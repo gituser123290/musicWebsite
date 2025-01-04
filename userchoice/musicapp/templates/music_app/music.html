@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+{% block content %}
+    <div class="m-4 rounded-sm">
+        <h1 class="text-3xl text-black font-bold text-center">My Music Library</h1>
+        <div class="flex flex-wrap justify-center align-middle gap-4 bg-orange-500 hover:bg-green-300 rounded-lg">
+            {% for song in music_list %}
+                <div class="bg-red-600 flex justify-center align-middle flex-col w-1/4 gap-2 p-10 m-4 rounded-lg shadow-2xl">
+                    <div>
+                        {% comment %}
+                        <a href="{% url 'detail' song.id %}">
+                            <p class="text-2xl font-semibold text-gray-400">{{ song.title | capfirst }}</p>
+                        </a>
+                        {% endcomment %}
+                        <img src="{{ song.album.image.url }}" alt="Album Art" class="w-20 h-20 object-cover rounded-full">
+                        <img class="w-24 h-24 object-cover rounded-full" src="{{ song.artist.image.url }}" alt="{{ artist.name }}">
+                        <p class="text-lg text-gray-900">Album: {{ song.album }}</p>
+                    </div>
+                    <p class="text-xl font-semibold text-gray-400">Title: {{ song.title | capfirst }}</p>
+                    <p class="text-lg text-gray-900">Artist: {{ song.artist }}</p>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+{% endblock %}

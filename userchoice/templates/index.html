@@ -1,0 +1,11 @@
+
+{% block content %}
+<div class="navigation">
+    <a href="{% url 'book_list' %}" class="home-link">Home</a>
+    <a href="{% url 'author_list' %}" class="back-link">Authors</a>
+    <a href="{% url 'music' %}" class="back-link">Music</a>
+    <a href="{% url 'artists' %}" class="back-link">Artist</a>
+    <a href="{% url 'populars' %}" class="back-link">Pupular Song</a>
+    <a href="{% url 'most_populars' %}" class="back-link">Most Pupular Song</a>
+</div>
+{% endblock %}
