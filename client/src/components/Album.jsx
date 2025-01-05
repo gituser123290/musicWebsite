@@ -3,33 +3,6 @@ import { VscPreview } from "react-icons/vsc";
 import { RiCloseLargeFill } from "react-icons/ri";
 import api from '../services/api';
 
-const Modal = ({ isOpen, onClose, artist }) => {
-    if (!isOpen) return null;
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-            <div className="bg-white p-6 rounded-lg max-w-md w-full">
-                <h2 className="text-2xl font-bold mb-4">Artist Details</h2>
-                <div className="w-full mb-6 flex justify-center">
-                    <img
-                    className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
-                    src={`http://localhost:8000${artist.image}`}
-                    alt="Song cover"
-                    />
-                </div>
-                <p><strong>Name:</strong> {artist.name}</p>
-                <p><strong>Songs:</strong> {artist.songs}</p>
-                <p><strong>Genre:</strong> {artist.genre}</p>
-                <p><strong>Debut Year:</strong> {artist.debutYear}</p>
-                <button
-                    className="mt-4 text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded"
-                    onClick={onClose}
-                >
-                    <RiCloseLargeFill/>
-                </button>
-            </div>
-        </div>
-    );
-};
 
 export default function Album() {
     const [albums, setAlbums] = useState([]);
@@ -96,7 +69,7 @@ export default function Album() {
                                 <div className="mt-2">
                                     <button
                                         className="text-indigo-600 underline hover:text-indigo-800"
-                                        onClick={() => openModal(artist)} // Open modal with artist info
+                                        onClick={() => openModal(artist)} 
                                     >
                                         <VscPreview/>
                                     </button>
@@ -110,3 +83,31 @@ export default function Album() {
         </div>
     );
 }
+
+const Modal = ({ isOpen, onClose, artist }) => {
+    if (!isOpen) return null;
+    return (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-white p-6 rounded-lg max-w-md w-full">
+                <h2 className="text-2xl font-bold mb-4">Artist Details</h2>
+                <div className="w-full mb-6 flex justify-center">
+                    <img
+                    className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
+                    src={`http://localhost:8000${artist.image}`}
+                    alt="Song cover"
+                    />
+                </div>
+                <p><strong>Name:</strong> {artist.name}</p>
+                <p><strong>Songs:</strong> {artist.songs}</p>
+                <p><strong>Genre:</strong> {artist.genre}</p>
+                <p><strong>Debut Year:</strong> {artist.debutYear}</p>
+                <button
+                    className="mt-4 text-white bg-red-500 hover:bg-red-600 px-4 py-2 rounded"
+                    onClick={onClose}
+                >
+                    <RiCloseLargeFill/>
+                </button>
+            </div>
+        </div>
+    );
+};

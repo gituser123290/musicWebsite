@@ -1,9 +1,6 @@
 from rest_framework import serializers
 from rest_framework import status
 from rest_framework.response import Response
-
-from django.conf import settings
-
 from .models import Album,Artist,Song
 
 class ArtistSerializer(serializers.ModelSerializer):

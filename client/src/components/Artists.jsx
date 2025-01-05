@@ -31,31 +31,31 @@ export default function Artists() {
     if (error) return <p>Error: {error.message}</p>
     return (
         <>
-        <div className="flex justify-between m-2">
-            <div className="p-4 bg-orange-500 rounded-md hover:bg-orange-600 shadow-xl transition-colors duration-200 cursor-pointer">
-                <p className="text-white font-semibold text-lg">Explore Artists</p>
-            </div>
+        <div className="flex justify-between items-center w-full h-auto mt-8 px-4 sm:px-6">
             <h1 className="text-3xl font-bold text-center text-gray-900 w-full sm:w-auto">Artists</h1>
-            <div className="p-4 bg-purple-500 rounded-md hover:bg-purple-600 shadow-xl transition-colors duration-200 cursor-pointer">
-                <p className="text-white font-semibold text-lg">Discover Songs</p>
-            </div>
         </div>
-        <div className="flex flex-wrap justify-start gap-8 w-full p-4 mb-14">
+        <div className="flex justify-center flex-wrap w-full mt-6 mb-20 px-2 sm:px-4">
             {artists.map(artist => (
-                <div key={artist.id} onClick={()=>handleClick(artist.id)} className="flex flex-col items-center w-full bg-lime-600 hover:bg-lime-700 p-4 rounded-lg shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 sm:w-1/2 md:w-1/3 lg:w-1/4 xl:w-1/5">
-                    <div className="bg-lime-100 hover:bg-lime-200 p-4 rounded-md shadow-md w-full flex-2">
-                        <img className="w-32 h-32 object-cover rounded-full mx-auto mb-4" src={`http://127.0.0.1:8000${artist.image}`} alt={artist.name} />
-                        <div className="text-center">
-                            <p className="text-xl font-semibold text-gray-800">{artist.name}</p>
-                            <p className="text-md text-gray-600">Born: {artist.birth_date}</p>
-                            <p className="text-md text-gray-600">Nationality: {artist.nationality}</p>
-                            <p className="text-md text-gray-600">Genre: {artist.genre}</p>
-                            <p className="text-md text-gray-600">Years Active: {artist.biography}</p>
-                        </div>
+                <div 
+                    key={artist.id} 
+                    onClick={() => handleClick(artist.id)} 
+                    className="flex flex-col items-center bg-gradient-to-r from-purple-500 to-pink-500 p-4 gap-2 m-2 rounded-xl shadow-xl sm:w-[290px] hover:scale-105 transition-all duration-300 transform hover:shadow-2xl"
+                >
+                    <img 
+                        className="w-32 h-32 object-cover rounded-full shadow-md mb-4" 
+                        src={`http://127.0.0.1:8000${artist.image}`} 
+                        alt={artist.name} 
+                    />
+                    <div className="text-center space-y-2">
+                        <p className="text-2xl font-semibold text-white">{artist.name}</p>
+                        <p className="text-md text-white">{artist.birth_date ? `Born: ${artist.birth_date}` : 'Birth Date: N/A'}</p>
+                        <p className="text-md text-white">{artist.nationality ? `Nationality: ${artist.nationality}` : 'Nationality: N/A'}</p>
+                        <p className="text-md text-white">{artist.genre ? `Genre: ${artist.genre}` : 'Genre: N/A'}</p>
+                        <p className="text-md text-white">{artist.biography ? `Years Active: ${artist.biography}` : 'Years Active: N/A'}</p>
                     </div>
                 </div>
             ))}
         </div>
-        </>
+    </>
     )
 }

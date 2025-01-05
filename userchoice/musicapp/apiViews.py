@@ -94,8 +94,6 @@ class SongList(APIView):
     parser_classes = [MultiPartParser, FormParser]
     def get(self, request):
         songs = Song.objects.all()
-        count=songs.count()
-        
         serializer = SongSerializer(songs, many=True)
         return Response(serializer.data)
     def post(self, request):
@@ -135,6 +133,7 @@ class AudioFileListView(APIView):
 class PopularSoung(APIView):
     def get(self, request):
         songs = Song.objects.order_by('-popularity')
+        # count=songs.count()
         if songs.count() == 0:
             return Response(status=status.HTTP_404_NOT_FOUND)
         max_popularity = Song.objects.aggregate(Max('popularity'))['popularity__max']
@@ -142,7 +141,7 @@ class PopularSoung(APIView):
         if max_popularity is None:
             popular_songs = Song.objects.none()
         else:
-            threshold = max_popularity / 2
+            threshold = max_popularity
             songs = Song.objects.filter(popularity__gte=threshold)
             popular_songs = songs[:max_popularity]
         serializer = SongSerializer(popular_songs, many=True)

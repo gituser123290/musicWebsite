@@ -30,10 +30,10 @@ export default function Songs() {
 
     return (
         <>
-        <div className='bg-pink-200'>
+        <div className='flex justify-center align-middle h-auto w-full p-4'>
             <h1 className="text-xl text-black font-semibold text-center mt-0">My Music Library</h1>
         </div>
-        <div className="flex text-justify w-full mb-14 bg-pink-200">
+        <div className="flex text-justify w-full mb-14">
             <div className="flex flex-wrap justify-center align-middle gap-1 rounded-lg">
                 {songs.map(song => (
                     <div key={song.id} onClick={()=>handleClick(song.id)} className="bg-red-600 flex-col justify-center align-middle w-[230px] gap-1 p-4 m-2 rounded-lg shadow-2xl">

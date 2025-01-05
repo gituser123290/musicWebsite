@@ -11,6 +11,9 @@ import SongDetail from './components/SongUpdateDelete';
 import ArtistUpdateDelete from './components/ArtistUpdateDelete';
 import ProductDetail from './components/ProductDetail';
 import PlaySong from './components/PlaySong';
+import SongPage from './pages/SongPage';
+import ArtistPage from './pages/ArtistPage';
+import AlbumPage from './pages/AlbumPage';
 function App() {
   return (
     <>
@@ -24,6 +27,9 @@ function App() {
           <Route path="/artist/" element={<Artists />} />
           <Route path="/artist/:id/" element={<ArtistUpdateDelete />} />
           <Route path="/users/" element={<Users />} />
+          <Route path="/createsong" element={<SongPage />} />
+          <Route path="/createartist" element={<ArtistPage />} />
+          <Route path="/createalbum" element={<AlbumPage />} />
           <Route path="/album/" element={<Album />} />
           <Route path="/popular_song/" element={<PopularSong />} />
           <Route path="*" element={<NotFound />} />
