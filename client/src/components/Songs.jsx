@@ -34,16 +34,16 @@ export default function Songs() {
             <h1 className="text-xl text-black font-semibold text-center mt-0">My Music Library</h1>
         </div>
         <div className="flex text-justify w-full mb-14">
-            <div className="flex flex-wrap justify-center align-middle gap-1 rounded-lg">
+            <div className="flex flex-wrap justify-center align-middle rounded-lg">
                 {songs.map(song => (
-                    <div key={song.id} onClick={()=>handleClick(song.id)} className="bg-red-600 flex-col justify-center align-middle w-[230px] gap-1 p-4 m-2 rounded-lg shadow-2xl">
+                    <div key={song.id} onClick={()=>handleClick(song.id)} className="bg-green-400 flex-col justify-center align-middle w-[295px] h-[300px] p-4 m-2 rounded-lg shadow-2xl hover:scale-105 transition-all duration-300 transform hover:shadow-2xl hover:bg-slate-500">
                         <div className='flex-1 ml-12'>
-                            <img className="w-24 h-24 object-cover rounded-full" src={`http://127.0.0.1:8000${song.artist_detail.image}`} alt={ song.artist.name } />
+                            <img className="w-24 h-24 object-cover rounded-full" src={`http://127.0.0.1:8000${song.artists.image}`} alt={song.artist.name} />
                         </div>
-                        <div className='flex-1'>
-                            <p className="text-sm font-medium text-gray-800 tracking-normal">Album: {song.album_detail.title}</p>
-                            <p className="text-xl font-semibold text-gray-950 tracking-tighter">Title: {song.title}</p>
-                            <p className="text-lg text-gray-900">Artist: {song.artist_detail.name}</p>
+                        <div className='py-8'>
+                            <p className="text-sm py-2 font-medium text-gray-800 tracking-normal">Album: {song.albums.title}</p>
+                            <p className="text-xl py-2 font-semibold text-gray-950 tracking-normal">Title: {song.name}</p>
+                            <p className="text-lg py-2 text-gray-900 -tracking-4">Artist: {song.artists.name}</p>
                         </div>
                     </div>
                 ))}

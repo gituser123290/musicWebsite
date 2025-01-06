@@ -1,17 +1,11 @@
-
-
 import os
 from pathlib import Path
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
-
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-ia7!lt)_%--z$$ov(vwhxh8^y@^anclrk)i^ovx@wpo_#&0y*p'
+
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -32,11 +26,13 @@ INSTALLED_APPS = [
     'tailwind',
     'theme', 
     'rest_framework',
+    'rest_framework.authtoken',
     
-     "corsheaders",
+    "corsheaders",
     
     'book',
     'musicapp',
+    'auth_app',
     
     'django_browser_reload'
 ]
@@ -141,6 +137,9 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',        
 ]
 MEDIA_ROOT = BASE_DIR / 'static/images'
+
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

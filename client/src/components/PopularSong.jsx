@@ -2,13 +2,12 @@ import React from 'react'
 import { useState, useEffect } from 'react';
 import api from '../services/api';
 import { FaPlay,FaPause } from "react-icons/fa";
-import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
+import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled,TbChartBarPopular } from "react-icons/tb";
 import { PiDownloadSimpleBold } from "react-icons/pi";
-import { FaEarListen } from "react-icons/fa6";
 import { CiStreamOn } from "react-icons/ci";
 
 export default function PopularSong() {
-  const [populars, setPopulars] = useState([])
+  const [populars, setPopulars] = useState(null)
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -18,8 +17,10 @@ export default function PopularSong() {
   useEffect(() => {
     const popularSongs = async () => {
       try {
-        const response = await api.get('/popularity');
+        const response = await api.get('/songs/popularity');
         setPopulars(response.data);
+        console.log(response.data);
+        
         setLoading(false);
       } catch (error) {
         setError(true);
@@ -47,39 +48,30 @@ export default function PopularSong() {
   }
 
   return (
-    <div className="flex flex-wrap justify-center m-12 p-4 gap-4">
-      {populars.map((song) => (
-        <div
-          key={song.id}
-          className="flex flex-col justify-center w-[400px] h-auto items-center p-4 rounded-md bg-orange-500 border border-red-100"
+    <div className="flex flex-wrap justify-center mt-2 p-2 gap-2">
+      {populars.map(song=>{
+        return(
+          <div key={song.song_id}
+          className="flex flex-col justify-center w-[300px] h-auto items-center p-4 rounded-md bg-orange-500 border border-red-100"
         >
-          <div className="flex items-center w-full mb-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden mr-4">
-              <img
-                src={`http://127.0.0.1:8000${song.album_detail.image}`}
-                alt={song.album_detail.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1 text-center text-lg font-bold p-2">
-              {song.album_detail.title.substring(0, 13)}... by {song.artist_detail.name}
+          <div className="flex items-center w-full mb-0">
+            <div className="flex-1 text-justify text-lg font-bold p-2">
+              {song.album}
             </div>
           </div>
-          <div className="flex items-center w-full mb-4">
-            <div className="w-16 h-16 rounded-full overflow-hidden mr-4">
-              <img
-                src={`http://127.0.0.1:8000${song.album_detail.image}`}
-                alt={song.album_detail.title}
-                className="w-full h-full object-cover"
-              />
-            </div>
-            <div className="flex-1 text-center text-lg font-bold p-2">
-              {song.artist_detail.name}
+          <div className="flex items-center w-full mb-0">
+            <div className="flex-1 text-justify text-lg font-bold p-2">
+              {song.artist}
             </div>
           </div>
-          <div className="flex justify-around mt-5 w-full">
+          <div className="flex items-center w-full mb-0">
+            <div className="flex-1 text-justify text-lg font-bold p-2">
+              {song.name}
+            </div>
+          </div>
+          <div className="flex justify-around mt-2 w-full">
             <div className="w-10 h-10 gap-2 flex justify-center align-middle items-center cursor-pointer">
-              {song.no_of_listeners} <p><FaEarListen /></p>
+              {Math.floor(song.popularity_score)} <p><TbChartBarPopular /></p>
             </div>
             <div className="w-10 h-10 gap-2 flex justify-center items-center cursor-pointer">
               {song.streams} <p><CiStreamOn /></p>
@@ -118,7 +110,7 @@ export default function PopularSong() {
             </div>
           </div>
         </div>
-      ))}
+      )})}
     </div>
   )
 }

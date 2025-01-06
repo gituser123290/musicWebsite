@@ -1,6 +1,6 @@
 from django.db import models
 import os
-# Define Album Model
+
 class Album(models.Model):
     ALBUM_TYPE = (
         ('Pop', 'Pop'),
@@ -20,11 +20,11 @@ class Album(models.Model):
     image = models.ImageField(upload_to='albums/',null=True, blank=True)
     
     def __str__(self):
-        return self.artist
+        return self.title
     
     class Meta:
         verbose_name_plural = 'Albums'
-        ordering = ['-release_date']
+        ordering = ['-title']
 
 class Artist(models.Model):
     ARTIST_GENRE = (
@@ -59,7 +59,7 @@ class Song(models.Model):
         ('Mixed', 'Mixed'),
         ('Other', 'Other'),
     )
-    title = models.CharField(max_length=100)
+    name = models.CharField(max_length=100)
     album = models.ForeignKey('Album', on_delete=models.CASCADE, related_name='songs')
     song_cover = models.ImageField(upload_to='song_covers/',null=True, blank=True)
     artist = models.ForeignKey('Artist', on_delete=models.CASCADE, related_name='songs')
@@ -72,28 +72,7 @@ class Song(models.Model):
     duration = models.DurationField()
     genre = models.CharField(max_length=50, choices=SONG_GENRE)
     track_number = models.PositiveIntegerField()
-    popularity = models.PositiveBigIntegerField(default=0)
-    
-    
-    # def delete_old_files(self):
-    #     if self.song_cover:
-    #         if os.path.isfile(self.song_cover.path):
-    #             os.remove(self.song_cover.path)
-    #     if self.audio_file:
-    #         if os.path.isfile(self.audio_file.path):
-    #             os.remove(self.audio_file.path)
-
-    # def save(self, *args, **kwargs):
-    #     if self.pk:
-    #         old_item = Song.objects.get(pk=self.pk)
-    #         if old_item.song_cover != self.song_cover:
-    #             old_item.delete_old_files()
-    #         if old_item.audio_file != self.audio_file:
-    #             old_item.delete_old_files()
-    #     super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f'{self.title} by {self.artist.name}'
+ 
 
     def calculate_popularity(self):
         """
@@ -119,8 +98,12 @@ class Song(models.Model):
         self.save()
 
         return popularity_score
+    
+    
+    def __str__(self):
+        return f'{self.name} by {self.artist.name}'
 
 
     class Meta:
         verbose_name_plural = 'Songs'  
-        ordering = ['title']  
+        ordering = ['name']  

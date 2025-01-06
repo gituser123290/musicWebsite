@@ -7,12 +7,14 @@ export default function Users() {
     const [users,setUsers]=useState([])
     const [isLoading, setIsLoading]=useState(true)
     const [error, setError]=useState(null)
+    const [count, setCount]=useState(0)
 
     useEffect(()=>{
         const fetchUser=async()=>{
             try{
                 const response=await api.get('/users')
                 setUsers(response.data)
+                setCount(response.data.length)
             }
             catch(err){
                 setError(err.message)
@@ -40,9 +42,9 @@ export default function Users() {
     if(error){
         return <div>{error}</div>
     }
-
-
     return (
+        <>
+        <p className="text-center">total {count} result</p>
         <div class="flex w-full h-auto justify-center items-center flex-wrap gap-2 bg-gray-300 p-2">
             {users.map(user => (
             <div key={user.id} class="flex w-[300px] h-auto flex-col flex-wrap max-w-4xl mt-0 p-2 justify-center mb-20 items-center bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl shadow-lg">
@@ -66,5 +68,6 @@ export default function Users() {
             </div>
             ))}
         </div>
+        </>
     )
 }

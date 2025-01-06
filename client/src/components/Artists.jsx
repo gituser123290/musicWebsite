@@ -39,7 +39,7 @@ export default function Artists() {
                 <div 
                     key={artist.id} 
                     onClick={() => handleClick(artist.id)} 
-                    className="flex flex-col items-center bg-gradient-to-r from-purple-500 to-pink-500 p-4 gap-2 m-2 rounded-xl shadow-xl sm:w-[290px] hover:scale-105 transition-all duration-300 transform hover:shadow-2xl"
+                    className="flex flex-col items-center bg-gradient-to-r from-purple-200 to-pink-200 p-4 gap-2 m-2 rounded-xl shadow-xl sm:w-[290px] hover:scale-105 transition-all duration-300 transform hover:shadow-2xl"
                 >
                     <img 
                         className="w-32 h-32 object-cover rounded-full shadow-md mb-4" 
@@ -47,11 +47,11 @@ export default function Artists() {
                         alt={artist.name} 
                     />
                     <div className="text-center space-y-2">
-                        <p className="text-2xl font-semibold text-white">{artist.name}</p>
-                        <p className="text-md text-white">{artist.birth_date ? `Born: ${artist.birth_date}` : 'Birth Date: N/A'}</p>
-                        <p className="text-md text-white">{artist.nationality ? `Nationality: ${artist.nationality}` : 'Nationality: N/A'}</p>
-                        <p className="text-md text-white">{artist.genre ? `Genre: ${artist.genre}` : 'Genre: N/A'}</p>
-                        <p className="text-md text-white">{artist.biography ? `Years Active: ${artist.biography}` : 'Years Active: N/A'}</p>
+                        <p className="text-2xl font-semibold text-zinc-500">{artist.name}</p>
+                        <p className="text-md text-zinc-500 text-justify">{artist.birth_date ? `Born: ${artist.birth_date}` : 'Birth Date: N/A'}</p>
+                        <p className="text-md text-zinc-500 text-justify">{artist.nationality ? `Nationality: ${artist.nationality}` : 'Nationality: N/A'}</p>
+                        <p className="text-md text-zinc-500 text-justify">{artist.genre ? `Genre: ${artist.genre}` : 'Genre: N/A'}</p>
+                        <p className="text-md text-zinc-500 text-justify">{artist.biography ? `Biography: ${artist.biography}` : 'Biography: N/A'}</p>
                     </div>
                 </div>
             ))}

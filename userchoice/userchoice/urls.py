@@ -9,7 +9,9 @@ urlpatterns = [
     path("__reload__/", include("django_browser_reload.urls")),
     # path('', include('book.urls')),
     # path('music/',include('musicapp.urls')),
+    path('account/',include('auth_app.urls')),
     path('',include('musicapp.urls')),
+    
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

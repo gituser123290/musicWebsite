@@ -80,12 +80,12 @@ export default function AllSongs() {
                         />
                     </div>
                     <div className="text-center text-fuchsia-600 text-xl font-semibold">
-                        <h2>{songs[currentSongIndex]?.title}</h2>
+                        <h2>{songs[currentSongIndex]?.name}</h2>
                     </div>
                     <div className="w-full flex flex-col items-center space-y-4">
                         <audio
                             ref={(audio) => setAudioPlayer(audio)}
-                            controls
+                            // controls
                             className="w-full rounded-lg bg-gray-100 p-2"
                             src={`http://localhost:8000${songs[currentSongIndex]?.audio_file}`}
                             onEnded={handleSongEnd} 

@@ -1,6 +1,7 @@
 import Songs from './components/Songs';
 import './index.css';
-import {BrowserRouter,Routes,Route} from 'react-router-dom';
+import { useAuth } from './context/AuthContext';
+import {BrowserRouter ,Routes,Route} from 'react-router-dom';
 import Artists from './components/Artists';
 import PopularSong from './components/PopularSong';
 import Album from './components/Album';
@@ -14,27 +15,46 @@ import PlaySong from './components/PlaySong';
 import SongPage from './pages/SongPage';
 import ArtistPage from './pages/ArtistPage';
 import AlbumPage from './pages/AlbumPage';
+import Login from './AuthPage/Login';
+import Register from './AuthPage/Register';
+
 function App() {
+  // const { user } = useAuth();
+  // console.log(user.username);
+  
   return (
     <>
-      <BrowserRouter>
-        <Routes>
-          <Route exact path="/" element={<Songs />} />
-          <Route path="/song/:id/" element={<SongDetail />} />
-          <Route path="/song/:id/play/" element={<PlaySong />} />
-          <Route path="/products/" element={<Products />} />
-          <Route path="/product/:id/" element={<ProductDetail />} />
-          <Route path="/artist/" element={<Artists />} />
-          <Route path="/artist/:id/" element={<ArtistUpdateDelete />} />
-          <Route path="/users/" element={<Users />} />
-          <Route path="/createsong" element={<SongPage />} />
-          <Route path="/createartist" element={<ArtistPage />} />
-          <Route path="/createalbum" element={<AlbumPage />} />
-          <Route path="/album/" element={<Album />} />
-          <Route path="/popular_song/" element={<PopularSong />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
+    <BrowserRouter>
+      <Routes>
+        {/* If the user is logged in, show authenticated routes */}
+        {/* {user ? ( */}
+          <>
+            <Route path="/" element={<Songs />} />
+            <Route path="/song/:id/" element={<SongDetail />} />
+            <Route path="/song/:id/play/" element={<PlaySong />} />
+            <Route path="/products/" element={<Products />} />
+            <Route path="/product/:id/" element={<ProductDetail />} />
+            <Route path="/artist/" element={<Artists />} />
+            <Route path="/artist/:id/" element={<ArtistUpdateDelete />} />
+            <Route path="/users/" element={<Users />} />
+            <Route path="/createsong" element={<SongPage />} />
+            <Route path="/createartist" element={<ArtistPage />} />
+            <Route path="/createalbum" element={<AlbumPage />} />
+            <Route path="/album/" element={<Album />} />
+            <Route path="/popular_song/" element={<PopularSong />} />
+          </>
+        {/* ) : ( */}
+          {/* // If the user is not logged in, show login and register routes */}
+          <>
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </>
+        {/* )} */}
+
+        {/* Fallback route for 404 page */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
+    </BrowserRouter>
     </>
   );
 }

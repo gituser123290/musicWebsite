@@ -4,20 +4,21 @@ from rest_framework import status
 from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound
 from rest_framework import generics  
-from rest_framework.parsers import MultiPartParser, FormParser # for image uploading
-
+from rest_framework.parsers import MultiPartParser, FormParser,FileUploadParser # for image uploading
+from rest_framework.permissions import IsAuthenticated
+import os
 import requests
 from django.conf import settings
 
 from django.db.models import Max
 
-from .serializers import ArtistSerializer,AlbumSerializer,SongSerializer,AudioSerializer
+from .serializers import ArtistSerializer,AlbumSerializer,SongSerializer,AudioSerializer,PopularSongSerializer
 from .models import Artist,Album,Song
 
 
 class AlbumList(APIView):
     # serializer_class = AlbumSerializer
-    # parser_classes = [MultiPartParser, FormParser]
+    parser_classes = (MultiPartParser, FormParser)
     def get(self, request):
         try:
             albums = Album.objects.all()
@@ -57,6 +58,7 @@ class AlbumDetail(APIView):
 
 
 class ArtistList(APIView):
+    # permission_classes = [IsAuthenticated]
     def get(self, request):
         artists = Artist.objects.all()
         serializer = ArtistSerializer(artists, many=True)
@@ -91,17 +93,53 @@ class ArtistDetail(APIView):
     
 
 class SongList(APIView):
-    parser_classes = [MultiPartParser, FormParser]
+    # parser_classes = (MultiPartParser, FormParser)
+    # parser_class = (FileUploadParser,)
+    parser_classes = (MultiPartParser, FormParser,)
+    # permission_classes = [IsAuthenticated]
     def get(self, request):
-        songs = Song.objects.all()
+        songs = Song.objects.all().order_by('-id')
         serializer = SongSerializer(songs, many=True)
         return Response(serializer.data)
-    def post(self, request):
-        serializer = SongSerializer(data=request.data)
+    
+    # def post(self, request,format=None):
+    #     serializer = SongSerializer(data=request.data)
+    #     if serializer.is_valid():
+    #         serializer.save()
+    #         return Response(serializer.data,status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=400)
+    
+    def post(self, request, format=None):
+        if 'song_cover' in request.FILES:
+            image_file = request.FILES['song_cover']
+            image_filename = os.path.join(settings.MEDIA_ROOT, 'song_covers', image_file.name)
+            with open(image_filename, 'wb+') as image_temp_file:
+                for chunk in image_file.chunks():
+                    image_temp_file.write(chunk)
+        else:
+            image_filename = None
+
+        if 'audio_file' in request.FILES:
+            my_file = request.FILES['audio_file']
+            file_filename = os.path.join(settings.MEDIA_ROOT, 'audio_files', my_file.name)
+            with open(file_filename, 'wb+') as file_temp_file:
+                for chunk in my_file.chunks():
+                    file_temp_file.write(chunk)
+        else:
+            file_filename = None
+            
+        data = request.data.copy()
+        if image_filename:
+            data['song_cover'] = image_filename
+        if file_filename:
+            data['audio_file'] = file_filename
+            
+        serializer = SongSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=201)
-        return Response(serializer.errors, status=400)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
 class SongDetail(APIView):
     parser_classes = [MultiPartParser, FormParser]
@@ -128,25 +166,28 @@ class AudioFileListView(APIView):
         songs = Song.objects.all()
         serializer = AudioSerializer(songs, many=True)
         return Response({"audio_files": serializer.data}, status=status.HTTP_200_OK)
+ 
+class PopularSongView(APIView):
+    def get(self, request, format=None):
+        songs = Song.objects.all()[:4]
+        popularity_scores = []
+        for song in songs:
+            popularity_score = song.calculate_popularity()  
+            popularity_scores.append({
+                'song_id': song.id,
+                'name': song.name,
+                'artist': song.artist.name,
+                'streams': song.streams,
+                'downloads': song.downloads,
+                'album': song.album.title,
+                'popularity_score': popularity_score,
+                'audio_file': song.audio_file.url if song.audio_file else None
+            })
+        popularity_scores = sorted(popularity_scores, key=lambda x: x['popularity_score'], reverse=True)    
+        return Response(popularity_scores, status=status.HTTP_200_OK) 
     
     
-class PopularSoung(APIView):
-    def get(self, request):
-        songs = Song.objects.order_by('-popularity')
-        # count=songs.count()
-        if songs.count() == 0:
-            return Response(status=status.HTTP_404_NOT_FOUND)
-        max_popularity = Song.objects.aggregate(Max('popularity'))['popularity__max']
-        popular_songs = []
-        if max_popularity is None:
-            popular_songs = Song.objects.none()
-        else:
-            threshold = max_popularity
-            songs = Song.objects.filter(popularity__gte=threshold)
-            popular_songs = songs[:max_popularity]
-        serializer = SongSerializer(popular_songs, many=True)
-        return Response(serializer.data)
-    
+        
 FREEE_API_URL = 'https://api.escuelajs.co/api/v1/users'
 
 class UserApiView(APIView):

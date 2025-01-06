@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams,useNavigate } from "react-router-dom";
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
 import { FaPlay, FaPause } from "react-icons/fa";
 import AllSongs from "./AllSongs";
@@ -14,6 +14,8 @@ const SongDetail = () => {
   // const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const navigate=useNavigate()
 
   useEffect(() => {
     const songs = async () => {
@@ -66,6 +68,12 @@ const SongDetail = () => {
   }
 
   return (
+    <>
+    <div className="w-1/6 items-center pl-10 p-4 m-1 bg-orange-500 rounded-md hover:bg-orange-600 shadow-xl transition-colors duration-200 cursor-pointer">
+        <button onClick={() => navigate(-1)} className="text-white">
+          Back to Posts
+        </button>
+      </div>
     <div className="flex items-center flex-col justify-center w-full bg-gradient-to-r from-blue-500 to-purple-600 pt-10 pb-16">
       <div className="flex items-center justify-center w-full flex-1 bg-gradient-to-r pt-8 pb-8">
         <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-6 bg-white rounded-xl shadow-xl flex flex-col items-center space-y-6">
@@ -76,10 +84,13 @@ const SongDetail = () => {
               alt="Song cover"
             />
           </div>
+          <div className="text-center text-fuchsia-600 text-xl font-semibold">
+            <h2>{song?.name}</h2>
+          </div>
           <div className="w-full flex flex-col items-center space-y-4">
             <audio
               ref={(audio) => setAudioPlayer(audio)}
-              controls
+              // controls
               className="w-full rounded-lg bg-gray-100 p-2"
               src={`http://localhost:8000${song.audio_file}`}
             />
@@ -112,6 +123,7 @@ const SongDetail = () => {
         <AllSongs />
       </div>
     </div>
+    </>
   );
 };
 

@@ -13,7 +13,7 @@ const SongDetail = () => {
   const navigate = useNavigate();
 
   const [songDetails, setSongDetails] = useState({
-    title: "",
+    name: "",
     album: "",
     song_cover: null,
     artist: "",
@@ -26,7 +26,6 @@ const SongDetail = () => {
     duration: "",
     genre: "",
     track_number: "",
-    popularity: "",
   });
 
   useEffect(() => {
@@ -35,10 +34,10 @@ const SongDetail = () => {
         const response = await api.get(`/song/${id}/`);
         setSong(response.data);
         setSongDetails({
-          title: response.data.title,
-          album: response.data.album_detail.id,
+          title: response.data.name,
+          album: response.data.album.id,
           song_cover: response.data.song_cover,
-          artist: response.data.artist_detail.id,
+          artist: response.data.artist.id,
           audio_file: response.data.audio_file,
           no_of_listeners: response.data.no_of_listeners,
           streams: response.data.streams,
@@ -48,7 +47,7 @@ const SongDetail = () => {
           duration: response.data.duration,
           genre: response.data.genre,
           track_number: response.data.track_number,
-          popularity: response.data.popularity,
+
         });
         setLoading(false);
       } catch (error) {
@@ -79,7 +78,7 @@ const SongDetail = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("title", songDetails.title);
+      formData.append("title", songDetails.name);
       formData.append("album", songDetails.album);
       formData.append("artist", songDetails.artist);
       formData.append("no_of_listeners", songDetails.no_of_listeners);
@@ -93,7 +92,6 @@ const SongDetail = () => {
       formData.append("duration", songDetails.duration);
       formData.append("genre", songDetails.genre);
       formData.append("track_number", songDetails.track_number);
-      formData.append("popularity", songDetails.popularity);
 
       if (songDetails.song_cover) {
         formData.append("song_cover", songDetails.song_cover); // Append the image if present
@@ -169,12 +167,12 @@ const SongDetail = () => {
                 </div>
                 <hr />
                 <div className="p-2 columns-2 gap-20">
-                  <h2 className="text-white text-2xl">{song.title}</h2>
+                  <h2 className="text-white text-2xl">{song.name}</h2>
                   <p className="text-white">
-                    Artist: {song.artist_detail.name}
+                    Artist: {song.artists.name}
                   </p>
                   <p className="text-white">
-                    Album: {song.album_detail.title.substring(0, 10)}...
+                    Album: {song.albums.title.substring(0, 10)}...
                   </p>
                   <p className="text-white">Listners: {song.no_of_listeners}</p>
                   <p className="text-white">Streams: {song.streams}</p>
@@ -186,7 +184,7 @@ const SongDetail = () => {
                   <p className="text-white">Length: {song.duration}</p>
                   <p className="text-white">Genre: {song.genre}</p>
                   <p className="text-white">Tracks: {song.track_number}</p>
-                  <p className="text-white">Popularity: {song.popularity}</p>
+                  {/* <p className="text-white">Popularity: {song.popularity}</p> */}
                   <div className="flex justify-center space-x-10">
                     <button
                       onClick={openCommentModal}
@@ -220,11 +218,11 @@ const SongDetail = () => {
               <h2 className="text-xl mb-4">Update Song</h2>
               <form onSubmit={handleUpdateSong}>
                 <div className="mb-2">
-                  <label className="block text-gray-700">Title</label>
+                  <label className="block text-gray-700">Song Name</label>
                   <input
                     type="text"
                     name="title"
-                    value={songDetails.title}
+                    value={songDetails.name}
                     onChange={handleInputChange}
                     className="w-full p-1 border rounded-md"
                   />
@@ -354,16 +352,6 @@ const SongDetail = () => {
                     type="number"
                     name="track_number"
                     value={songDetails.track_number}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Popularity</label>
-                  <input
-                    type="number"
-                    name="popularity"
-                    value={songDetails.popularity}
                     onChange={handleInputChange}
                     className="w-full p-1 border rounded-md"
                   />
