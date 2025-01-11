@@ -3,23 +3,27 @@ import { Navigate } from 'react-router-dom';
 import {BrowserRouter ,Routes,Route} from 'react-router-dom';
 import './index.css';
 import Navbar from './layouts/Navbar';
-import Artists from './components/Artists';
-import PopularSong from './components/PopularSong';
-import Album from './components/Album';
-import NotFound from './components/NotFound';
-import Products from './components/Products';
-import Users from './components/Users';
-import SongDetail from './components/SongUpdateDelete';
-import ArtistUpdateDelete from './components/ArtistUpdateDelete';
-import ProductDetail from './components/ProductDetail';
-import PlaySong from './components/PlaySong';
+import Artists from './components/Artist/Artists';
+import PopularSong from './components/Song/PopularSong';
+import Album from './components/Album/Album';
+import NotFound from './layouts/NotFound';
+import Products from './components/Others/Products';
+import Users from './components/Others/Users';
+import SongDetail from './components/Song/SongUpdateDelete';
+import ArtistUpdateDelete from './components/Artist/ArtistUpdateDelete';
+import ProductDetail from './components/Others/ProductDetail';
+import PlaySong from './components/Song/PlaySong';
 import SongPage from './pages/SongPage';
 import ArtistPage from './pages/ArtistPage';
 import AlbumPage from './pages/AlbumPage';
 import ProtectedRoute from './AuthPage/ProtectedRoute'
-import Songs from './components/Songs';
+import Songs from './components/Song/Songs';
 import Login from './AuthPage/Login';
 import Register from './AuthPage/Register';
+import Author from './components/Book/Author';
+import AuthorDetail from './components/Book/AuthorDetail';
+import Book from './components/Book/Book'
+
 import Loading from './layouts/Loading';
 
 function App() {
@@ -125,10 +129,19 @@ function App() {
           </ProtectedRoute>
           } />
 
+          <Route path="author">
+            <Route path="authors" element={
+                <Author />
+              } />
+            <Route path="books" element={<Book/>} /> 
+          </Route>
+          <Route path="/author/:id" element={
+                <AuthorDetail />
+              } /> 
+          <Route path='/loading' element={<Loading/>}/>
         <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login loggedInUser={loggedInUser} />} />
         <Route path="/register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
         <Route path="*" element={<NotFound />} />
-        <Route path='/loading' element={<Loading/>}/>
       </Routes>
     </BrowserRouter>
     </>

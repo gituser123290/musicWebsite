@@ -1,8 +1,8 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
-import Loading from '../layouts/Loading'
+import api from '../../services/api'
+import Loading from '../../layouts/Loading'
 
 
 
@@ -18,6 +18,7 @@ export default function Artists() {
             try {
                 const response = await api.get('/artist/')
                 setArtists(response.data)
+                console.log(response.data)
                 setLoading(false)
             } catch (error) {
                 setError(error)

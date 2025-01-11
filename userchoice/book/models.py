@@ -9,7 +9,7 @@ class Author(models.Model):
     death_date = models.DateField(null=True, blank=True)
     nationality = models.CharField(max_length=50)
     biography = models.TextField()
-    image = models.ImageField(upload_to='authors/')
+    image = models.ImageField(upload_to='authors/',null=True,blank=True)
     website = models.URLField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
@@ -32,7 +32,7 @@ class Book(models.Model):
     genre = models.CharField(max_length=50)
     pages = models.PositiveIntegerField(default=0)
     description = models.TextField()
-    cover_image = models.ImageField(upload_to='books/')
+    cover_image = models.ImageField(upload_to='books/',null=True,blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):

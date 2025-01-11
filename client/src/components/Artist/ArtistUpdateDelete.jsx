@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useParams,useNavigate } from 'react-router-dom';
 import { FaRegEdit, FaTrash } from "react-icons/fa";
-import api from '../services/api';
-import Loading from '../layouts/Loading';
+import api from '../../services/api';
+import Loading from '../../layouts/Loading';
 
 
 

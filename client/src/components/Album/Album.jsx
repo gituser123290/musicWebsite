@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { VscPreview } from "react-icons/vsc";
 // import { RiCloseLargeFill } from "react-icons/ri";
-import api from '../services/api';
-import Loading from '../layouts/Loading';
+import api from '../../services/api';
+import Loading from '../../layouts/Loading';
 
 
 export default function Album() {

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FaRegEdit, FaTrash } from "react-icons/fa";
 import { FaPlay } from "react-icons/fa";
-import api from "../services/api";
+import api from "../../services/api";
 
 const SongDetail = () => {
   const { id } = useParams();

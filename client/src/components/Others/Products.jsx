@@ -1,10 +1,10 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
-import api from '../services/api'
+import api from '../../services/api'
 import { useNavigate } from 'react-router-dom';
 import { MdReadMore } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
-import Loading from '../layouts/Loading';
+import Loading from '../../layouts/Loading';
 
 
 

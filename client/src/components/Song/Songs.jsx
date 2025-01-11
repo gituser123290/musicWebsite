@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../services/api'
-import Loading from '../layouts/Loading'
+import api from '../../services/api'
+import Loading from '../../layouts/Loading'
 
 
 

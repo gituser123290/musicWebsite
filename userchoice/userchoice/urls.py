@@ -11,6 +11,7 @@ urlpatterns = [
     # path('music/',include('musicapp.urls')),
     path('account/',include('auth_app.urls')),
     path('',include('musicapp.urls')),
+    path('book/',include('book.urls')),
     
 ]
 

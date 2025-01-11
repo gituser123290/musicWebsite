@@ -1,8 +1,8 @@
 import React, { useState,useEffect } from 'react'
 import { FaRegEdit, FaTrash } from "react-icons/fa";
 import moment from "moment";
-import api from '../services/api'
-import Loading from '../layouts/Loading';
+import api from '../../services/api'
+import Loading from '../../layouts/Loading';
 
 export default function Users() {
     const [users,setUsers]=useState([])

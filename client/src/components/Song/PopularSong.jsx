@@ -1,6 +1,6 @@
 import React from 'react'
 import { useState, useEffect } from 'react';
-import api from '../services/api';
+import api from '../../services/api';
 import { FaPlay,FaPause } from "react-icons/fa";
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled,TbChartBarPopular } from "react-icons/tb";
 import { PiDownloadSimpleBold } from "react-icons/pi";

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import api from "../services/api";
+import api from "../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../layouts/Loading";
+import Loading from "../../layouts/Loading";
 
 export default function ProductDetail() {
   const { id } = useParams();
