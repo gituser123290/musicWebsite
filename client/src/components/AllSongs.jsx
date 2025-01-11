@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
 import { FaPlay, FaPause, FaRedoAlt } from "react-icons/fa";
 import api from '../services/api';
+import Loading from '../layouts/Loading';
 
 export default function AllSongs() {
     const [songs, setSongs] = useState([]);
@@ -65,7 +66,7 @@ export default function AllSongs() {
         }
     };
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div><Loading/></div>;
     if (error) return <div>Error: {error}</div>;
 
     return (

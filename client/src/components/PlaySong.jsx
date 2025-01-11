@@ -3,6 +3,7 @@ import { useParams,useNavigate } from "react-router-dom";
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
 import { FaPlay, FaPause } from "react-icons/fa";
 import AllSongs from "./AllSongs";
+import Loading from "../layouts/Loading";
 import api from "../services/api";
 
 
@@ -59,9 +60,7 @@ const SongDetail = () => {
   //   setCurrentSongIndex(newIndex);
   // };
 
-  if (loading) {
-    return <p>Loading...</p>;
-  }
+  if (loading) return <div><Loading/></div>;
 
   if (error) {
     return <p>Error: {error}</p>;

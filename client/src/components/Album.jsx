@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { VscPreview } from "react-icons/vsc";
 // import { RiCloseLargeFill } from "react-icons/ri";
 import api from '../services/api';
+import Loading from '../layouts/Loading';
 
 
 export default function Album() {
@@ -35,7 +36,7 @@ export default function Album() {
         setSelectedArtist(null);
     };
 
-    if (loading) return <p>Loading...</p>;
+    if (loading) return <div className='top-28 left-40'><Loading/></div>;
     if (error) return <p>Error: {error.message}</p>;
 
     return (

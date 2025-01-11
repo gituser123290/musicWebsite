@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import api from '../services/api'
+import Loading from '../layouts/Loading'
+
+
+
 export default function Songs() {
     const [songs, setSongs] = useState([])
     const [loading, setLoading] = useState(true)
@@ -19,13 +23,14 @@ export default function Songs() {
             }
         }
         fetchSong()
-    }, [])
+    }, [navigate])
 
     const handleClick=(id)=>{
         navigate(`/song/${id}`)
     }
 
-    if (loading) return <p>Loading...</p>
+    if (loading) return <div><Loading/></div>;
+
     if (error) return <p>Error: {error.message}</p>
 
     return (

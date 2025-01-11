@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from rest_framework.exceptions import NotFound
 from rest_framework import generics  
 from rest_framework.parsers import MultiPartParser, FormParser,FileUploadParser # for image uploading
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly
 import os
 import requests
 from django.conf import settings
@@ -17,7 +17,7 @@ from .models import Artist,Album,Song
 
 
 class AlbumList(APIView):
-    # serializer_class = AlbumSerializer
+    permission_classes = [IsAuthenticatedOrReadOnly]
     parser_classes = (MultiPartParser, FormParser)
     def get(self, request):
         try:
@@ -37,6 +37,7 @@ class AlbumList(APIView):
 
 
 class AlbumDetail(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request, pk):
         album = get_object_or_404(Album, pk=pk)
         serializer = AlbumSerializer(album)
@@ -58,7 +59,7 @@ class AlbumDetail(APIView):
 
 
 class ArtistList(APIView):
-    # permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request):
         artists = Artist.objects.all()
         serializer = ArtistSerializer(artists, many=True)
@@ -73,6 +74,7 @@ class ArtistList(APIView):
     
 
 class ArtistDetail(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request, pk):
         artist = get_object_or_404(Artist, pk=pk)
         serializer = ArtistSerializer(artist)
@@ -96,7 +98,9 @@ class SongList(APIView):
     # parser_classes = (MultiPartParser, FormParser)
     # parser_class = (FileUploadParser,)
     parser_classes = (MultiPartParser, FormParser,)
+    permission_classes = [IsAuthenticatedOrReadOnly]
     # permission_classes = [IsAuthenticated]
+    
     def get(self, request):
         songs = Song.objects.all().order_by('-id')
         serializer = SongSerializer(songs, many=True)
@@ -143,6 +147,7 @@ class SongList(APIView):
     
 class SongDetail(APIView):
     parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request, pk):
         song = get_object_or_404(Song, pk=pk)
         serializer = SongSerializer(song)
@@ -162,12 +167,14 @@ class SongDetail(APIView):
         return Response(status=204)
 
 class AudioFileListView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request):
         songs = Song.objects.all()
         serializer = AudioSerializer(songs, many=True)
         return Response({"audio_files": serializer.data}, status=status.HTTP_200_OK)
  
 class PopularSongView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request, format=None):
         songs = Song.objects.all()[:4]
         popularity_scores = []
@@ -191,6 +198,7 @@ class PopularSongView(APIView):
 FREEE_API_URL = 'https://api.escuelajs.co/api/v1/users'
 
 class UserApiView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request):
         try:
             response = requests.get(FREEE_API_URL)
@@ -209,6 +217,7 @@ class UserApiView(APIView):
             )
 
 class UserDetailView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request,id):
         try:
             response = requests.get(f"{FREEE_API_URL}/{id}")
@@ -229,6 +238,7 @@ class UserDetailView(APIView):
             )
 
 class ProductApi(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request):
         try:
             url='https://api.escuelajs.co/api/v1/products'
@@ -248,6 +258,7 @@ class ProductApi(APIView):
             )
 
 class ProductDetailView(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
     def get(self, request,id):
         try:
             url='https://api.escuelajs.co/api/v1/products'

@@ -2,6 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useParams,useNavigate } from 'react-router-dom';
 import { FaRegEdit, FaTrash } from "react-icons/fa";
 import api from '../services/api';
+import Loading from '../layouts/Loading';
+
+
+
 
 const ArtistUpdateDelete = () => {
     const { id } = useParams();
@@ -115,7 +119,7 @@ const ArtistUpdateDelete = () => {
         setIsDeleteModalOpen(false);
     };
 
-    if (loading) return <p>Loading artist details...</p>;
+    if (loading) return <div><Loading/></div>;
     if (error) return <p>Error: {error}</p>;
 
     return (

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import api from "../services/api";
 import { useNavigate, useParams } from "react-router-dom";
+import Loading from "../layouts/Loading";
 
 export default function ProductDetail() {
   const { id } = useParams();
@@ -25,7 +26,7 @@ export default function ProductDetail() {
 
   if (error) return <h1>Error: {error}</h1>;
 
-  if (loading) return <h1>Loading...</h1>;
+  if (loading) return <div><Loading/></div>;
 
   return (
     <div className="flex justify-center items-center w-full min-h-screen p-10 mb-10 bg-gradient-to-r from-blue-500 to-purple-600">

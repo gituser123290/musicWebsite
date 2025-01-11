@@ -4,6 +4,7 @@ import api from '../services/api'
 import { useNavigate } from 'react-router-dom';
 import { MdReadMore } from "react-icons/md";
 import { FaRegEdit } from "react-icons/fa";
+import Loading from '../layouts/Loading';
 
 
 
@@ -34,7 +35,8 @@ export default function Products() {
         navigate(`/product/${id}`)
     }
 
-    if (loading) return <p>Loading...</p>
+    if (loading) return <div><Loading/></div>
+    
     if (error) return <p>Error: {error.message}</p>
     return (
         <div className="m-1 rounded-sm">
