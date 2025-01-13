@@ -1,41 +1,150 @@
-from django.shortcuts import render
-from django.db.models import Max
-from .models import Album,Artist,Song
-# Create your views here.
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import ValidationError
+from rest_framework import status
 
-def get_music(request):
-    music_list =Song.objects.all()
-    return render(request, 'music_app/music.html', {'music_list': music_list})
+from .models import Song, Playlist, Album, Artist, Like, Comment, Subscription, PlaylistCollaborator
+from .serializers import SongSerializer, PlaylistSerializer, AlbumSerializer, ArtistSerializer, LikeSerializer, CommentSerializer, SubscriptionSerializer, PlaylistCollaboratorSerializer
 
+# Song View (List and Create)
+class SongListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = SongSerializer
+    permission_classes = [IsAuthenticated]
 
-def get_artist(request):
-    artist_list = Artist.objects.all()
-    return render(request, 'music_app/artist.html', {'artist_list': artist_list})
-
-
-def get_popularSong(request):
-    max_popularity = Song.objects.aggregate(Max('popularity'))['popularity__max']
+    def get_queryset(self):
+        return Song.objects.filter(user=self.request.user)
     
-    if max_popularity is None:
-        popular_songs = Song.objects.none()
-    else:
-        threshold = max_popularity / 2
-        all_songs = Song.objects.all()
-        popular_songs = []
-        for song in all_songs:
-            popularity_score = song.calculate_popularity()
-            if popularity_score >= threshold:
-                popular_songs.append(song)
-        popular_songs.sort(key=lambda song: song.calculate_popularity(), reverse=True)
-    return render(request, 'music_app/popular_song.html', {'popular_songs': popular_songs})
+    def perform_create(self, serializer):
+        title = serializer.validated_data.get('title')
+        if Song.objects.filter(user=self.request.user, title=title).exists():
+            raise ValidationError("A song with this title already exists.")
+        
+        serializer.save(user=self.request.user)
 
-def get_mostPopularSongs(request):
-    songs = Song.objects.all()
-    count=songs.count()
-    song_popularity = []
-    for song in songs:
-        score = song.calculate_popularity()
-        song_popularity.append((song, score))
-    sorted_songs = sorted(song_popularity, key=lambda x: x[1], reverse=True)
-    top_songs = sorted_songs[:10]
-    return render(request, 'music_app/most_popular_song.html', {'top_songs': top_songs,'count': count})
+# Song View (Retrieve, Update, and Delete)
+class SongRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = SongSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Song.objects.all()
+
+# Playlist View (List and Create)
+class PlaylistListCreateAPIView(generics.CreateAPIView):
+    serializer_class = PlaylistSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Playlist.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Playlist View (Retrieve, Update, and Delete)
+class PlaylistRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PlaylistSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Playlist.objects.all()
+
+# Album View (List and Create)
+class AlbumListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = AlbumSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Album.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save()
+
+# Album View (Retrieve, Update, and Delete)
+class AlbumRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = AlbumSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Album.objects.all()
+
+# Artist View (List and Create)
+class ArtistListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = ArtistSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Artist.objects.all()
+
+    def perform_create(self, serializer):
+        
+        serializer.save()
+
+# Artist View (Retrieve, Update, and Delete)
+class ArtistRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = ArtistSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Artist.objects.all()
+
+# Like View (List and Create)
+class LikeListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = LikeSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Like.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Like View (Retrieve, Update, and Delete)
+class LikeRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = LikeSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Like.objects.all()
+
+# Comment View (List and Create)
+class CommentListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Comment.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Comment View (Retrieve, Update, and Delete)
+class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Comment.objects.all()
+
+# Subscription View (List and Create)
+class SubscriptionListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = SubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return Subscription.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# Subscription View (Retrieve, Update, and Delete)
+class SubscriptionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = SubscriptionSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = Subscription.objects.all()
+
+# PlaylistCollaborator View (List and Create)
+class PlaylistCollaboratorListCreateAPIView(generics.ListCreateAPIView):
+    serializer_class = PlaylistCollaboratorSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_queryset(self):
+        return PlaylistCollaborator.objects.filter(user=self.request.user)
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+# PlaylistCollaborator View (Retrieve, Update, and Delete)
+class PlaylistCollaboratorRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PlaylistCollaboratorSerializer
+    permission_classes = [IsAuthenticated]
+    queryset = PlaylistCollaborator.objects.all()
+
+
