@@ -5,17 +5,19 @@ from django.contrib.auth.models import User
 class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
-        fields = ['id', 'title', 'artist', 'genre', 'duration', 'file', 'user', 'created_at']
+        fields = ['id', 'title', 'artist', 'genre', 'duration', 'file', 'song_cover', 'user', 'created_at']
         read_only_fields = ['user']
 
 class PlaylistSerializer(serializers.ModelSerializer):
-    songs = SongSerializer(many=True)
+    song = SongSerializer(source='songs',many=True,read_only=True)
+    songs = serializers.PrimaryKeyRelatedField(queryset=Song.objects.all(), many=True, required=False)
     class Meta:
         model = Playlist
-        fields = ['id', 'name', 'user', 'songs', 'is_public', 'created_at']
+        fields = ['id', 'name', 'user','songs','song', 'is_public', 'created_at']
 
 class AlbumSerializer(serializers.ModelSerializer):
-    songs = SongSerializer(many=True)
+    songs = SongSerializer(many=True,read_only=True)
+    
     class Meta:
         model = Album
         fields = ['id', 'name', 'artist', 'release_date', 'songs', 'cover_image']
@@ -44,3 +46,8 @@ class PlaylistCollaboratorSerializer(serializers.ModelSerializer):
     class Meta:
         model = PlaylistCollaborator
         fields = ['id', 'playlist', 'user', 'role']
+        
+class AudioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Song
+        fields = ['id','song_cover','file']

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate} from "react-router-dom";
 import { FaRegEdit, FaTrash } from "react-icons/fa";
 import { FaPlay } from "react-icons/fa";
 import api from "../../services/api";
+import token from "../Token/token";
 
 const SongDetail = () => {
   const { id } = useParams();
@@ -12,42 +13,32 @@ const SongDetail = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
 
+
   const [songDetails, setSongDetails] = useState({
-    name: "",
-    album: "",
+    title: "",
     song_cover: null,
     artist: "",
-    audio_file: null,
-    no_of_listeners: "",
-    streams: "",
-    radio_airplay: "",
-    downloads: "",
-    social_media_mentions: "",
+    file: null,
     duration: "",
     genre: "",
-    track_number: "",
   });
 
   useEffect(() => {
     const fetchSongDetail = async () => {
       try {
-        const response = await api.get(`/song/${id}/`);
+        const response = await api.get(`/songs/${id}/`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         setSong(response.data);
         setSongDetails({
-          title: response.data.name,
-          album: response.data.album.id,
+          title: response.data.title,
           song_cover: response.data.song_cover,
-          artist: response.data.artist.id,
-          audio_file: response.data.audio_file,
-          no_of_listeners: response.data.no_of_listeners,
-          streams: response.data.streams,
-          radio_airplay: response.data.radio_airplay,
-          downloads: response.data.downloads,
-          social_media_mentions: response.data.social_media_mentions,
+          artist: response.data.artist,
+          audio_file: response.data.file,
           duration: response.data.duration,
           genre: response.data.genre,
-          track_number: response.data.track_number,
-
         });
         setLoading(false);
       } catch (error) {
@@ -78,37 +69,27 @@ const SongDetail = () => {
     e.preventDefault();
     try {
       const formData = new FormData();
-      formData.append("title", songDetails.name);
-      formData.append("album", songDetails.album);
+      formData.append("title", songDetails.title);
       formData.append("artist", songDetails.artist);
-      formData.append("no_of_listeners", songDetails.no_of_listeners);
-      formData.append("streams", songDetails.streams);
-      formData.append("radio_airplay", songDetails.radio_airplay);
-      formData.append("downloads", songDetails.downloads);
-      formData.append(
-        "social_media_mentions",
-        songDetails.social_media_mentions
-      );
       formData.append("duration", songDetails.duration);
       formData.append("genre", songDetails.genre);
-      formData.append("track_number", songDetails.track_number);
 
       if (songDetails.song_cover) {
         formData.append("song_cover", songDetails.song_cover); // Append the image if present
-      }else{
+      } else {
         formData.append("song_cover", null);
       }
 
       if (songDetails.audio_file) {
-        formData.append("audio_file", songDetails.audio_file); // Append the audio file if present
-      }else{
-        formData.append("audio_file", null);
+        formData.append("file", songDetails.file); // Append the audio file if present
+      } else {
+        formData.append("file", null);
       }
 
-
-      const response = await api.put(`/song/${id}/`, formData, {
+      const response = await api.put(`/songs/${id}/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
+          Authorization: `Bearer ${token}`,
         },
       });
       setSong(response.data);
@@ -120,7 +101,11 @@ const SongDetail = () => {
 
   const deleteSong = async () => {
     try {
-      await api.delete(`/song/${id}/`);
+      await api.delete(`/song/${id}/`,{
+        headers:{
+          Authorization:`Bearer ${token}`
+        }
+      });
       setSong(null);
     } catch (error) {
       setError(error.message);
@@ -135,10 +120,9 @@ const SongDetail = () => {
     setIsModalOpen(false);
   };
 
-
-    const handlePlaySong=(id)=>{
-        navigate(`/song/${id}/play`);
-    }
+  const handlePlaySong = (id) => {
+    navigate(`/song/${id}/play`);
+  };
 
   if (loading) return <p>Loading song details...</p>;
   if (error) return <p>Error: {error}</p>;
@@ -161,30 +145,16 @@ const SongDetail = () => {
                 <div className="mb-2">
                   <img
                     className="w-full h-auto object-cover rounded-md"
-                    src={`http://localhost:8000${song.song_cover}`}
+                    src={song.song_cover}
                     alt="Song cover"
                   />
                 </div>
                 <hr />
                 <div className="p-2 columns-2 gap-20">
-                  <h2 className="text-white text-2xl">{song.name}</h2>
-                  <p className="text-white">
-                    Artist: {song.artists.name}
-                  </p>
-                  <p className="text-white">
-                    Album: {song.albums.title.substring(0, 10)}...
-                  </p>
-                  <p className="text-white">Listners: {song.no_of_listeners}</p>
-                  <p className="text-white">Streams: {song.streams}</p>
-                  <p className="text-white">Radio Play: {song.radio_airplay}</p>
-                  <p className="text-white">Downloads: {song.downloads}</p>
-                  <p className="text-white">
-                    Mentions: {song.social_media_mentions}
-                  </p>
+                  <h2 className="text-white text-2xl">{song.title}</h2>
+                  <p className="text-white">Artist: {song.artist}</p>
                   <p className="text-white">Length: {song.duration}</p>
                   <p className="text-white">Genre: {song.genre}</p>
-                  <p className="text-white">Tracks: {song.track_number}</p>
-                  {/* <p className="text-white">Popularity: {song.popularity}</p> */}
                   <div className="flex justify-center space-x-10">
                     <button
                       onClick={openCommentModal}
@@ -199,7 +169,7 @@ const SongDetail = () => {
                       <FaTrash />
                     </button>
                     <button
-                      onClick={()=>handlePlaySong(song.id)}
+                      onClick={() => handlePlaySong(song.id)}
                       className="mt-2 text-xl text-white py-2 rounded-md hover:text-orange-400"
                     >
                       <FaPlay />
@@ -222,17 +192,7 @@ const SongDetail = () => {
                   <input
                     type="text"
                     name="title"
-                    value={songDetails.name}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Album</label>
-                  <input
-                    type="text"
-                    name="album"
-                    value={songDetails.album}
+                    value={songDetails.title}
                     onChange={handleInputChange}
                     className="w-full p-1 border rounded-md"
                   />
@@ -247,7 +207,9 @@ const SongDetail = () => {
                     className="w-full p-2 border rounded-md"
                   />
                   {songDetails.song_cover && !songDetails.song_cover.name && (
-                    <p className="text-gray-600 mt-2">{song.song_cover.split('/').pop()}</p>
+                    <p className="text-gray-600 mt-2">
+                      {song.song_cover.split("/").pop()}
+                    </p>
                   )}
                 </div>
                 <div className="mb-2">
@@ -264,68 +226,19 @@ const SongDetail = () => {
                   <label className="block text-gray-700">Audio File</label>
                   <input
                     type="file"
-                    name="audio_file"
+                    name="file"
                     accept="audio/*"
-                    value={songDetails.audio_file}
+                    value={songDetails.file}
                     onChange={handleInputChange}
                     className="w-full p-1 border rounded-md"
                   />
-                  {songDetails.audio_file && !songDetails.audio_file.name && (
-                    <p className="text-gray-600 mt-2">{song.audio_file.split('/').pop()} </p>
+                  {songDetails.file && !songDetails.file && (
+                    <p className="text-gray-600 mt-2">
+                      {song.file.split("/").pop()}{" "}
+                    </p>
                   )}
                 </div>
-                <div className="mb-4">
-                  <label className="block text-gray-700">No of Listners</label>
-                  <input
-                    type="number"
-                    name="no_of_listeners"
-                    value={songDetails.no_of_listeners}
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Streams</label>
-                  <input
-                    type="number"
-                    name="streams"
-                    value={songDetails.streams}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Radio Air Play</label>
-                  <input
-                    type="number"
-                    name="radio_airplay"
-                    value={songDetails.radio_airplay}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Downloads</label>
-                  <input
-                    type="number"
-                    name="downloads"
-                    value={songDetails.downloads}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">
-                    Social Media Metions
-                  </label>
-                  <input
-                    type="number"
-                    name="social_media_mentions"
-                    value={songDetails.social_media_mentions}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
+
                 <div className="mb-2">
                   <label className="block text-gray-700">Duration</label>
                   <input
@@ -342,16 +255,6 @@ const SongDetail = () => {
                     type="text"
                     name="genre"
                     value={songDetails.genre}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Track Number</label>
-                  <input
-                    type="number"
-                    name="track_number"
-                    value={songDetails.track_number}
                     onChange={handleInputChange}
                     className="w-full p-1 border rounded-md"
                   />

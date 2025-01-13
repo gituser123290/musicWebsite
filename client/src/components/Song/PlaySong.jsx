@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useParams,useNavigate } from "react-router-dom";
+import { useParams,useNavigate, Navigate } from "react-router-dom";
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
 import { FaPlay, FaPause } from "react-icons/fa";
 import AllSongs from "./AllSongs";
@@ -20,8 +20,17 @@ const SongDetail = () => {
 
   useEffect(() => {
     const songs = async () => {
+      const token=sessionStorage.getItem('token')
+      if(!token){
+        Navigate('/login');
+        return;
+      }
       try {
-        const response = await api.get(`/song/${id}/`);
+        const response = await api.get(`/songs/${id}/`,{
+          headers:{
+            Authorization:`Bearer ${token}`
+          }
+        });
         setSong(response.data);
         setLoading(false);
       } catch (error) {
@@ -79,19 +88,19 @@ const SongDetail = () => {
           <div className="w-full mb-6 flex justify-center">
             <img
               className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
-              src={`http://localhost:8000${song.song_cover}`}
+              src={song.song_cover}
               alt="Song cover"
             />
           </div>
           <div className="text-center text-fuchsia-600 text-xl font-semibold">
-            <h2>{song?.name}</h2>
+            <h2>{song?.title}</h2>
           </div>
           <div className="w-full flex flex-col items-center space-y-4">
             <audio
               ref={(audio) => setAudioPlayer(audio)}
-              // controls
+              controls
               className="w-full rounded-lg bg-gray-100 p-2"
-              src={`http://localhost:8000${song.audio_file}`}
+              src={song.file}
             />
             <div className="flex justify-center space-x-6 mt-4">
               <button

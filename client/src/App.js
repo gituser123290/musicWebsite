@@ -66,7 +66,7 @@ function App() {
             </ProtectedRoute>
           }
         /> */}
-          <Route path="/song/:id/" element={
+          <Route path="/songs/:id/" element={
             <ProtectedRoute>
               <SongDetail />
             </ProtectedRoute>

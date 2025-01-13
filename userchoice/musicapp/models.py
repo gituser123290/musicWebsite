@@ -7,6 +7,7 @@ class Song(models.Model):
     genre = models.CharField(max_length=100)
     duration = models.DurationField()  
     file = models.FileField(upload_to='songs/')  
+    song_cover=models.ImageField(upload_to='song_covers/',blank=True,null=True)
     user = models.ForeignKey(User, related_name='songs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 

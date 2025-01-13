@@ -3,6 +3,8 @@ import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb
 import { FaPlay, FaPause, FaRedoAlt } from "react-icons/fa";
 import api from '../../services/api';
 import Loading from '../../layouts/Loading';
+import token from '.././Token/token'
+
 
 export default function AllSongs() {
     const [songs, setSongs] = useState([]);
@@ -16,8 +18,12 @@ export default function AllSongs() {
     useEffect(() => {
         const allSongs = async () => {
             try {
-                const response = await api.get("/songs/");
-                setSongs(response.data.audio_files, response.data);
+                const response = await api.get("/audio/",{
+                    headers:{
+                        Authorization:`Bearer ${token}`
+                    }
+                });
+                setSongs(response.data);
                 setError(null);
                 setLoading(false);
             } catch (error) {
@@ -81,14 +87,14 @@ export default function AllSongs() {
                         />
                     </div>
                     <div className="text-center text-fuchsia-600 text-xl font-semibold">
-                        <h2>{songs[currentSongIndex]?.name}</h2>
+                        <h2>{songs[currentSongIndex]?.title}</h2>
                     </div>
                     <div className="w-full flex flex-col items-center space-y-4">
                         <audio
                             ref={(audio) => setAudioPlayer(audio)}
-                            // controls
+                            controls
                             className="w-full rounded-lg bg-gray-100 p-2"
-                            src={`http://localhost:8000${songs[currentSongIndex]?.audio_file}`}
+                            src={`http://localhost:8000${songs[currentSongIndex]?.file}`}
                             onEnded={handleSongEnd} 
                             loop={isLooping}
                         />

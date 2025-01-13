@@ -2,7 +2,8 @@ from django.urls import path, include
 from .views import SongListCreateAPIView, SongRetrieveUpdateDestroyAPIView, PlaylistListCreateAPIView, PlaylistRetrieveUpdateDestroyAPIView, \
     AlbumListCreateAPIView, AlbumRetrieveUpdateDestroyAPIView, ArtistListCreateAPIView, ArtistRetrieveUpdateDestroyAPIView, \
     LikeListCreateAPIView, LikeRetrieveUpdateDestroyAPIView, CommentListCreateAPIView, CommentRetrieveUpdateDestroyAPIView, \
-    SubscriptionListCreateAPIView, SubscriptionRetrieveUpdateDestroyAPIView, PlaylistCollaboratorListCreateAPIView, PlaylistCollaboratorRetrieveUpdateDestroyAPIView
+    SubscriptionListCreateAPIView, SubscriptionRetrieveUpdateDestroyAPIView, PlaylistCollaboratorListCreateAPIView, PlaylistCollaboratorRetrieveUpdateDestroyAPIView, \
+        AudioFiles
     
     
 from rest_framework.routers import DefaultRouter
@@ -31,4 +32,6 @@ urlpatterns = [
     
     path('playlist_collaborators/', PlaylistCollaboratorListCreateAPIView.as_view(), name='playlist-collaborator-list-create'),
     path('playlist_collaborators/<int:pk>/', PlaylistCollaboratorRetrieveUpdateDestroyAPIView.as_view(), name='playlist-collaborator-retrieve-update-destroy'),
+    
+    path('audio/',AudioFiles.as_view(),name='audios'),
 ]
