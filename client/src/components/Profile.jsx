@@ -1,11 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
 import api from '../services/api'
 import Loading from '../layouts/Loading'
+import { FaTwitter, FaGithub, FaLinkedin, FaEnvelope, FaAlignRight } from 'react-icons/fa';
 
 export default function Profile() {
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState([])
     const [error, setError] = useState(null)
-    const [loading, setLoading] = useState(true)  // Set loading to true initially
+    const [loading, setLoading] = useState(true)
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -18,7 +22,7 @@ export default function Profile() {
                     }
                 })
                 setUser(response.data)
-                setLoading(false) 
+                setLoading(false)
                 console.log(response.data);
             } catch (error) {
                 setError(error.message)
@@ -28,32 +32,60 @@ export default function Profile() {
         fetchUser()
     }, [])
 
+    const browseSongs = async (e) => {
+        e.preventDefault();
+        navigate("/all-songs");
+      }
+
     if (loading) return <Loading />
-    
+
     if (error) return <p>Error: {error}</p>
 
     return (
-        <div className="w-full m-0 p-0 bg-gray-400">
-            <div className="w-full max-w-6xl mx-auto h-screen flex justify-center items-center">
-                <div className="bg-white shadow-md rounded-md p-12">
-                    <img src={user.profile_picture || "/default-image.jpg"} alt="Profile" className="w-24 h-24 rounded-full mx-auto mb-6" />
-                    <h1 className="text-3xl font-bold text-center">{user.username || 'User'}</h1>
-                    <p className="text-gray-600 text-center">{user.bio || 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'}</p>
-                    <div>
-                        <ul className="flex flex-wrap justify-center gap-4">
-                            <li className="text-gray-600 hover:text-gray-800">
-                                <a href="//">About</a>
-                            </li>
-                            <li className="text-gray-600 hover:text-gray-800">
-                                <a href="//">Services</a>
-                            </li>
-                            <li className="text-gray-600 hover:text-gray-800">
-                                <a href="//">Contact</a>
-                            </li>
-                            <li className="text-gray-600 hover:text-gray-800">
-                                <a href="https://open.spotify.com/" target="_blank" rel="noopener noreferrer">Spotify</a>
-                            </li>
-                        </ul>
+        <div className="max-w-sm mx-auto bg-gray-200 rounded-xl mt-10 shadow-md overflow-hidden md:max-w-2xl hover:scale-105 transition-transform duration-300 hover:shadow-xl">
+            <div className="md:flex m-10">
+                <div className="md:flex-shrink-0">
+                    <img
+                        className="w-24 h-24 rounded-full mx-auto mt-6"
+                        src={`http://localhost:8000${user?.avatar}`} alt={user.username}
+                    />
+                </div>
+                <div className="p-6">
+                    <h2 className="text-xl font-semibold text-gray-800">{user?.username}</h2>
+                    <p className="text-gray-600">{user?.bio || "No bio available"}</p>
+
+                    <div className="mt-4 flex space-x-4">
+                        <a href='/' target="_blank" rel="noopener noreferrer">
+                            <FaTwitter
+                                size={24}
+                                className="text-blue-500 hover:text-blue-700 transition-colors duration-300"
+                            />
+                        </a>
+                        <a href='/' target="_blank" rel="noopener noreferrer">
+                            <FaGithub
+                                size={24}
+                                className="text-gray-800 hover:text-gray-900 transition-colors duration-300"
+                            />
+                        </a>
+                        <a href='/' target="_blank" rel="noopener noreferrer">
+                            <FaLinkedin
+                                size={24}
+                                className="text-blue-700 hover:text-blue-800 transition-colors duration-300"
+                            />
+                        </a>
+                        <a href={`mailto:${user?.email}`} target="_blank" rel="noopener noreferrer">
+                            <FaEnvelope
+                                size={24}
+                                className="text-red-500 hover:text-red-700 transition-colors duration-300"
+                            />
+                        </a>
+                        <a href={browseSongs} target="_blank" rel="noopener noreferrer">
+                            <FaAlignRight
+                                onClick={browseSongs}
+                                size={24}
+                                className="text-red-500 hover:text-red-700 transition-colors duration-300"
+                            />
+                        </a>
                     </div>
                 </div>
             </div>

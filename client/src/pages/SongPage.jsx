@@ -8,7 +8,7 @@ export default function SongPage() {
     title: "",
     song_cover: null,
     artist_id: "",
-    file: null,
+    audio: null,
     duration: "",
     genre: "Pop",
   });
@@ -130,7 +130,7 @@ export default function SongPage() {
           <div className="mb-2">
             <label className="block text-gray-700">Duration</label>
             <input
-              type="number"
+              type="text"
               name="duration"
               value={songData.duration}
               onChange={handleInputChange}
@@ -143,7 +143,7 @@ export default function SongPage() {
             <label className="block text-gray-700">Audio File</label>
             <input
               type="file"
-              name="file"
+              name="audio"
               accept="audio/*"
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"

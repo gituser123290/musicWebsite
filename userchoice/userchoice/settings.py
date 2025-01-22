@@ -9,7 +9,6 @@ SECRET_KEY = 'django-insecure-ia7!lt)_%--z$$ov(vwhxh8^y@^anclrk)i^ovx@wpo_#&0y*p
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
 AUTH_USER_MODEL = 'authApp.CustomUser'
 
 ALLOWED_HOSTS = []
@@ -49,6 +48,11 @@ INTERNAL_IPS = [
 # NPM_BIN_PATH = 'npm'
 NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
+
+AUTHENTICATION_BACKENDS = (
+    'django.contrib.auth.backends.ModelBackend',
+    
+)
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',

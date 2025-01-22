@@ -6,7 +6,7 @@ import Loading from "../../layouts/Loading";
 import api from "../../services/api";
 
 
-const SongDetail = () => {
+export default function SongDetail() {
   const { id } = useParams()
   const [song, setSong] = useState([]);
   const [comments, setComments] = useState([]);
@@ -135,14 +135,16 @@ const SongDetail = () => {
 
   return (
     <>
-      <div className="w-1/6 items-center pl-10 p-4 m-1 bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl transition-colors duration-200 cursor-pointer">
-        <button onClick={() => navigate(-1)} className="text-white">
-          Back to Posts
-        </button>
-      </div>
-      <div className="flex items-center justify-center w-full pt-10 pb-16">
-        <div className="flex items-center justify-center m-2 w-full flex-row space-x-8">  {/* Added flex-row and space-x-8 */}
-          <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-xl flex flex-col items-center space-y-6">
+      <div className="w-full justify-center items-center bg-gray-600 space-x-28 mb-10">
+        <div className="w-full flex justify-start">
+          <div className="items-center p-2 mt-1 rounded-md bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl transition-colors duration-200 cursor-pointer">
+            <button onClick={() => navigate(-1)} className="text-white">
+              Back to Posts
+            </button>
+          </div>
+        </div>
+        <div className="flex items-center justify-center m-2 mt-[-15px] w-10/12 flex-row space-x-20">
+          <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-xl flex flex-col items-center space-y-4">
             <div className="w-full mb-6 flex justify-center">
               <img
                 className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
@@ -181,9 +183,8 @@ const SongDetail = () => {
               </div>
             </div>
           </div>
-
-          <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-6 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-xl flex flex-col items-center space-y-6">
-            <div className="flex justify-center space-x-20 mt-4">
+          <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-xl flex flex-col items-center space-y-6">
+            <div className="flex justify-center space-x-10 mt-2">
               <button className="p-0 hover:text-amber-900 text-3xl">
                 <FaPlusSquare size={24} />
               </button>
@@ -198,7 +199,7 @@ const SongDetail = () => {
               <h2>{song.title}</h2>
             </div>
             <div className="flex flex-col items-center space-y-4">
-              <h3><FaComment size={24} />{countComment}</h3>
+              <h3 className="flex"><FaComment size={24} />{countComment}</h3>
               {comments ? (
                 comments.map((comment) => (
                   <div key={comment.id} className="flex items-center w-full">
@@ -212,7 +213,10 @@ const SongDetail = () => {
               ) : (
                 <p>No comments yet.</p>
               )}
-              <h3><FaHeartbeat />{countLike}</h3>
+              <div className="flex justify-center">
+              <p><FaHeartbeat /></p>
+              <p>{countLike}</p>
+              </div>
               {like ? (
                 like.map((like) => (
                   <div key={like.id} className="flex items-center w-full">
@@ -248,9 +252,9 @@ const SongDetail = () => {
             </div>
           </div>
         </div>
-      </div>
+       </div> 
     </>
   );
 };
 
-export default SongDetail;
+

@@ -84,9 +84,10 @@ class AlbumCreateAPIView(generics.CreateAPIView):
     parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = AlbumSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save()
 
 
 class AlbumListAPIView(generics.ListAPIView):
@@ -101,16 +102,19 @@ class AlbumUpdateAPIView(generics.RetrieveUpdateAPIView):
     parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = AlbumSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
     queryset = Album.objects.all()
 
     def perform_update(self, serializer):
         return serializer.save(modified_by=self.request.user)
+    
 
 
 class AlbumDeleteAPIView(generics.DestroyAPIView):
     permissions_classes = [IsAuthenticated]
     queryset = Album.objects.all()
     serializer_class = AlbumSerializer
+    authentication_classes=[TokenAuthentication]
 
     def perform_destroy(self, instance):
         instance.delete()
@@ -121,16 +125,14 @@ class AlbumDeleteAPIView(generics.DestroyAPIView):
 class ArtistListCreateAPIView(generics.ListCreateAPIView):
     parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = ArtistSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
 
     def get_queryset(self):
         return Artist.objects.all()
 
     def perform_create(self, serializer):
-        if self.request.user.is_authenticated:
-            serializer.save()
-        else:
-            raise PermissionError("Authentication required to create content.")
+        serializer.save()
 
 
 class ArtistRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):

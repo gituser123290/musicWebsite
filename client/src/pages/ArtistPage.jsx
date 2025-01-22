@@ -6,11 +6,11 @@ export default function ArtistPage() {
     const [error, setError] = useState(null)
     const [songData, setSongData] = useState({
         name: "",
-        nationality: "",
-        birth_date: "",
-        biography: "",
+        bio: "",
         image: null,
-        genre: "",
+        website:"",
+        social_media: null,
+        nationality: "",
     });
 
     const navigate=useNavigate()
@@ -32,22 +32,20 @@ export default function ArtistPage() {
 
     const handleArtist = async (e) => {
         e.preventDefault();
+        const token = localStorage.getItem('token');
+        if (!token) {
+            alert("You need to be logged in to create an artist");
+            return;
+        }
+        const formData = new FormData();
+        for (let key in songData) {
+        formData.append(key, songData[key]);
+        }
         try {
-            const formData = new FormData();
-            formData.append("name", songData.name);
-            formData.append("genre", songData.genre);
-            formData.append("birth_date", songData.birth_date);
-            formData.append("nationality", songData.nationality);
-            formData.append("biography", songData.biography);
-
-            if (songData.image) {
-                formData.append("image", songData.image);
-            } else {
-                formData.append("image", null);
-            }
-            const response = await api.post('/artist/', formData, {
+            const response = await api.post('/artists/', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
+                    Authorization: `Token ${token}`,
                 },
             });
             setSongData(response.data);
@@ -78,7 +76,7 @@ export default function ArtistPage() {
                             </label>
                             <input
                                 type="text"
-                                name="name" // Corrected name attribute
+                                name="name" 
                                 id="name"
                                 onChange={handleInputChange}
                                 placeholder="Enter Artist name"
@@ -88,26 +86,27 @@ export default function ArtistPage() {
                         </div>
                         <div>
                             <label htmlFor="genre" className="block text-lg text-gray-700 mb-2">
-                                Genre
+                                Bio
                             </label>
                             <input
                                 type="text"
-                                name="genre"
-                                id="genre"
+                                name="bio"
+                                id="bio"
                                 onChange={handleInputChange}
-                                placeholder="Enter genre"
+                                placeholder="Bio"
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                                 required
                             />
                         </div>
                         <div>
                             <label htmlFor="birth_date" className="block text-lg text-gray-700 mb-2">
-                                Birth Date
+                                Image
                             </label>
                             <input
-                                type="date"
-                                name="birth_date"
-                                id="birth_date"
+                                type="file"
+                                name="image"
+                                id="image"
+                                accept="image/*"
                                 onChange={handleInputChange}
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                                 required
@@ -115,12 +114,12 @@ export default function ArtistPage() {
                         </div>
                         <div>
                             <label htmlFor="nationality" className="block text-lg text-gray-700 mb-2">
-                                Nationality
+                                Website
                             </label>
                             <input
                                 type="text"
-                                name="nationality"
-                                id="nationality"
+                                name="website"
+                                id="website"
                                 onChange={handleInputChange}
                                 placeholder="Enter nationality"
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
@@ -129,27 +128,27 @@ export default function ArtistPage() {
                         </div>
                         <div>
                             <label htmlFor="biography" className="block text-lg text-gray-700 mb-2">
-                                Biography
+                                Social Media
                             </label>
-                            <textarea
-                                name="biography"
-                                id="biography"
-                                placeholder="Write a short biography"
+                            <input
+                                type="json"
+                                name="social_media"
+                                id="social_media"
+                                placeholder="Social Media Name"
                                 onChange={handleInputChange}
-                                rows="4"
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                                 required
-                            ></textarea>
+                            />
                         </div>
                         <div>
                             <label htmlFor="image" className="block text-lg text-gray-700 mb-2">
-                                Image
+                                Nationality
                             </label>
                             <input
-                                type="file"
-                                name="image"
-                                id="image"
-                                accept="image/*"
+                                type="text"
+                                name="nationality"
+                                id="nationality"
+                                placeholder="Nationality Name"
                                 onChange={handleInputChange}
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                             />

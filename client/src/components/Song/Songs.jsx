@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate,Navigate } from 'react-router-dom'
 import api from '../../services/api'
 import Loading from '../../layouts/Loading'
-import token from '../Token/token'
-
-
 
 export default function Songs() {
     const [songs, setSongs] = useState([])
@@ -14,6 +11,11 @@ export default function Songs() {
 
     useEffect(() => {
         const fetchSong = async () => {
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                Navigate('/login');
+                return;
+            }
             try {
                 const response = await api.get('/songs/',{
                     headers:{

@@ -1,15 +1,13 @@
 from rest_framework import serializers
-from django.contrib.auth.models import User
+from rest_framework import serializers
+from .models import CustomUser
 
-class RegistrationSerializer(serializers.ModelSerializer):
+class RegisterationSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={'input_type': 'password'}, write_only=True)
-    
     class Meta:
-        model = User
-        fields = ['username', 'email', 'password', 'password2']
-        extra_kwargs = {
-            'password': {'write_only': True}
-        }
+        model = CustomUser
+        fields = ['email', 'username','bio', 'avatar', 'password','password2']
+        extra_kwargs = {'password2': {'write_only': True}}
         
     def save(self):
         password = self.validated_data['password']
@@ -18,23 +16,22 @@ class RegistrationSerializer(serializers.ModelSerializer):
         if password != password2:
             raise serializers.ValidationError("Passwords don't match.")
         
-        if User.objects.filter(email=self.validated_data['email']).exists():  
+        if CustomUser.objects.filter(email=self.validated_data['email']).exists():  
             raise serializers.ValidationError("Email already exists.")
         
-        user = User.objects.create_user(
+        user = CustomUser.objects.create_user(
             username=self.validated_data['username'],
             email=self.validated_data['email'],
+            bio=self.validated_data['bio'],
+            avatar=self.validated_data['avatar'],   
             password=password,  
         )
         user.save()
         return user
 
-
-
-class CurrentUserSerializer(serializers.ModelSerializer):
-    avatar = serializers.ImageField(required=False)  
-
+class CustomUserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = User
-        fields = ['id', 'username', 'email', 'first_name', 'last_name', 'avatar']
-        read_only_fields = ['id'] 
+        model = CustomUser
+        fields = ['id', 'email', 'username', 'bio', 'avatar']
+    
+    

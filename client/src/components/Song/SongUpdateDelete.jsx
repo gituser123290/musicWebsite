@@ -150,13 +150,12 @@ export default function SongUpdate() {
 
   return (
     <>
-      <div className="w-1/6 items-center pl-10 p-4 m-1 bg-orange-500 rounded-md hover:bg-orange-600 shadow-xl transition-colors duration-200 cursor-pointer">
-        <button onClick={() => navigate(-1)} className="text-white">
-          Back to Posts
-        </button>
-      </div>
-      <div className="flex flex-col min-h-screen bg-gray-200">
-        <div className="flex items-center justify-center w-full flex-1 bg-gray-200 pt-4 pb-16">
+        <div className="flex items-center justify-center flex-col w-full flex-1 mt-4">
+          <div className="items-center p-2 m-2 bg-orange-300 rounded-md hover:bg-orange-600 shadow-xl transition-colors duration-200 cursor-pointer">
+            <button onClick={() => navigate(-1)} className="text-white text-center">
+              Back to Posts
+            </button>
+          </div>
           <div className="w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-gray-800 p-2 rounded-md shadow-lg">
             <h1 className="text-center text-cyan-600 text-2xl mb-2">
               Song Detail
@@ -302,7 +301,6 @@ export default function SongUpdate() {
             </div>
           </div>
         )}
-      </div>
     </>
   );
 };

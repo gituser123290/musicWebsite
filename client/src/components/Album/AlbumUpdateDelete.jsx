@@ -4,9 +4,10 @@ import { FaRegEdit, FaTrash } from "react-icons/fa";
 import api from '../../services/api';
 import Loading from '../../layouts/Loading';
 
-export default function AlbumUpdateDelete () {
+export default function AlbumUpdateDelete() {
     const { id } = useParams();
-    const [song, setSong] = useState(null);
+    const [album, setAlbum] = useState([]);
+    const [artists, setArtists] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -15,15 +16,14 @@ export default function AlbumUpdateDelete () {
 
     const [songDetails, setSongDetails] = useState({
         name: '',
-        artist: '',
+        artist_id: '',
         cover_image: null,
-        songs: null,
         release_date: '',
     });
 
     useEffect(() => {
         const fetchAlbumDetail = async () => {
-            const token = localStorage.getItem('token');
+            const token = sessionStorage.getItem('token');
             if (!token) {
                 navigate('/login');
                 return;
@@ -35,20 +35,25 @@ export default function AlbumUpdateDelete () {
                     return;
                 }
 
+                const artistsResponse = await api.get('/artists/', {
+                    headers: {
+                      Authorization: `Token ${token}`,
+                    },
+                  });
+                  setArtists(artistsResponse.data);
+
                 const response = await api.get(`/albums/${id}/`, {
                     headers: {
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Token ${token}`,
                     },
                 });
-
                 if (response.data) {
-                    setSong(response.data);
+                    setAlbum(response.data);
                     setSongDetails({
                         name: response.data.name || '',
                         artist_id: response.data.artist ? response.data.artist_id : '',
                         release_date: response.data.release_date || '',
                         cover_image: response.data.song_cover || '',
-                        songs: response.data.songs ? response.data.songs.id : '',
                     });
                     setLoading(false);
                 } else {
@@ -56,13 +61,14 @@ export default function AlbumUpdateDelete () {
                     setLoading(false);
                 }
             } catch (error) {
+                console.error("error", error);
                 setError(error.message);
                 setLoading(false);
             }
         };
 
         fetchAlbumDetail();
-    }, [id,navigate]);
+    }, [id, navigate]);
 
     const handleInputChange = (e) => {
         const { name, value, type, files } = e.target;
@@ -81,29 +87,24 @@ export default function AlbumUpdateDelete () {
 
     const handleUpdateSong = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
+
+        const formData = new FormData();
+        for (let key in setSongDetails) {
+            formData.append(key, setSongDetails[key]);
         }
         try {
-            const formData = new FormData();
-            formData.append('name', songDetails.name);
-            formData.append('artist', songDetails.artist);
-            formData.append('release_date', songDetails.release_date);
-            formData.append('songs', songDetails.songs);
-
-            if (songDetails.cover_image) {
-                formData.append('cover_image', songDetails.cover_image);
-            }
-
             const response = await api.put(`/albums/${id}/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Token ${token}`,
                 },
             });
-            setSong(response.data);
+            setAlbum(response.data);
             closeCommentModal();
         } catch (error) {
             alert(`Failed to update song.${error.message}`);
@@ -111,18 +112,18 @@ export default function AlbumUpdateDelete () {
     };
 
     const deleteSong = async () => {
-        const token = localStorage.getItem('token');
-            if (!token) {
-                navigate('/login');
-                return;
-            }
+        const token = sessionStorage.getItem('token');
+        if (!token) {
+            navigate('/login');
+            return;
+        }
         try {
-            await api.delete(`/albums/${id}/`,{
+            await api.delete(`/albums/delete/${id}/`, {
                 headers: {
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Token ${token}`,
                 },
             });
-            setSong(null);
+            setAlbum(null);
         } catch (error) {
             alert(`Unauthorised ${error.message}`)
             navigate(`/albums/${id}/`)
@@ -142,48 +143,45 @@ export default function AlbumUpdateDelete () {
 
     return (
         <>
-            <div className="p-4 bg-orange-500 rounded-md hover:bg-orange-600 shadow-xl transition-colors duration-200 cursor-pointer">
-                <button onClick={() => navigate(-1)} className="back-btn">Back to Posts</button>
-            </div>
-            <div className="flex flex-col min-h-screen bg-gray-200">
-                <div className="flex items-center justify-center w-full flex-1 bg-gray-200 pt-4 pb-16">
-                    <div className="w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-gray-800 p-2 rounded-md shadow-lg">
-                        <h1 className="text-center text-cyan-600 text-2xl mb-2">Song Detail</h1>
-                        {song ? (
-                            <div className="flex flex-col items-center space-y-4">
-                                <div className="mb-2">
-                                    <img
-                                        className="w-full h-auto object-cover rounded-md"
-                                        src={song.cover_image}
-                                        alt="Song cover"
-                                    />
-                                </div>
-                                <hr />
-                                <div className="p-2 columns-2 gap-20">
-                                    <h2 className="text-white text-2xl">{song.name}</h2>
-                                    <p className="text-white">Artist: {song.artist?.name}</p>
-                                    <p className="text-white">song Name: {song.title}</p>
-                                    <p className="text-white">Duration: {song.duration}</p>
-                                    <div className="flex justify-end">
-                                        <button
-                                            onClick={openCommentModal}
-                                            className="mt-2 text-3xl text-white px-4 py-2 rounded-md hover:text-sky-400"
-                                        >
-                                            <FaRegEdit />
-                                        </button>
-                                        <button
-                                            onClick={deleteSong}
-                                            className="mt-2 text-3xl text-white px-4 py-2 rounded-md hover:text-red-600"
-                                        >
-                                            <FaTrash />
-                                        </button>
-                                    </div>
+            <div className="flex items-center justify-center w-full flex-col bg-gray-200 pt-4 pb-16">
+                <div className="p-2 bg-orange-500 rounded-md m-2 hover:bg-orange-600 shadow-xl transition-colors duration-200 cursor-pointer">
+                    <button onClick={() => navigate(-1)} className="back-btn">Back to Posts</button>
+                </div>
+                <div className="w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-gray-800 p-2 rounded-md shadow-lg">
+                    <h1 className="text-center text-cyan-600 text-2xl mb-2">Song Detail</h1>
+                    {album ? (
+                        <div className="flex flex-col items-center space-y-4">
+                            <div className="mb-2">
+                                <img
+                                    className="w-full h-auto object-cover rounded-md"
+                                    src={album.cover_image}
+                                    alt="Song cover"
+                                />
+                            </div>
+                            <hr />
+                            <div className="p-2 columns-2 gap-20">
+                                <h2 className="text-white text-2xl">{album.name}</h2>
+                                <p className="text-white">Artist: {album.artist?.name}</p>
+                                <p className="text-white">song Name: {album.songs.length}</p>
+                                <div className="flex justify-end">
+                                    <button
+                                        onClick={openCommentModal}
+                                        className="mt-2 text-3xl text-white px-4 py-2 rounded-md hover:text-sky-400"
+                                    >
+                                        <FaRegEdit />
+                                    </button>
+                                    <button
+                                        onClick={deleteSong}
+                                        className="mt-2 text-3xl text-white px-4 py-2 rounded-md hover:text-red-600"
+                                    >
+                                        <FaTrash />
+                                    </button>
                                 </div>
                             </div>
-                        ) : (
-                            <p>No Album found!</p>
-                        )}
-                    </div>
+                        </div>
+                    ) : (
+                        <p>No Album found!</p>
+                    )}
                 </div>
                 {isModalOpen && (
                     <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
@@ -202,13 +200,20 @@ export default function AlbumUpdateDelete () {
                                 </div>
                                 <div className="mb-2">
                                     <label className="block text-gray-700">Artist</label>
-                                    <input
-                                        type="text"
-                                        name="artist"
-                                        value={songDetails.artist}
-                                        onChange={handleInputChange}
-                                        className="w-full p-1 border rounded-md"
-                                    />
+                                    <select
+                                    name="artist_id"
+                                    value={songDetails.artist_id}
+                                    onChange={handleInputChange}
+                                    className="w-full p-1 border rounded-md"
+                                    required
+                                    >
+                                    <option value="">Select Artist</option>
+                                    {artists.map((artist) => (
+                                        <option key={artist.id} value={artist.id}>
+                                        {artist.name}
+                                        </option>
+                                    ))}
+                                    </select>
                                 </div>
                                 <div className="mb-2">
                                     <label className="block text-gray-700">Song Cover</label>
@@ -218,16 +223,6 @@ export default function AlbumUpdateDelete () {
                                         accept="image/*"
                                         onChange={handleInputChange}
                                         className="w-full p-2 border rounded-md"
-                                    />
-                                </div>
-                                <div className="mb-2">
-                                    <label className="block text-gray-700">Song</label>
-                                    <input
-                                        type="file"
-                                        name="songs"
-                                        value={songDetails.songs}
-                                        onChange={handleInputChange}
-                                        className="w-full p-1 border rounded-md"
                                     />
                                 </div>
                                 <div className="mb-2">

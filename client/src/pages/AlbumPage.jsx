@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate, useNavigate } from "react-router-dom";
 import api from '../services/api';
 
 export default function ArtistPage() {
@@ -14,19 +14,18 @@ export default function ArtistPage() {
 
     const navigate = useNavigate();
 
-    const token=sessionStorage.getItem('token')
 
     useEffect(() => {
         const fetchArtists = async () => {
             const token = sessionStorage.getItem('token');
             if (!token) {
-                navigate('/login'); 
+                Navigate('/login'); 
                 return;
             }
             try {
-                const response = await api.get("/artists/", {
+                const response = await api.get('/artists/', {
                     headers: {
-                        Authorization: `Bearer ${token}`, 
+                        Authorization: `Token ${token}`, 
                     },
                 });
                 setArtists(response.data);
@@ -55,30 +54,16 @@ export default function ArtistPage() {
 
     const handleArtist = async (e) => {
         e.preventDefault();
+        const formData = new FormData();
+        for (let key in songData) {
+        formData.append(key, songData[key]);
+        }
         try {
-            const formData = new FormData();
-            formData.append("name", songData.name);
-            formData.append("artist_id", songData.artist_id);
-            formData.append("release_date", songData.release_date);
-
-            if (songData.cover_image) {
-                formData.append("cover_image", songData.cover_image);
-            } else {
-                formData.append("cover_image", null);
-            }
-
-            const token = sessionStorage.getItem("token");
-            if (!token) {
-                navigate('/login');
-                return;
-            }
-
             const response = await api.post('/albums/create/', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
             });
-
             setSongData(response.data);
             navigate('/album');
         } catch (error) {
@@ -93,7 +78,7 @@ export default function ArtistPage() {
     return (
         <div className="flex w-full min-h-screen justify-center items-center p-4 bg-slate-100">
             <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg mb-20">
-                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Album Information {token}</h2>
+                <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">Album Information</h2>
                 <form onSubmit={handleArtist}>
                     <div className="space-y-4">
                         <div>

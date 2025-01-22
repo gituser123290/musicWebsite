@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Song, Playlist, Album, Artist, Like, Comment, Subscription, PlaylistCollaborator
 from django.contrib.auth.models import User
-from authApp.serializers import CurrentUserSerializer
+from authApp.serializers import CustomUserSerializer
 
 
 
@@ -45,13 +45,13 @@ class AlbumSerializer(serializers.ModelSerializer):
 
 
 class LikeSerializer(serializers.ModelSerializer):
-    user=CurrentUserSerializer(read_only=True)
+    user=CustomUserSerializer(read_only=True)
     class Meta:
         model = Like
         fields = ['id', 'user', 'song', 'created_at']
 
 class CommentSerializer(serializers.ModelSerializer):
-    user=CurrentUserSerializer(read_only=True)
+    user=CustomUserSerializer(read_only=True)
     songs=SongSerializer(read_only=True)
     class Meta:
         model = Comment

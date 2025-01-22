@@ -3,7 +3,7 @@ import { VscPreview } from "react-icons/vsc";
 // import { RiCloseLargeFill } from "react-icons/ri";
 import api from '../../services/api';
 import Loading from '../../layouts/Loading';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 
 export default function Album() {
@@ -17,8 +17,18 @@ export default function Album() {
 
     useEffect(() => {
         const fetchAlbumData = async () => {
+            const token = sessionStorage.getItem('token');
+            if (!token) {
+                Navigate('/login');
+                return;
+            }
             try {
-                const response = await api.get('/albums/');
+                const response = await api.get('/albums/',{
+                    headers:{
+                        Authorization: `Token ${token}`,
+                    }
+                }
+                );
                 setAlbums(response.data);
                 setLoading(false);
             } catch (error) {
@@ -43,7 +53,7 @@ export default function Album() {
         setSelectedArtist(null);
     };
 
-    if (loading) return <div className='top-28 left-40'><Loading/></div>;
+    if (loading) return <Loading/>;
     if (error) return <p>Error: {error.message}</p>;
 
     return (
@@ -53,6 +63,7 @@ export default function Album() {
                     const artist = { 
                         name: album.artist.name,
                         image: album.cover_image,
+                        songs: album.songs.length,
                         date:album.release_date,
                         social_media:album.artist.social_media.spotify
                     };
@@ -71,9 +82,10 @@ export default function Album() {
                             </div>
                             <div className="px-4 py-3 w-full text-center">
                                 <h2 className="text-xl font-bold text-gray-900">{album.name}</h2>
-                                <p className="text-sm text-gray-600">{album.artist.name}</p>
-                                <p className="text-sm text-gray-600">{album.artist.social_media.spotify}</p>
-                                <p className="text-sm text-gray-600">{album.release_date}</p>
+                                <p className="text-sm text-gray-600">Singer: {album.artist.name}</p>
+                                <p className="text-sm text-gray-600">Plateform: {album.artist.social_media.spotify}</p>
+                                <p className="text-sm text-gray-600">Release Date: {album.release_date}</p>
+                                <p className='text-sm text-gray-500'>Total Songs: {album.songs.length}</p>
                                 <div className="mt-2">
                                     <button
                                         className="text-indigo-600 underline hover:text-indigo-800"
@@ -106,7 +118,7 @@ const Modal = ({ isOpen, onClose, artist }) => {
                     />
                 </div>
                 <p><strong>Name: </strong> {artist.name}</p>
-                <p><strong>Songs: </strong> {artist.song}</p>
+                <p><strong>Songs: </strong> {artist.songs}</p>
                 <p><strong>Social_media: </strong>{artist.social_media}</p>
                 <p><strong>Debut Year: </strong> {artist.date}</p>
             </div>

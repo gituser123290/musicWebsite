@@ -62,7 +62,7 @@ export default function Artists() {
                     />
                     <div className="text-center space-y-2">
                         <p className="text-2xl font-semibold text-zinc-500">{artist.name}</p>
-                        <p className="text-md text-zinc-500 text-justify">{artist.social_media.spotify ? `Social Media: ${artist.social_media.spotify}` : ' Social Media: N/A'}</p>
+                        <p className="text-md text-zinc-500 text-justify">{Object.entries(artist.social_media).map((plateform)=>{return(<p>Social Media: {plateform[1]}</p>)})}</p>
                         <p className="text-md text-zinc-500 text-justify">{artist.nationality ? `Nationality: ${artist.nationality}` : 'Nationality: N/A'}</p>
                         <p className="text-md text-zinc-500 text-justify">{artist.bio ? `BioGraphy: ${artist.bio}` : 'Biography: N/A'}</p>
                         <p className="text-md text-zinc-500 text-justify">{artist.website ? (<>Read More: <a href={artist.website} target="_blank" rel="noopener noreferrer">more</a></>
