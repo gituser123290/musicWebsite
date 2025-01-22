@@ -1,53 +1,74 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate} from "react-router-dom";
+import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { FaRegEdit, FaTrash } from "react-icons/fa";
 import { FaPlay } from "react-icons/fa";
 import api from "../../services/api";
-import token from "../Token/token";
+import Loading from "../../layouts/Loading";
 
-const SongDetail = () => {
+export default function SongUpdate() {
   const { id } = useParams();
-  const [song, setSong] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-
 
   const [songDetails, setSongDetails] = useState({
     title: "",
     song_cover: null,
-    artist: "",
-    file: null,
+    artist_id: "",
+    audio: null,
     duration: "",
-    genre: "",
+    genre: "Pop",
   });
+  const [artists, setArtists] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [song, setSong] = useState([])
+  const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  // Fetch artists and song details on component mount
   useEffect(() => {
-    const fetchSongDetail = async () => {
+    const fetchArtists = async () => {
+      const token = sessionStorage.getItem('token')
+      if (!token) {
+        Navigate('/login')
+        return;
+      }
+      try {
+        const response = await api.get("/artists/", {
+          headers: { Authorization: `Token ${token}` },
+        });
+        setArtists(response.data);
+      } catch (error) {
+        setError("Failed to load artists");
+      }
+    };
+
+    const fetchSongDetails = async () => {
+      const token = sessionStorage.getItem('token')
+      if (!token) {
+        Navigate('/login')
+        return;
+      }
       try {
         const response = await api.get(`/songs/${id}/`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
+          headers: { 
+            Authorization: `Token ${token}` 
           },
         });
         setSong(response.data);
         setSongDetails({
           title: response.data.title,
           song_cover: response.data.song_cover,
-          artist: response.data.artist,
-          audio_file: response.data.file,
+          artist_id: response.data.artist_id,
+          audio: response.data.audio,
           duration: response.data.duration,
           genre: response.data.genre,
         });
-        setLoading(false);
       } catch (error) {
-        setError(error.message);
-        setLoading(false);
+        setError("Failed to load song", error.message);
       }
     };
 
-    fetchSongDetail();
+    fetchArtists();
+    fetchSongDetails();
   }, [id]);
 
   const handleInputChange = (e) => {
@@ -55,7 +76,7 @@ const SongDetail = () => {
     if (type === "file") {
       setSongDetails((prevDetails) => ({
         ...prevDetails,
-        song_cover: files[0],
+        [name]: files[0],
       }));
     } else {
       setSongDetails((prevDetails) => ({
@@ -65,52 +86,51 @@ const SongDetail = () => {
     }
   };
 
-  const handleUpdateSong = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+
+    const formData = new FormData();
+    for (let key in songDetails) {
+      formData.append(key, songDetails[key]);
+    }
+    const token = sessionStorage.getItem('token')
+    if (!token) {
+      Navigate('/login')
+      return;
+    }
     try {
-      const formData = new FormData();
-      formData.append("title", songDetails.title);
-      formData.append("artist", songDetails.artist);
-      formData.append("duration", songDetails.duration);
-      formData.append("genre", songDetails.genre);
-
-      if (songDetails.song_cover) {
-        formData.append("song_cover", songDetails.song_cover); // Append the image if present
-      } else {
-        formData.append("song_cover", null);
-      }
-
-      if (songDetails.audio_file) {
-        formData.append("file", songDetails.file); // Append the audio file if present
-      } else {
-        formData.append("file", null);
-      }
-
-      const response = await api.put(`/songs/${id}/`, formData, {
+      await api.put(`/songs/${id}/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization: `Bearer ${token}`,
+          Authorization: `Token ${token}`,
         },
       });
-      setSong(response.data);
-      closeCommentModal();
+      navigate(`/songs/${id}`);
     } catch (error) {
-      alert(error.message);
+      setError(error.response?.data?.detail);
+    } finally {
+      setLoading(false);
     }
   };
 
   const deleteSong = async () => {
-    try {
-      await api.delete(`/song/${id}/`,{
-        headers:{
-          Authorization:`Bearer ${token}`
-        }
-      });
-      setSong(null);
-    } catch (error) {
-      setError(error.message);
+    const token = sessionStorage.getItem('token')
+    if (!token) {
+      Navigate('/login')
+      return;
     }
-  };
+    try {
+      await api.delete(`/songs/${id}/`, {
+        headers: {
+          Authorization: `Token ${token}`
+        },
+      });
+      navigate(`/`);
+    } catch (error) {
+      setError(error.response?.data?.detail || "An error occurred");
+    }
+  }
 
   const openCommentModal = () => {
     setIsModalOpen(true);
@@ -124,8 +144,9 @@ const SongDetail = () => {
     navigate(`/song/${id}/play`);
   };
 
-  if (loading) return <p>Loading song details...</p>;
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p className="text-red-500">{error}</p>;
+  if (loading) return <Loading />;
+
 
   return (
     <>
@@ -152,7 +173,7 @@ const SongDetail = () => {
                 <hr />
                 <div className="p-2 columns-2 gap-20">
                   <h2 className="text-white text-2xl">{song.title}</h2>
-                  <p className="text-white">Artist: {song.artist}</p>
+                  <p className="text-white">Artist: {song.artist?.name}</p>
                   <p className="text-white">Length: {song.duration}</p>
                   <p className="text-white">Genre: {song.genre}</p>
                   <div className="flex justify-center space-x-10">
@@ -186,7 +207,7 @@ const SongDetail = () => {
           <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="bg-white p-6 rounded-md shadow-lg w-1/3 columns-2">
               <h2 className="text-xl mb-4">Update Song</h2>
-              <form onSubmit={handleUpdateSong}>
+              <form onSubmit={handleSubmit}>
                 <div className="mb-2">
                   <label className="block text-gray-700">Song Name</label>
                   <input
@@ -214,27 +235,33 @@ const SongDetail = () => {
                 </div>
                 <div className="mb-2">
                   <label className="block text-gray-700">Artist</label>
-                  <input
-                    type="text"
-                    name="artist"
+                  <select
+                    name="artist_id"
                     value={songDetails.artist}
                     onChange={handleInputChange}
                     className="w-full p-1 border rounded-md"
-                  />
+                    required
+                  >
+                    <option value="">Select Artist</option>
+                    {artists.map((artist) => (
+                      <option key={artist.id} value={artist.id}>
+                        {artist.name}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div className="mb-2">
                   <label className="block text-gray-700">Audio File</label>
                   <input
                     type="file"
-                    name="file"
+                    name="audio"
                     accept="audio/*"
-                    value={songDetails.file}
                     onChange={handleInputChange}
                     className="w-full p-1 border rounded-md"
                   />
-                  {songDetails.file && !songDetails.file && (
+                  {songDetails.audio && !songDetails.audio && (
                     <p className="text-gray-600 mt-2">
-                      {song.file.split("/").pop()}{" "}
+                      {song.audio.split("/").pop()}{" "}
                     </p>
                   )}
                 </div>
@@ -279,4 +306,3 @@ const SongDetail = () => {
     </>
   );
 };
-export default SongDetail;

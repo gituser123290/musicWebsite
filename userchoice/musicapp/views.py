@@ -1,124 +1,225 @@
 import requests
 from rest_framework import generics
-from rest_framework.permissions import IsAuthenticated,IsAuthenticatedOrReadOnly,AllowAny
-from rest_framework.exceptions import ValidationError,NotFound
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
+from rest_framework.exceptions import NotFound
 from rest_framework import status
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
+from rest_framework.parsers import MultiPartParser, FileUploadParser
 
 from .models import Song, Playlist, Album, Artist, Like, Comment, Subscription, PlaylistCollaborator
-from .serializers import SongSerializer,AudioSerializer, PlaylistSerializer, AlbumSerializer, ArtistSerializer, LikeSerializer, CommentSerializer, SubscriptionSerializer, PlaylistCollaboratorSerializer
+from .serializers import SongSerializer, AudioSerializer, PlaylistSerializer, AlbumSerializer, ArtistSerializer, LikeSerializer, CommentSerializer, SubscriptionSerializer, PlaylistCollaboratorSerializer
 
-# Song View (List and Create)
-class SongListCreateAPIView(generics.ListCreateAPIView):
+
+# Song Views
+class SongCreateAPIView(generics.CreateAPIView):
+    parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = SongSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        # return Song.objects.filter(user=self.request.user)
-        return Song.objects.all()
-    
     def perform_create(self, serializer):
-        title = serializer.validated_data.get('title')
-        if Song.objects.filter(user=self.request.user, title=title).exists():
-            raise ValidationError("A song with this title already exists.")
- 
         serializer.save(user=self.request.user)
 
-# Song View (Retrieve, Update, and Delete)
-class SongRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+
+class SongListAPIView(generics.ListAPIView):
     serializer_class = SongSerializer
-    permission_classes = [IsAuthenticatedOrReadOnly]
+    permission_classes = [AllowAny]
+
+    def get_queryset(self):
+        return Song.objects.all()
+
+
+class SongRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    parser_classes = [MultiPartParser, FileUploadParser]
+    serializer_class = SongSerializer
+    permission_classes = [IsAuthenticated]
     queryset = Song.objects.all()
 
-# Playlist View (List and Create)
-class PlaylistListCreateAPIView(generics.ListCreateAPIView):
+    def perform_update(self, serializer):
+        return serializer.save(modified_by=self.request.user)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# Playlist Views
+class PlaylistListAPIView(generics.ListAPIView):
     serializer_class = PlaylistSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         return Playlist.objects.filter(user=self.request.user)
+    
+    
+    def list(self, request, *args, **kwargs):
+        playlists = self.get_queryset()
+        serialized_playlists = PlaylistSerializer(playlists, many=True)
+        return Response(serialized_playlists.data)
 
+        
+class PlaylistCreateAPIView(generics.CreateAPIView):
+    serializer_class = PlaylistSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        playlist = serializer.save(user=self.request.user)
+        
+        song_ids = self.request.data.get('songs', [])
+        songs = Song.objects.filter(id__in=song_ids)
 
-# Playlist View (Retrieve, Update, and Delete)
+        if songs.exists():
+            playlist.songs.set(songs)
+        
 class PlaylistRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PlaylistSerializer
     permission_classes = [IsAuthenticated]
     queryset = Playlist.objects.all()
 
-# Album View (List and Create)
-class AlbumListCreateAPIView(generics.ListCreateAPIView):
+
+# Album Views
+class AlbumCreateAPIView(generics.CreateAPIView):
+    parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = AlbumSerializer
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class AlbumListAPIView(generics.ListAPIView):
+    serializer_class = AlbumSerializer
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         return Album.objects.all()
 
-    def perform_create(self, serializer):
-        serializer.save()
 
-# Album View (Retrieve, Update, and Delete)
-class AlbumRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+class AlbumUpdateAPIView(generics.RetrieveUpdateAPIView):
+    parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = AlbumSerializer
     permission_classes = [IsAuthenticated]
     queryset = Album.objects.all()
 
-# Artist View (List and Create)
+    def perform_update(self, serializer):
+        return serializer.save(modified_by=self.request.user)
+
+
+class AlbumDeleteAPIView(generics.DestroyAPIView):
+    permissions_classes = [IsAuthenticated]
+    queryset = Album.objects.all()
+    serializer_class = AlbumSerializer
+
+    def perform_destroy(self, instance):
+        instance.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+# Artist Views
 class ArtistListCreateAPIView(generics.ListCreateAPIView):
+    parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = ArtistSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
     def get_queryset(self):
         return Artist.objects.all()
 
     def perform_create(self, serializer):
-        
-        serializer.save()
+        if self.request.user.is_authenticated:
+            serializer.save()
+        else:
+            raise PermissionError("Authentication required to create content.")
 
-# Artist View (Retrieve, Update, and Delete)
+
 class ArtistRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ArtistSerializer
-    permission_classes = [IsAuthenticated]
     queryset = Artist.objects.all()
+    
+    
+    def patch(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
-# Like View (List and Create)
-class LikeListCreateAPIView(generics.ListCreateAPIView):
+
+# Like Views
+class LikeListAPIView(generics.ListAPIView):
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Like.objects.filter(user=self.request.user)
+        song_id = self.kwargs.get('song_id')
+        return Like.objects.filter(song_id=song_id)
+    
+    def list(self, request, *args, **kwargs):
+        song_id = self.kwargs.get('song_id')
+        song = Song.objects.filter(id=song_id).first()
+        if not song:
+            raise NotFound("Song not found.")
 
+        likes = Like.objects.filter(song=song)
+
+        return Response(LikeSerializer(likes, many=True).data)
+
+class LikeCreateAPIView(generics.CreateAPIView):
+    serializer_class = LikeSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+    
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        song_id = self.kwargs.get('song_id')
 
-# Like View (Retrieve, Update, and Delete)
+        try:
+            song = Song.objects.get(id=song_id)
+        except Song.DoesNotExist:
+            raise NotFound("Song not found.")
+        
+        like = Like.objects.filter(user=self.request.user, song=song).first()
+
+        if like:
+            like.delete()
+        else:
+            serializer.save(user=self.request.user, song=song)
+
+        like_count = Like.objects.filter(song=song).count()
+        return Response(like_count, status=status.HTTP_200_OK)
+        
+
 class LikeRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
     queryset = Like.objects.all()
 
-# Comment View (List and Create)
-class CommentListCreateAPIView(generics.ListCreateAPIView):
+
+# Comment Views
+class CommentListAPIView(generics.ListAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
-        return Comment.objects.filter(user=self.request.user)
+        song_id = self.kwargs.get('song_id')  
+        return Comment.objects.filter(song_id=song_id)
+    
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+        
+class CommentCreateAPIView(generics.CreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-# Comment View (Retrieve, Update, and Delete)
+
 class CommentRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = CommentSerializer
     permission_classes = [IsAuthenticated]
     queryset = Comment.objects.all()
 
-# Subscription View (List and Create)
+
+# Subscription Views
 class SubscriptionListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
@@ -129,13 +230,14 @@ class SubscriptionListCreateAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-# Subscription View (Retrieve, Update, and Delete)
+
 class SubscriptionRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = SubscriptionSerializer
     permission_classes = [IsAuthenticated]
     queryset = Subscription.objects.all()
 
-# PlaylistCollaborator View (List and Create)
+
+# Playlist Collaborator Views
 class PlaylistCollaboratorListCreateAPIView(generics.ListCreateAPIView):
     serializer_class = PlaylistCollaboratorSerializer
     permission_classes = [IsAuthenticated]
@@ -146,27 +248,29 @@ class PlaylistCollaboratorListCreateAPIView(generics.ListCreateAPIView):
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
-# PlaylistCollaborator View (Retrieve, Update, and Delete)
+
 class PlaylistCollaboratorRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PlaylistCollaboratorSerializer
     permission_classes = [IsAuthenticatedOrReadOnly]
     queryset = PlaylistCollaborator.objects.all()
 
+
+# Audio Files View
 class AudioFiles(APIView):
     permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request):
         songs = Song.objects.all()
         serializer = AudioSerializer(songs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
-        
-        
-        
 
+# External API Views
 FREEE_API_URL = 'https://api.escuelajs.co/api/v1/users'
 
+
 class UserApiView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request):
         try:
             response = requests.get(FREEE_API_URL)
@@ -184,9 +288,10 @@ class UserApiView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 class UserDetailView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    def get(self, request,id):
+
+    def get(self, request, id):
         try:
             response = requests.get(f"{FREEE_API_URL}/{id}")
             if response.status_code == 200:
@@ -205,15 +310,16 @@ class UserDetailView(APIView):
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 class ProductApi(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
+
     def get(self, request):
         try:
-            url='https://api.escuelajs.co/api/v1/products'
-            response=requests.get(url)
-            if response.status_code==200:
-                products=response.json()
-                return Response(products,status=status.HTTP_200_OK)
+            url = 'https://api.escuelajs.co/api/v1/products'
+            response = requests.get(url)
+            if response.status_code == 200:
+                products = response.json()
+                return Response(products, status=status.HTTP_200_OK)
             else:
                 return Response(
                     {"error": "Failed to fetch products data from Freee API"},
@@ -221,15 +327,17 @@ class ProductApi(APIView):
                 )
         except requests.exceptions.RequestException as e:
             return Response(
-                {"error":f"An error occurred: {str(e)}"},
+                {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
 
+
 class ProductDetailView(APIView):
-    permission_classes = [IsAuthenticatedOrReadOnly]
-    def get(self, request,id):
+
+
+    def get(self, request, id):
         try:
-            url='https://api.escuelajs.co/api/v1/products'
+            url = 'https://api.escuelajs.co/api/v1/products'
             response = requests.get(f"{url}/{id}")
             if response.status_code == 200:
                 user_data = response.json()
@@ -246,6 +354,3 @@ class ProductDetailView(APIView):
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-
-
-

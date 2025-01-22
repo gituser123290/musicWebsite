@@ -1,14 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
+
+
 
 class Song(models.Model):
     title = models.CharField(max_length=200)
-    artist = models.CharField(max_length=200)
+    artist = models.ForeignKey('Artist',on_delete=models.CASCADE,related_name='artists')
     genre = models.CharField(max_length=100)
     duration = models.DurationField()  
-    file = models.FileField(upload_to='songs/')  
+    audio = models.FileField(upload_to='songs/',null=True, blank=True)  
     song_cover=models.ImageField(upload_to='song_covers/',blank=True,null=True)
-    user = models.ForeignKey(User, related_name='songs', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='songs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -16,7 +19,7 @@ class Song(models.Model):
 
 class Playlist(models.Model):
     name = models.CharField(max_length=200)
-    user = models.ForeignKey(User, related_name='playlists', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='playlists', on_delete=models.CASCADE)
     songs = models.ManyToManyField(Song, related_name='playlists')
     is_public = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -27,7 +30,7 @@ class Playlist(models.Model):
 
 class Album(models.Model):
     name = models.CharField(max_length=200)
-    artist = models.CharField(max_length=200)
+    artist = models.ForeignKey('Artist',on_delete=models.CASCADE,related_name='artist')
     release_date = models.DateField()
     songs = models.ManyToManyField(Song, related_name='albums')
     cover_image = models.ImageField(upload_to='album_covers/', blank=True, null=True)
@@ -41,12 +44,13 @@ class Artist(models.Model):
     image=models.ImageField(upload_to="artist_image/",blank=True,null=True)
     website = models.URLField(blank=True, null=True)
     social_media = models.JSONField(blank=True, null=True)
+    nationality=models.CharField(max_length=100,null=True,blank=True)
 
     def __str__(self):
         return self.name
 
 class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -57,7 +61,7 @@ class Like(models.Model):
         return f"{self.user.username} liked {self.song.title}"
 
 class Comment(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     song = models.ForeignKey(Song, on_delete=models.CASCADE)
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -66,7 +70,7 @@ class Comment(models.Model):
         return f"Comment by {self.user.username} on {self.song.title}"
 
 class Subscription(models.Model):
-    user = models.ForeignKey(User, related_name='subscriptions', on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='subscriptions', on_delete=models.CASCADE)
     artist = models.ForeignKey(Artist, related_name='subscribers', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -75,7 +79,7 @@ class Subscription(models.Model):
 
 class PlaylistCollaborator(models.Model):
     playlist = models.ForeignKey(Playlist, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     role = models.CharField(max_length=50, choices=[('owner', 'Owner'), ('collaborator', 'Collaborator')])
 
     def __str__(self):

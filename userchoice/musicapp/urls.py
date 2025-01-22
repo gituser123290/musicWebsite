@@ -1,37 +1,53 @@
-from django.urls import path, include
-from .views import SongListCreateAPIView, SongRetrieveUpdateDestroyAPIView, PlaylistListCreateAPIView, PlaylistRetrieveUpdateDestroyAPIView, \
-    AlbumListCreateAPIView, AlbumRetrieveUpdateDestroyAPIView, ArtistListCreateAPIView, ArtistRetrieveUpdateDestroyAPIView, \
-    LikeListCreateAPIView, LikeRetrieveUpdateDestroyAPIView, CommentListCreateAPIView, CommentRetrieveUpdateDestroyAPIView, \
-    SubscriptionListCreateAPIView, SubscriptionRetrieveUpdateDestroyAPIView, PlaylistCollaboratorListCreateAPIView, PlaylistCollaboratorRetrieveUpdateDestroyAPIView, \
-        AudioFiles
-    
-    
-from rest_framework.routers import DefaultRouter
+from django.urls import path
+from . import views
 
 urlpatterns = [
-    path('songs/', SongListCreateAPIView.as_view(), name='song-list-create'),
-    path('songs/<int:pk>/', SongRetrieveUpdateDestroyAPIView.as_view(), name='song-retrieve-update-destroy'),
-    
-    path('playlists/', PlaylistListCreateAPIView.as_view(), name='playlist-list-create'),
-    path('playlists/<int:pk>/', PlaylistRetrieveUpdateDestroyAPIView.as_view(), name='playlist-retrieve-update-destroy'),
-    
-    path('albums/', AlbumListCreateAPIView.as_view(), name='album-list-create'),
-    path('albums/<int:pk>/', AlbumRetrieveUpdateDestroyAPIView.as_view(), name='album-retrieve-update-destroy'),
-    
-    path('artists/', ArtistListCreateAPIView.as_view(), name='artist-list-create'),
-    path('artists/<int:pk>/', ArtistRetrieveUpdateDestroyAPIView.as_view(), name='artist-retrieve-update-destroy'),
-    
-    path('likes/', LikeListCreateAPIView.as_view(), name='like-list-create'),
-    path('likes/<int:pk>/', LikeRetrieveUpdateDestroyAPIView.as_view(), name='like-retrieve-update-destroy'),
-    
-    path('comments/', CommentListCreateAPIView.as_view(), name='comment-list-create'),
-    path('comments/<int:pk>/', CommentRetrieveUpdateDestroyAPIView.as_view(), name='comment-retrieve-update-destroy'),
-    
-    path('subscriptions/', SubscriptionListCreateAPIView.as_view(), name='subscription-list-create'),
-    path('subscriptions/<int:pk>/', SubscriptionRetrieveUpdateDestroyAPIView.as_view(), name='subscription-retrieve-update-destroy'),
-    
-    path('playlist_collaborators/', PlaylistCollaboratorListCreateAPIView.as_view(), name='playlist-collaborator-list-create'),
-    path('playlist_collaborators/<int:pk>/', PlaylistCollaboratorRetrieveUpdateDestroyAPIView.as_view(), name='playlist-collaborator-retrieve-update-destroy'),
-    
-    path('audio/',AudioFiles.as_view(),name='audios'),
+    # Song URLs
+    path('songs/', views.SongListAPIView.as_view(), name='song-list'),
+    path('songs/create/', views.SongCreateAPIView.as_view(), name='song-create'),
+    path('songs/<int:pk>/', views.SongRetrieveUpdateDestroyAPIView.as_view(), name='song-detail'),
+
+    # Playlist URLs
+    path('playlist/', views.PlaylistListAPIView.as_view(), name='playlist-list'),
+    path('playlist/create/', views.PlaylistCreateAPIView.as_view(), name='playlist-create'),
+    path('playlists/<int:pk>/', views.PlaylistRetrieveUpdateDestroyAPIView.as_view(), name='playlist-detail'),
+
+    # Album URLs
+    path('albums/', views.AlbumListAPIView.as_view(), name='album-list'),
+    path('albums/create/', views.AlbumCreateAPIView.as_view(), name='album-create'),
+    path('albums/<int:pk>/', views.AlbumUpdateAPIView.as_view(), name='album-update'),
+    path('albums/delete/<int:pk>/', views.AlbumDeleteAPIView.as_view(), name='album-delete'),
+
+    # Artist URLs
+    path('artists/', views.ArtistListCreateAPIView.as_view(), name='artist-list-create'),
+    path('artists/<int:pk>/', views.ArtistRetrieveUpdateDestroyAPIView.as_view(), name='artist-detail'),
+
+    # Like URLs
+    path('likes/<int:song_id>/', views.LikeListAPIView.as_view(), name='like-list'),
+    path('like/<int:song_id>/', views.LikeCreateAPIView.as_view(), name='like-create'),
+    path('like/<int:pk>/', views.LikeRetrieveUpdateDestroyAPIView.as_view(), name='like-detail'),
+
+    # Comment URLs
+    path('comments/<int:song_id>/', views.CommentListAPIView.as_view(), name='comment-list'),
+    path('comment/<int:pk>/', views.CommentCreateAPIView.as_view(), name='comment-create'),
+    path('comment/<int:pk>/', views.CommentRetrieveUpdateDestroyAPIView.as_view(), name='comment-detail'),
+
+    # Subscription URLs
+    path('subscriptions/', views.SubscriptionListCreateAPIView.as_view(), name='subscription-list-create'),
+    path('subscriptions/<int:pk>/', views.SubscriptionRetrieveUpdateDestroyAPIView.as_view(), name='subscription-detail'),
+
+    # Playlist Collaborator URLs
+    path('playlist_collaborators/', views.PlaylistCollaboratorListCreateAPIView.as_view(), name='playlist-collaborator-list-create'),
+    path('playlist_collaborators/<int:pk>/', views.PlaylistCollaboratorRetrieveUpdateDestroyAPIView.as_view(), name='playlist-collaborator-detail'),
+
+    # Audio Files URLs
+    path('audio_files/', views.AudioFiles.as_view(), name='audio-files'),
+
+    # External API User URLs
+    path('users/', views.UserApiView.as_view(), name='users'),
+    path('users/<int:id>/', views.UserDetailView.as_view(), name='user-detail'),
+
+    # External API Product URLs
+    path('products/', views.ProductApi.as_view(), name='products'),
+    path('products/<int:id>/', views.ProductDetailView.as_view(), name='product-detail'),
 ]

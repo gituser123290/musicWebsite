@@ -5,6 +5,7 @@ import { FaPlay,FaPause } from "react-icons/fa";
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled,TbChartBarPopular } from "react-icons/tb";
 import { PiDownloadSimpleBold } from "react-icons/pi";
 import { CiStreamOn } from "react-icons/ci";
+import Loading from '../../layouts/Loading'
 
 export default function PopularSong() {
   const [populars, setPopulars] = useState(null)
@@ -40,7 +41,7 @@ export default function PopularSong() {
   };
 
   if (loading) {
-    return <div>Loading...</div>
+    return <div><Loading/></div>
   }
 
   if (error) {

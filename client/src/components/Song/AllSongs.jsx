@@ -18,13 +18,13 @@ export default function AllSongs() {
     useEffect(() => {
         const allSongs = async () => {
             try {
-                const response = await api.get("/audio/",{
+                const response = await api.get("/audio_files/",{
                     headers:{
-                        Authorization:`Bearer ${token}`
+                        Authorization:`Token ${token}`
                     }
                 });
                 setSongs(response.data);
-                setError(null);
+                console.log(response.data)
                 setLoading(false);
             } catch (error) {
                 setError(error.message);
@@ -94,7 +94,7 @@ export default function AllSongs() {
                             ref={(audio) => setAudioPlayer(audio)}
                             controls
                             className="w-full rounded-lg bg-gray-100 p-2"
-                            src={`http://localhost:8000${songs[currentSongIndex]?.file}`}
+                            src={`http://localhost:8000${songs[currentSongIndex]?.audio}`}
                             onEnded={handleSongEnd} 
                             loop={isLooping}
                         />

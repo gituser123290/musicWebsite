@@ -1,35 +1,48 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 export default function SongPage() {
   const [error, setError] = useState(null);
-
   const [songData, setSongData] = useState({
     title: "",
-    album: "",
     song_cover: null,
-    artist: "",
-    audio_file: null,
-    no_of_listeners: "",
-    streams: "",
-    radio_airplay: "",
-    downloads: "",
-    social_media_mentions: "",
+    artist_id: "",
+    file: null,
     duration: "",
-    genre: 'Pop',
-    track_number: "",
+    genre: "Pop",
   });
+  const [artists, setArtists] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const navigate = useNavigate();
+  const token = sessionStorage.getItem("token");
+
+
+  useEffect(() => {
+    const fetchArtists = async () => {
+      try {
+        const response = await api.get("/artists/", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        setArtists(response.data);
+      } catch (error) {
+        console.error("Error fetching artists:", error);
+        setError("Failed to load artists");
+      }
+    };
+
+    fetchArtists();
+  }, [token]);
 
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
     if (type === "file") {
       setSongData((prevDetails) => ({
         ...prevDetails,
-        song_cover: files[0],
-        audio_file:files[0]
+        [name]: files[0],
       }));
     } else {
       setSongData((prevDetails) => ({
@@ -39,35 +52,37 @@ export default function SongPage() {
     }
   };
 
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
+    setLoading(true);
 
+    const formData = new FormData();
     for (let key in songData) {
       formData.append(key, songData[key]);
     }
 
     try {
-      const response = await api.post('/song/', formData, {
+      const response = await api.post('/songs/create/', formData, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
+          Authorization:`Token ${token}`,
         },
       });
-      setSongData(response.data)
-      console.log('Song submitted successfully:', response.data);
-      navigate('/')
+      console.log("Song submitted successfully:", response.data);
+      navigate("/"); 
     } catch (error) {
-      setError(error)
-      console.error('Error submitting the song:', error);
+      setError(error.response?.data?.detail || "An error occurred");
+      console.error("Error submitting the song:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  if (error) return <p>Error: {error}</p>;
+  if (error) return <p className="text-red-500">Error: {error}</p>;
 
   return (
     <div className="w-full flex items-center justify-center mt-4 mb-20">
-      <div className="bg-cyan-800 p-6 rounded-md shadow-lg w-1/3 columns-2">
+      <div className="bg-cyan-800 p-6 rounded-md shadow-lg w-1/3">
         <h2 className="text-xl mb-4">Create Song</h2>
         <form onSubmit={handleSubmit} encType="multipart/form-data">
           <div className="mb-2">
@@ -78,120 +93,64 @@ export default function SongPage() {
               value={songData.title}
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
+              required
             />
           </div>
+
           <div className="mb-2">
-            <label className="block text-gray-700">Album</label>
+            <label className="block text-gray-700">Genre</label>
             <input
-              type="number"
-              name="album"
-              value={songData.album}
+              type="text"
+              name="genre"
+              value={songData.genre}
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
+              required
             />
           </div>
+
           <div className="mb-2">
             <label className="block text-gray-700">Artist</label>
-            <input
-              type="number"
-              name="artist"
-              value={songData.artist}
+            <select
+              name="artist_id"
+              value={songData.artist_id}
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
-            />
+              required
+            >
+              <option value="">Select Artist</option>
+              {artists.map((artist) => (
+                <option key={artist.id} value={artist.id}>
+                  {artist.name}
+                </option>
+              ))}
+            </select>
           </div>
-          <div className="mb-4">
-            <label className="block text-gray-700">No of Listners</label>
-            <input
-              type="number"
-              name="no_of_listeners"
-              value={songData.no_of_listeners}
-              onChange={handleInputChange}
-              className="w-full p-2 border rounded-md"
-            />
-          </div>
-          <div className="mb-2">
-            <label className="block text-gray-700">Streams</label>
-            <input
-              type="number"
-              name="streams"
-              value={songData.streams}
-              onChange={handleInputChange}
-              className="w-full p-1 border rounded-md"
-            />
-          </div>
-          <div className="mb-2">
-            <label className="block text-gray-700">Radio Air Play</label>
-            <input
-              type="number"
-              name="radio_airplay"
-              value={songData.radio_airplay}
-              onChange={handleInputChange}
-              className="w-full p-1 border rounded-md"
-            />
-          </div>
-          <div className="mb-2">
-            <label className="block text-gray-700">Downloads</label>
-            <input
-              type="number"
-              name="downloads"
-              value={songData.downloads}
-              onChange={handleInputChange}
-              className="w-full p-1 border rounded-md"
-            />
-          </div>
-          <div className="mb-2">
-            <label className="block text-gray-700">Social Media Metions</label>
-            <input
-              type="number"
-              name="social_media_mentions"
-              value={songData.social_media_mentions}
-              onChange={handleInputChange}
-              className="w-full p-1 border rounded-md"
-            />
-          </div>
+
           <div className="mb-2">
             <label className="block text-gray-700">Duration</label>
             <input
-              type="text"
+              type="number"
               name="duration"
               value={songData.duration}
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
+              required
             />
           </div>
-          <div className="mb-2">
-            <label className="block text-gray-700">Genre</label>
-            <select name="genre" value={songData.genre} onChange={handleInputChange}>
-            <option value="Pop">Pop</option>
-            <option value="Rock">Rock</option>
-            <option value="Hip-Hop">Hip-Hop</option>
-            <option value="Jazz">Jazz</option>
-            <option value="Electronic">Electronic</option>
-            <option value="Mixed">Mixed</option>
-            <option value="Other">Other</option>
-          </select>
-          </div>
-          <div className="mb-2">
-            <label className="block text-gray-700">Track Number</label>
-            <input
-              type="number"
-              name="track_number"
-              value={songData.track_number}
-              onChange={handleInputChange}
-              className="w-full p-1 border rounded-md"
-            />
-          </div>
+
           <div className="mb-2">
             <label className="block text-gray-700">Audio File</label>
             <input
               type="file"
-              name="audio_file"
+              name="file"
               accept="audio/*"
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
+              required
             />
           </div>
+
           <div className="mb-2">
             <label className="block text-gray-700">Song Cover</label>
             <input
@@ -200,13 +159,16 @@ export default function SongPage() {
               accept="image/*"
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
+              required
             />
           </div>
+
           <button
             type="submit"
             className="w-full p-2 bg-blue-500 text-white rounded-md"
+            disabled={loading}
           >
-            Submit
+            {loading ? "Uploading..." : "Submit"}
           </button>
         </form>
       </div>

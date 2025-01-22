@@ -7,9 +7,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("__reload__/", include("django_browser_reload.urls")),
-    # path('', include('book.urls')),
-    # path('music/',include('musicapp.urls')),
-    path('account/',include('auth_app.urls')),
+    path('account/',include('authApp.urls')),
     path('',include('musicapp.urls')),
     path('book/',include('book.urls')),
     

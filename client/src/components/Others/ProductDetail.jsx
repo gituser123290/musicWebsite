@@ -13,8 +13,10 @@ export default function ProductDetail() {
 
   useEffect(() => {
     const fetchProduct = async () => {
+      const token = localStorage.getItem('token');
+      if (!token) return navigate('/login');
       try {
-        const response = await api.get(`/product/${id}/`);
+        const response = await api.get(`/products/${id}/`);
         setProducts(response.data);
         setLoading(false);
       } catch (error) {
@@ -22,7 +24,7 @@ export default function ProductDetail() {
       }
     };
     fetchProduct();
-  }, [id]);
+  }, [id,navigate]);
 
   if (error) return <h1>Error: {error}</h1>;
 

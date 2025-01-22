@@ -15,8 +15,17 @@ export default function Artists() {
 
     useEffect(() => {
         const fetchSong = async () => {
+            const token =sessionStorage.getItem('token')
+            if(!token){
+                navigate('/login')
+                return
+            }
             try {
-                const response = await api.get('/artist/')
+                const response = await api.get('/artists/',{
+                    headers: {
+                        'Authorization': `Token ${token}`,
+                    },
+                })
                 setArtists(response.data)
                 console.log(response.data)
                 setLoading(false)
@@ -26,7 +35,7 @@ export default function Artists() {
             }
         }
         fetchSong()
-    }, [])
+    }, [navigate])
 
     const handleClick=(id)=>{
         navigate(`/artist/${id}/`)
@@ -48,15 +57,18 @@ export default function Artists() {
                 >
                     <img 
                         className="w-32 h-32 object-cover rounded-full shadow-md mb-4" 
-                        src={`http://127.0.0.1:8000${artist.image}`} 
+                        src={artist.image} 
                         alt={artist.name} 
                     />
                     <div className="text-center space-y-2">
                         <p className="text-2xl font-semibold text-zinc-500">{artist.name}</p>
-                        <p className="text-md text-zinc-500 text-justify">{artist.birth_date ? `Born: ${artist.birth_date}` : 'Birth Date: N/A'}</p>
+                        <p className="text-md text-zinc-500 text-justify">{artist.social_media.spotify ? `Social Media: ${artist.social_media.spotify}` : ' Social Media: N/A'}</p>
                         <p className="text-md text-zinc-500 text-justify">{artist.nationality ? `Nationality: ${artist.nationality}` : 'Nationality: N/A'}</p>
-                        <p className="text-md text-zinc-500 text-justify">{artist.genre ? `Genre: ${artist.genre}` : 'Genre: N/A'}</p>
-                        <p className="text-md text-zinc-500 text-justify">{artist.biography ? `Biography: ${artist.biography}` : 'Biography: N/A'}</p>
+                        <p className="text-md text-zinc-500 text-justify">{artist.bio ? `BioGraphy: ${artist.bio}` : 'Biography: N/A'}</p>
+                        <p className="text-md text-zinc-500 text-justify">{artist.website ? (<>Read More: <a href={artist.website} target="_blank" rel="noopener noreferrer">more</a></>
+                        ) : (
+                            'Read More: N/A'
+                        )}</p>
                     </div>
                 </div>
             ))}

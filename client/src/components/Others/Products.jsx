@@ -18,8 +18,10 @@ export default function Products() {
 
     useEffect(() => {
         const fetchProducts = async () => {
+            const token = localStorage.getItem('token')
+            if(!token) return navigate('/login')
             try {
-                const response = await api.get('/product/')
+                const response = await api.get('/products/')
                 setProducts(response.data)
                 setCount(response.data.length);
                 setLoading(false)
