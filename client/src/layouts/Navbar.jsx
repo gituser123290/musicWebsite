@@ -45,14 +45,6 @@ export default function Navbar({ isAuthenticated, handleLogout }) {
                         <li className='px-2 py-1 rounded-sm mx-1'>
                             <a
                                 className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                href='/popular_song'
-                            >
-                                Popular Songs
-                            </a>
-                        </li>
-                        <li className='px-2 py-1 rounded-sm mx-1'>
-                            <a
-                                className='text-black hover:text-white transition-all duration-300 rounded-md'
                                 href='/profile'
                             >
                                 Profile
@@ -69,6 +61,7 @@ export default function Navbar({ isAuthenticated, handleLogout }) {
                                 </ul>
                                 {isDropdownOpen && (
                                     <div className="dropdown-content absolute bg-green-500 text-white rounded-md mt-1 z-10">
+                                    <a href="/playlist" className="block px-4 py-2 hover:bg-green-900">Playlist</a>
                                     <a href="/createsong" className="block px-4 py-2 hover:bg-green-900">Create Song</a>
                                     <a href="/createartist" className="block px-4 py-2 hover:bg-green-900">Create Artist</a>
                                     <a href="/createalbum" className="block px-4 py-2 hover:bg-green-900">Create Album</a>

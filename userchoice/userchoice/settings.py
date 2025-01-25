@@ -9,7 +9,10 @@ SECRET_KEY = 'django-insecure-ia7!lt)_%--z$$ov(vwhxh8^y@^anclrk)i^ovx@wpo_#&0y*p
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-AUTH_USER_MODEL = 'authApp.CustomUser'
+# myproject/settings.py
+
+AUTH_USER_MODEL = 'authApp.UserProfile'
+
 
 ALLOWED_HOSTS = []
 

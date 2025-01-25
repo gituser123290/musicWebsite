@@ -59,45 +59,50 @@ export default function Album() {
     return (
         <div className="flex justify-center items-center w-full py-8 mb-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-4 w-full">
-                {albums.map((album) => {
-                    const artist = { 
-                        name: album.artist.name,
-                        image: album.cover_image,
-                        songs: album.songs.length,
-                        date:album.release_date,
-                        social_media:album.artist.social_media.spotify
-                    };
-
-                    return (
-                        <div onClick={()=>handleClick(album.id)} 
-                            key={album.id}
-                            className="flex justify-center items-center flex-col bg-slate-300 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
-                        >
-                            <div className="w-full">
-                                <img
-                                    className="w-full h-48 object-cover rounded-t-lg"
-                                    src={album.cover_image}
-                                    alt={album.name}
-                                />
-                            </div>
-                            <div className="px-4 py-3 w-full text-center">
-                                <h2 className="text-xl font-bold text-gray-900">{album.name}</h2>
-                                <p className="text-sm text-gray-600">Singer: {album.artist.name}</p>
-                                <p className="text-sm text-gray-600">Plateform: {album.artist.social_media.spotify}</p>
-                                <p className="text-sm text-gray-600">Release Date: {album.release_date}</p>
-                                <p className='text-sm text-gray-500'>Total Songs: {album.songs.length}</p>
-                                <div className="mt-2">
-                                    <button
-                                        className="text-indigo-600 underline hover:text-indigo-800"
-                                        onMouseEnter={() => openModal(artist)}
-                                    >
-                                        <VscPreview/>
-                                    </button>
+            {albums && albums.length > 0 ?(
+                albums.map((album) => {
+                        const artist = { 
+                            name: album.artist.name,
+                            image: album.cover_image,
+                            songs: album.songs.length,
+                            date:album.release_date,
+                            social_media:album.artist.social_media.spotify
+                        };
+    
+                        return (
+                            <div onClick={()=>handleClick(album.id)} 
+                                key={album.id}
+                                className="flex justify-center items-center flex-col bg-slate-300 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
+                            >
+                                <div className="w-full">
+                                    <img
+                                        className="w-full h-48 object-cover rounded-t-lg"
+                                        src={album.cover_image}
+                                        alt={album.name}
+                                    />
+                                </div>
+                                <div className="px-4 py-3 w-full text-center">
+                                    <h2 className="text-xl font-bold text-gray-900">{album.name}</h2>
+                                    <p className="text-sm text-gray-600">Singer: {album.artist.name}</p>
+                                    <p className="text-sm text-gray-600">Plateform: {album.artist.social_media.spotify}</p>
+                                    <p className="text-sm text-gray-600">Release Date: {album.release_date}</p>
+                                    <p className='text-sm text-gray-500'>Total Songs: {album.songs.length}</p>
+                                    <div className="mt-2">
+                                        <button
+                                            className="text-indigo-600 underline hover:text-indigo-800"
+                                            onMouseEnter={() => openModal(artist)}
+                                        >
+                                            <VscPreview/>
+                                        </button>
+                                    </div>
                                 </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })
+                ):(
+                    <p className='text-red-600 text-2xl'>No albums found.</p>
+                )}
+                
             </div>
             <Modal isOpen={isModalOpen} onClose={closeModal} artist={selectedArtist} />
         </div>

@@ -1,0 +1,170 @@
+import Loading from '../../layouts/Loading';
+import api from '../../services/api';
+import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
+import { FaPlay, FaPause, FaTrash } from "react-icons/fa";
+import { useEffect, useState, useRef } from 'react';
+import { Navigate,useNavigate } from 'react-router-dom';
+
+const PlaylistComponent = () => {
+  const [playlists, setPlaylists] = useState(null);
+  const [error, setError] = useState(null);
+  const [currentPlaylistIndex, setCurrentPlaylistIndex] = useState(0);
+  const [currentSongIndex, setCurrentSongIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef(null);
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getPlaylist = async () => {
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+        Navigate('/login');
+        return;
+      }
+      try {
+        const response = await api.get('/playlist/', {
+          headers: {
+            Authorization: `Token ${token}`
+          }
+        });
+        setPlaylists(response.data);
+      } catch (error) {
+        setError(error);
+      }
+    };
+    getPlaylist();
+  }, []);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      isPlaying ? audioRef.current.play() : audioRef.current.pause();
+    }
+  }, [currentSongIndex, isPlaying]);
+
+  const handlePlayPause = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleNext = () => {
+    const nextIndex = (currentSongIndex + 1) % playlists[currentPlaylistIndex].songs.length;
+    setCurrentSongIndex(nextIndex);
+    setIsPlaying(true);
+  };
+
+  const handlePrevious = () => {
+    const prevIndex = (currentSongIndex - 1 + playlists[currentPlaylistIndex].songs.length) % playlists[currentPlaylistIndex].songs.length;
+    setCurrentSongIndex(prevIndex);
+    setIsPlaying(true);
+  };
+
+  const deleteSongToPlaylist = async (playlistId, songId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+  
+    try {
+      await api.delete(`/playlists/${playlistId}/songs/${songId}/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      alert("Song deleted from playlist");
+      setPlaylists(prevPlaylists => 
+        prevPlaylists.map(playlist => 
+          playlist.id === playlistId 
+          ? { ...playlist, songs: playlist.songs.filter(song => song.id !== songId) }
+          : playlist
+        )
+      );
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+  
+  
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+  if (!playlists) return <Loading />;
+
+  const currentPlaylist = playlists[currentPlaylistIndex];
+  const currentSong = currentPlaylist.songs[currentSongIndex];
+
+  const handleClick = (songId) => {
+    navigate(`/songs/${songId}/`);
+  };
+  
+
+  return (
+    <div className="bg-gray-900 py-8 px-4">
+      <div className="container mx-auto space-y-8 flex flex-col justify-between min-h-screen">
+        <div>
+          {playlists.map((playlist) => (
+            <div
+              key={playlist.id}
+              className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300"
+            >
+              <h2 className="text-3xl font-bold text-center text-white mb-6">{playlist.name}</h2>
+              <div className="space-y-6">
+                {playlist.songs.map((song) => (
+                  <div
+                    key={song.id}
+                    className="bg-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-600 transition-all duration-300 transform hover:scale-100"
+                  >
+                    <div className="flex items-center space-x-4">
+                      <img
+                        src={`http://localhost:8000${song.song_cover}`}
+                        alt={song.title}
+                        className="w-20 h-20 rounded-md shadow-md hover:shadow-lg transition-shadow duration-300"
+                      />
+                      <div className="text-white">
+                        <h3 className="text-xl font-semibold" onClick={() => handleClick(song.id)}>{song.title}</h3>
+                        <p className="text-sm text-gray-500">{song.artist?.name}</p>
+                        <p className="text-sm text-gray-500">{song.genre} | {song.duration}</p>
+                      </div>
+                    </div>
+                    <div className='cursor-pointer hover:text-red-600'>
+                      <FaTrash onClick={() => deleteSongToPlaylist(playlist.id, song.id)} size={10}/>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+        <div className="audio-controls text-white mt-6 flex flex-col justify-end">
+        <div className=" text-yellow-400 mt-4">
+            <h3>{currentSong.title} - {currentSong.artist?.name}</h3>
+          </div>
+          <audio
+            ref={audioRef}
+            src={`http://localhost:8000${currentSong?.audio}`}
+            onEnded={handleNext}
+          />
+          <div className="flex justify-between items-center">
+            <button onClick={handlePrevious} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600">
+              <TbPlayerTrackPrevFilled size={25} />
+            </button>
+            <button onClick={handlePlayPause} className="p-4 bg-gray-700 rounded-full hover:bg-gray-600">
+              {isPlaying ? <FaPause size={25} /> : <FaPlay size={25} />}
+            </button>
+            <button onClick={handleNext} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600">
+              <TbPlayerTrackNextFilled size={25} />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default PlaylistComponent;

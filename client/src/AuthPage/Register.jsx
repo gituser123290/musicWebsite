@@ -8,25 +8,31 @@ const Register = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [password2, setPassword2] = useState('');
+  const [bio, setBio] = useState('');
+  const [avatar, setAvatar] = useState(null);
   const [error, setError] = useState('');
-  // const[loading,setLoading]=useState(true)
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-
     if(password !== password2){
       setError('Password does not match');
       return;
     }
-    // setLoading(true);
-    try {
-      const response = await api.post('/account/register/', {username,email,password,password2})
+    const file = avatar; // Assuming avatar is a file input field with onChange event
+    const formData = new FormData();
+    formData.append('username', username);
+    formData.append('email', email);
+    formData.append('password', password);
+    formData.append('bio', bio);
+    if(file) formData.append('avatar', file);
+    setError('');
 
+    try {
+      const response = await api.post('/account/register/', formData)
       const {token}=response.data;
       if(token){
         sessionStorage.setItem('token',token)
-        console.log(token);
         navigate('/login'); 
       }else {
         setError('Registration successful, but no token returned');
@@ -36,7 +42,6 @@ const Register = () => {
     }
   };
 
-  // if(loading) return <p>Loading...</p>
 
   return (
     <div className='flex justify-center flex-col ml-96 mt-2 m-10 p-4 w-1/3 h-auto bg-gray-400 rounded-md'>
@@ -68,6 +73,20 @@ const Register = () => {
           placeholder="Confirm Password"
           value={password2}
           onChange={(e) => setPassword2(e.target.value)}
+          className='bg-zinc-600 px-2 py-2 m-3 rounded-lg'
+        />
+        <input
+          type="text"
+          placeholder="Bio"
+          value={bio}
+          onChange={(e) => setBio(e.target.value)}
+          className='bg-zinc-600 px-2 py-2 m-3 rounded-lg'
+        />
+        <input
+          type="file"
+          placeholder="avatar"
+          value={avatar}
+          onChange={(e) => setAvatar(e.target.value)}
           className='bg-zinc-600 px-2 py-2 m-3 rounded-lg'
         />
         <button className='px-2 py-2 bg-green-400 w-20 ml-64 rounded-md hover:bg-green-900 m-2' type="submit">Register</button>

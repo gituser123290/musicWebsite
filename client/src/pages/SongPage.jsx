@@ -14,28 +14,26 @@ export default function SongPage() {
   });
   const [artists, setArtists] = useState([]);
   const [loading, setLoading] = useState(false);
-
   const navigate = useNavigate();
-  const token = sessionStorage.getItem("token");
-
 
   useEffect(() => {
     const fetchArtists = async () => {
+      const token = sessionStorage.getItem("token");
+      if(!token) return;
       try {
         const response = await api.get("/artists/", {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Token ${token}`,
           },
         });
         setArtists(response.data);
       } catch (error) {
-        console.error("Error fetching artists:", error);
-        setError("Failed to load artists");
+        setError("Failed to load artists",error.message);
       }
     };
 
     fetchArtists();
-  }, [token]);
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value, type, files } = e.target;
@@ -55,7 +53,8 @@ export default function SongPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-
+    const token = sessionStorage.getItem("token");
+    if(!token) return;
     const formData = new FormData();
     for (let key in songData) {
       formData.append(key, songData[key]);

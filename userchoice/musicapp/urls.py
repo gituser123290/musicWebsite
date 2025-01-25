@@ -10,7 +10,8 @@ urlpatterns = [
     # Playlist URLs
     path('playlist/', views.PlaylistListAPIView.as_view(), name='playlist-list'),
     path('playlist/create/', views.PlaylistCreateAPIView.as_view(), name='playlist-create'),
-    path('playlists/<int:pk>/', views.PlaylistRetrieveUpdateDestroyAPIView.as_view(), name='playlist-detail'),
+    path('playlist/<int:pk>/add_song/', views.PlaylistUpdateAPIView.as_view(), name='playlist-update'),
+    path('playlists/<int:playlist_id>/songs/<int:song_id>/', views.PlaylistDestroyAPIView.as_view(), name='playlist-delete'),
 
     # Album URLs
     path('albums/', views.AlbumListAPIView.as_view(), name='album-list'),

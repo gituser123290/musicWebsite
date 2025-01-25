@@ -3,6 +3,7 @@ from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.exceptions import NotFound
 from rest_framework import status
+from rest_framework.exceptions import ValidationError
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -73,10 +74,53 @@ class PlaylistCreateAPIView(generics.CreateAPIView):
         if songs.exists():
             playlist.songs.set(songs)
         
-class PlaylistRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+
+    
+class PlaylistUpdateAPIView(generics.RetrieveUpdateAPIView):
     serializer_class = PlaylistSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
     queryset = Playlist.objects.all()
+    
+    
+    def patch(self, request, *args, **kwargs):
+        playlist = self.get_object()
+        song_ids = request.data.get('songs_id', [])
+        
+        if not song_ids:
+            return Response({"detail": "No song IDs provided."}, status=status.HTTP_400_BAD_REQUEST)
+
+        songs = Song.objects.filter(id__in=song_ids)
+        if len(songs) != len(song_ids): 
+            return Response({"detail": "Some song IDs are invalid."}, status=status.HTTP_400_BAD_REQUEST)
+
+        playlist.songs.add(*songs)
+        serializer = PlaylistSerializer(playlist)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    
+    
+class PlaylistDestroyAPIView(generics.RetrieveDestroyAPIView):
+    serializer_class = PlaylistSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    queryset = Playlist.objects.all()
+    
+    def get_object(self):
+        playlist = Playlist.objects.get(id=self.kwargs['playlist_id'])
+
+        song = Song.objects.get(id=self.kwargs['song_id'])
+        if song not in playlist.songs.all():
+            raise ValidationError("Song not found in the playlist.")
+
+        return song
+
+    def perform_destroy(self, instance):
+        playlist = Playlist.objects.get(id=self.kwargs['playlist_id'])
+        song = instance 
+        playlist.songs.remove(song)
+        playlist.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # Album Views
@@ -138,6 +182,8 @@ class ArtistListCreateAPIView(generics.ListCreateAPIView):
 class ArtistRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = ArtistSerializer
     queryset = Artist.objects.all()
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
     
     
     def patch(self, request, *args, **kwargs):

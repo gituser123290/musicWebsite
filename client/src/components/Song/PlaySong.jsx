@@ -112,6 +112,29 @@ export default function SongDetail() {
     }
   };
 
+  const addSongToPlaylist = async (e) => {
+    e.preventDefault();
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    try {
+      await api.patch(`/playlist/${id}/add_song/`,
+        {
+          song: song.id,
+        },
+        {
+          headers: {
+            Authorization: `Token ${token}`,
+          },
+        }
+      );
+      alert("Song added to playlist");
+    } catch (error) {
+      setError(error.message);
+    }
+  }
   const browseSongs = async (e) => {
     e.preventDefault();
     navigate("/all-songs");
@@ -137,9 +160,9 @@ export default function SongDetail() {
     <>
       <div className="w-full justify-center items-center bg-gray-600 space-x-28 mb-10">
         <div className="w-full flex justify-start">
-          <div className="items-center p-2 mt-1 rounded-md bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl transition-colors duration-200 cursor-pointer">
+          <div className="items-center pl-2 pr-2 mt-1 ml-2 rounded-md bg-gradient-to-r from-blue-500 to-purple-600 shadow-xl transition-colors duration-200 cursor-pointer">
             <button onClick={() => navigate(-1)} className="text-white">
-              Back to Posts
+              Back
             </button>
           </div>
         </div>
@@ -186,7 +209,7 @@ export default function SongDetail() {
           <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-4 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl shadow-xl flex flex-col items-center space-y-6">
             <div className="flex justify-center space-x-10 mt-2">
               <button className="p-0 hover:text-amber-900 text-3xl">
-                <FaPlusSquare size={24} />
+                <FaPlusSquare size={24} onClick={addSongToPlaylist} />
               </button>
               <button onClick={handleLike} className="text-cyan-800 text-2xl p-0">
                 <FaHeartbeat size={20} />

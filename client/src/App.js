@@ -4,18 +4,17 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
 import Navbar from './layouts/Navbar';
 import Loading from './layouts/Loading';
-import AllSongs from './components/Song/AllSongs';
-import Profile from './components/Profile';
+// import Footer from './layouts/Footer';
+
 
 
 // Lazy loading components
 const Artists = React.lazy(() => import('./components/Artist/Artists'));
 const AlbumUpdateDelete=React.lazy(() => import('./components/Album/AlbumUpdateDelete'));
-const PopularSong = React.lazy(() => import('./components/Song/PopularSong'));
 const Album = React.lazy(() => import('./components/Album/Album'));
 const NotFound = React.lazy(() => import('./layouts/NotFound'));
-const Products = React.lazy(() => import('./components/Others/Products'));
-const Users = React.lazy(() => import('./components/Others/Users'));
+const Profile = React.lazy(() => import('./components/Profile'));
+const AllSongs = React.lazy(() => import('./components/Song/AllSongs'));
 const SongDetail = React.lazy(() => import('./components/Song/SongUpdateDelete'));
 const ArtistUpdateDelete = React.lazy(() => import('./components/Artist/ArtistUpdateDelete'));
 const ProductDetail = React.lazy(() => import('./components/Others/ProductDetail'));
@@ -30,6 +29,8 @@ const Register = React.lazy(() => import('./AuthPage/Register'));
 const Author = React.lazy(() => import('./components/Book/Author'));
 const AuthorDetail = React.lazy(() => import('./components/Book/AuthorDetail'));
 const Book = React.lazy(() => import('./components/Book/Book'));
+const Playlist = React.lazy(() => import('./components/Playlists/Playlist'));
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -64,7 +65,7 @@ function App() {
 
             <Route path="/profile" element={
               <ProtectedRoute>
-                <Profile />
+                <Profile loggedInUser={loggedInUser} />
               </ProtectedRoute>
             } />
 
@@ -86,12 +87,6 @@ function App() {
               </ProtectedRoute>
             } />
 
-            <Route path="/products/" element={
-              <ProtectedRoute>
-                <Products />
-              </ProtectedRoute>
-            } />
-
             <Route path="/product/:id/" element={
               <ProtectedRoute>
                 <ProductDetail />
@@ -110,11 +105,6 @@ function App() {
               </ProtectedRoute>
             } />
 
-            <Route path="/users/" element={
-              <ProtectedRoute>
-                <Users />
-              </ProtectedRoute>
-            } />
 
             <Route path="/createsong" element={
               <ProtectedRoute>
@@ -145,12 +135,11 @@ function App() {
               </ProtectedRoute>
             } />
 
-            <Route path="/popular_song/" element={
+            <Route path="/playlist/" element={
               <ProtectedRoute>
-                <PopularSong />
+                <Playlist />
               </ProtectedRoute>
             } />
-
             <Route path="author">
               <Route path="authors" element={<Author />} />
               <Route path="books" element={<Book />} />
@@ -163,6 +152,7 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </Suspense>
+        {/* <Footer/> */}
       </BrowserRouter>
     </>
   );
