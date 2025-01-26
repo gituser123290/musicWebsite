@@ -166,7 +166,7 @@ class AlbumDeleteAPIView(generics.DestroyAPIView):
 
 
 # Artist Views
-class ArtistListCreateAPIView(generics.ListCreateAPIView):
+class ArtistListAPIView(generics.ListAPIView):
     parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = ArtistSerializer
     permission_classes = [IsAuthenticated]
@@ -174,6 +174,13 @@ class ArtistListCreateAPIView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         return Artist.objects.all()
+
+        
+class ArtistCreateAPIView(generics.CreateAPIView):
+    parser_classes = [MultiPartParser, FileUploadParser]
+    serializer_class = ArtistSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
 
     def perform_create(self, serializer):
         serializer.save()

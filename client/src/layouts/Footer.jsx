@@ -2,10 +2,15 @@ import React from 'react';
 
 export default function Footer() {
   return (
-    <div className='fiexd bottom-0 mt-20'>
-      <footer className="bg-[#686464] p-4 flex justify-center text-white hover:bg-[gray]">
-        <p>{new Date().getDate()}/{new Date().getMonth() + 1}/{new Date().getFullYear()} My Website. All rights reserved.</p>
+    <footer className="bg-gray-900 text-white py-6">
+        <div className="container mx-auto text-center px-6">
+          <p className="text-lg mb-4">© 2025 MusicStream. All rights reserved.</p>
+          <div className="flex justify-center space-x-8">
+            <a href="/" className="hover:text-yellow-500">About</a>
+            <a href="/" className="hover:text-yellow-500">Privacy Policy</a>
+            <a href="/" className="hover:text-yellow-500">Contact</a>
+          </div>
+        </div>
       </footer>
-    </div>
   );
 }

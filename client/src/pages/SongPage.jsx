@@ -7,9 +7,9 @@ export default function SongPage() {
   const [songData, setSongData] = useState({
     title: "",
     song_cover: null,
+    song_cover_url: '',
     artist_id: "",
     audio: null,
-    duration: "",
     genre: "Pop",
   });
   const [artists, setArtists] = useState([]);
@@ -19,7 +19,7 @@ export default function SongPage() {
   useEffect(() => {
     const fetchArtists = async () => {
       const token = sessionStorage.getItem("token");
-      if(!token) return;
+      if (!token) return;
       try {
         const response = await api.get("/artists/", {
           headers: {
@@ -28,7 +28,7 @@ export default function SongPage() {
         });
         setArtists(response.data);
       } catch (error) {
-        setError("Failed to load artists",error.message);
+        setError("Failed to load artists", error.message);
       }
     };
 
@@ -50,25 +50,42 @@ export default function SongPage() {
     }
   };
 
+  const validateForm = () => {
+    if (!songData.song_cover && !songData.song_cover_url) {
+      setError("At least one image field (song_cover or song_cover_url) must be provided.");
+      return false;
+    }
+
+    if (songData.song_cover && songData.song_cover_url) {
+      setError("Only one image field should be provided: either 'song_cover' or 'song_cover_url'.");
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+
     setLoading(true);
     const token = sessionStorage.getItem("token");
-    if(!token) return;
+    if (!token) return;
     const formData = new FormData();
     for (let key in songData) {
       formData.append(key, songData[key]);
     }
 
     try {
-      const response = await api.post('/songs/create/', formData, {
+      await api.post("/songs/create/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
-          Authorization:`Token ${token}`,
+          Authorization: `Token ${token}`,
         },
       });
-      console.log("Song submitted successfully:", response.data);
-      navigate("/"); 
+      navigate("/");
     } catch (error) {
       setError(error.response?.data?.detail || "An error occurred");
       console.error("Error submitting the song:", error);
@@ -125,19 +142,6 @@ export default function SongPage() {
               ))}
             </select>
           </div>
-
-          <div className="mb-2">
-            <label className="block text-gray-700">Duration</label>
-            <input
-              type="text"
-              name="duration"
-              value={songData.duration}
-              onChange={handleInputChange}
-              className="w-full p-1 border rounded-md"
-              required
-            />
-          </div>
-
           <div className="mb-2">
             <label className="block text-gray-700">Audio File</label>
             <input
@@ -158,7 +162,18 @@ export default function SongPage() {
               accept="image/*"
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
-              required
+              required={!songData.song_cover_url}
+            />
+          </div>
+          <div className="mb-2">
+            <label className="block text-gray-700">Song Cover URL</label>
+            <input
+              type="url"
+              name="song_cover_url"
+              value={songData.song_cover_url}
+              onChange={handleInputChange}
+              className="w-full p-1 border rounded-md"
+              required={!songData.song_cover}
             />
           </div>
 

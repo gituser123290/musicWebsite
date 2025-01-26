@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import api from '../services/api'
 import Loading from '../layouts/Loading'
 import moment from 'moment';
-import { FaTwitter, FaGithub, FaLinkedin, FaEnvelope, FaAlignRight } from 'react-icons/fa';
+import { FaTwitter, FaGithub, FaLinkedin, FaEnvelope, FaAlignRight, FaPenSquare } from 'react-icons/fa';
 
 export default function Profile() {
     const [user, setUser] = useState([])
@@ -57,6 +57,12 @@ export default function Profile() {
                     <p className="text-gray-600">{user?.bio || "No bio available"}</p>
 
                     <div className="mt-4 flex space-x-4">
+                    <a href='/updateprofile' rel="noopener noreferrer">
+                            <FaPenSquare
+                                size={24}
+                                className="text-gray-800 hover:text-gray-900 transition-colors duration-300"
+                            />
+                        </a>
                         <a href='https://x.com/Naurangi23' target="_blank" rel="noopener noreferrer">
                             <FaTwitter
                                 size={24}

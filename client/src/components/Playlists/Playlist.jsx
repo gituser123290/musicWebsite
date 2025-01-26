@@ -5,9 +5,12 @@ import { FaPlay, FaPause, FaTrash } from "react-icons/fa";
 import { useEffect, useState, useRef } from 'react';
 import { Navigate,useNavigate } from 'react-router-dom';
 
+
+
 const PlaylistComponent = () => {
   const [playlists, setPlaylists] = useState(null);
   const [error, setError] = useState(null);
+  // eslint-disable-next-line
   const [currentPlaylistIndex, setCurrentPlaylistIndex] = useState(0);
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
@@ -108,38 +111,42 @@ const PlaylistComponent = () => {
     <div className="bg-gray-900 py-8 px-4">
       <div className="container mx-auto space-y-8 flex flex-col justify-between min-h-screen">
         <div>
-          {playlists.map((playlist) => (
-            <div
-              key={playlist.id}
-              className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300"
-            >
-              <h2 className="text-3xl font-bold text-center text-white mb-6">{playlist.name}</h2>
-              <div className="space-y-6">
-                {playlist.songs.map((song) => (
-                  <div
-                    key={song.id}
-                    className="bg-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-600 transition-all duration-300 transform hover:scale-100"
-                  >
-                    <div className="flex items-center space-x-4">
-                      <img
-                        src={`http://localhost:8000${song.song_cover}`}
-                        alt={song.title}
-                        className="w-20 h-20 rounded-md shadow-md hover:shadow-lg transition-shadow duration-300"
-                      />
-                      <div className="text-white">
-                        <h3 className="text-xl font-semibold" onClick={() => handleClick(song.id)}>{song.title}</h3>
-                        <p className="text-sm text-gray-500">{song.artist?.name}</p>
-                        <p className="text-sm text-gray-500">{song.genre} | {song.duration}</p>
+          {playlists && playlists.length > 0 ?(
+            playlists.map((playlist) => (
+              <div
+                key={playlist.id}
+                className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300"
+              >
+                <h2 className="text-3xl font-bold text-center text-white mb-6">{playlist.name}</h2>
+                <div className="space-y-6">
+                  {playlist.songs.map((song) => (
+                    <div
+                      key={song.id}
+                      className="bg-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-600 transition-all duration-300 transform hover:scale-100"
+                    >
+                      <div className="flex items-center space-x-4">
+                        <img
+                          src={`http://localhost:8000${song.song_cover}`}
+                          alt={song.title}
+                          className="w-20 h-20 rounded-md shadow-md hover:shadow-lg transition-shadow duration-300"
+                        />
+                        <div className="text-white">
+                          <h3 className="text-xl font-semibold" onClick={() => handleClick(song.id)}>{song.title}</h3>
+                          <p className="text-sm text-gray-500">{song.artist?.name}</p>
+                          <p className="text-sm text-gray-500">{song.genre} | {song.duration}</p>
+                        </div>
+                      </div>
+                      <div className='cursor-pointer hover:text-red-600'>
+                        <FaTrash onClick={() => deleteSongToPlaylist(playlist.id, song.id)} size={10}/>
                       </div>
                     </div>
-                    <div className='cursor-pointer hover:text-red-600'>
-                      <FaTrash onClick={() => deleteSongToPlaylist(playlist.id, song.id)} size={10}/>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          ):(
+            <div className="text-white text-center">No playlists found</div>
+          )}
         </div>
         <div className="audio-controls text-white mt-6 flex flex-col justify-end">
         <div className=" text-yellow-400 mt-4">

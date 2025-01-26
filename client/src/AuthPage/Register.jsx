@@ -7,25 +7,20 @@ const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [password2, setPassword2] = useState('');
-  const [bio, setBio] = useState('');
-  const [avatar, setAvatar] = useState(null);
+  const [confirmPassword, setConfirmPassword2] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if(password !== password2){
+    if(password !== confirmPassword){
       setError('Password does not match');
       return;
     }
-    const file = avatar; // Assuming avatar is a file input field with onChange event
     const formData = new FormData();
     formData.append('username', username);
     formData.append('email', email);
     formData.append('password', password);
-    formData.append('bio', bio);
-    if(file) formData.append('avatar', file);
     setError('');
 
     try {
@@ -38,6 +33,7 @@ const Register = () => {
         setError('Registration successful, but no token returned');
       }
     } catch (err) {
+      alert('Registration failed', err.message);
       setError(err.response?.data?.message);
     }
   };
@@ -71,22 +67,8 @@ const Register = () => {
         <input
           type="password"
           placeholder="Confirm Password"
-          value={password2}
-          onChange={(e) => setPassword2(e.target.value)}
-          className='bg-zinc-600 px-2 py-2 m-3 rounded-lg'
-        />
-        <input
-          type="text"
-          placeholder="Bio"
-          value={bio}
-          onChange={(e) => setBio(e.target.value)}
-          className='bg-zinc-600 px-2 py-2 m-3 rounded-lg'
-        />
-        <input
-          type="file"
-          placeholder="avatar"
-          value={avatar}
-          onChange={(e) => setAvatar(e.target.value)}
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword2(e.target.value)}
           className='bg-zinc-600 px-2 py-2 m-3 rounded-lg'
         />
         <button className='px-2 py-2 bg-green-400 w-20 ml-64 rounded-md hover:bg-green-900 m-2' type="submit">Register</button>

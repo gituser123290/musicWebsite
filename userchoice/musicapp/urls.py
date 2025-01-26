@@ -20,7 +20,8 @@ urlpatterns = [
     path('albums/delete/<int:pk>/', views.AlbumDeleteAPIView.as_view(), name='album-delete'),
 
     # Artist URLs
-    path('artists/', views.ArtistListCreateAPIView.as_view(), name='artist-list-create'),
+    path('artists/', views.ArtistListAPIView.as_view(), name='artist-list'),
+    path('artist/create/', views.ArtistCreateAPIView.as_view(), name='artist-create'),
     path('artists/<int:pk>/', views.ArtistRetrieveUpdateDestroyAPIView.as_view(), name='artist-detail'),
 
     # Like URLs

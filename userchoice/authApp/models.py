@@ -6,19 +6,13 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 class UserProfile(AbstractUser):
-    # Removed the `user` field as it's redundant
     profile_picture = models.ImageField(upload_to='profile_pics/', blank=True, null=True)
     bio = models.TextField(blank=True, null=True)
     phone_number = models.CharField(max_length=15, blank=True, null=True)
 
     def __str__(self):
         return self.username
-
-# Signal to create the user profile when a user is created
-@receiver(post_save, sender=settings.AUTH_USER_MODEL)
-def create_user_profile(sender, instance, created, **kwargs):
-    if created:
-        UserProfile.objects.create(user=instance)
+    
 
 # Signal to create the auth token when a user is created
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)

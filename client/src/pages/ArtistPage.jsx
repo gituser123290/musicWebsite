@@ -8,6 +8,7 @@ export default function ArtistPage() {
         name: "",
         bio: "",
         image: null,
+        image_url: null,
         website:"",
         social_media: null,
         nationality: "",
@@ -42,19 +43,18 @@ export default function ArtistPage() {
         formData.append(key, songData[key]);
         }
         try {
-            const response = await api.post('/artists/', formData, {
+            const response = await api.post('/artist/create/', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
-                    Authorization: `Token ${token}`,
+                    'Authorization': `Token ${token}`,
                 },
             });
             setSongData(response.data);
-            navigate('/artist')
             console.log(response.data);
-            
+            navigate('/artist')            
         } catch (error) {
             setError(error);
-            alert(error.message);
+            console.log(error.message);
         }
     };
 
@@ -107,6 +107,19 @@ export default function ArtistPage() {
                                 name="image"
                                 id="image"
                                 accept="image/*"
+                                onChange={handleInputChange}
+                                className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label htmlFor="birth_date" className="block text-lg text-gray-700 mb-2">
+                                Image URL
+                            </label>
+                            <input
+                                type="url"
+                                name="image_url"
+                                id="image_url"
                                 onChange={handleInputChange}
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                                 required

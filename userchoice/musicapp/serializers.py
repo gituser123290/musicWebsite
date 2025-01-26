@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from .models import Song, Playlist, Album, Artist, Like, Comment, Subscription, PlaylistCollaborator
 from django.contrib.auth.models import User
-from authApp.serializers import UserSerializer
+from authApp.serializers import UserProfileSerializer
 
 
 
@@ -12,11 +12,17 @@ class ArtistSerializer(serializers.ModelSerializer):
         
         
     def validate(self, data):
-        if not data.get('image') and not data.get('image_url'):
-            raise serializers.ValidationError("At least one image field must be provided.")
-        if data.get('image') and data.get('image_url'):
-            raise serializers.ValidationError("Only one image field should be provided.")
+        image = data.get('image')
+        image_url = data.get('image_url')
+
+        if not image and not image_url:
+            raise serializers.ValidationError("At least one image field (image or image_url) must be provided.")
+
+        if image and image_url:
+            raise serializers.ValidationError("Only one image field should be provided: either 'image' or 'image_url'.")
+
         return data
+
         
         
     def update(self, instance, validated_data):
@@ -87,13 +93,13 @@ class AlbumSerializer(serializers.ModelSerializer):
 
 
 class LikeSerializer(serializers.ModelSerializer):
-    user=UserSerializer(read_only=True)
+    user=UserProfileSerializer(read_only=True)
     class Meta:
         model = Like
         fields = ['id', 'user', 'song', 'created_at']
 
 class CommentSerializer(serializers.ModelSerializer):
-    user=UserSerializer(read_only=True)
+    user=UserProfileSerializer(read_only=True)
     songs=SongSerializer(read_only=True)
     class Meta:
         model = Comment

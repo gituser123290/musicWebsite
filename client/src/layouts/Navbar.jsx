@@ -1,126 +1,78 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { GiMusicSpell } from "react-icons/gi";
 
-export default function Navbar({ isAuthenticated, handleLogout }) {
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [isDropdownOpenOdd, setIsDropdownOpenOdd] = useState(false);
+const Navbar = ({ isAuthenticated, handleLogout }) => {
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    const handleMouseEnter1 = () => setIsDropdownOpen(true);
-    const handleMouseLeave1 = () => setIsDropdownOpen(false);
+  const toggleDropdown = () => {
+    setDropdownOpen(!dropdownOpen);
+  };
 
-    const handleMouseEnter = () => setIsDropdownOpenOdd(true);
-    const handleMouseLeave = () => setIsDropdownOpenOdd(false);
+  return (
+    <nav className="bg-gray-800 text-white px-6 py-4 flex items-center justify-between">
+      {/* Logo on the left */}
+      <div className="text-2xl font-semibold">
+        <a href="/"><GiMusicSpell size={25}/></a>
+      </div>
 
-    return (
-        <>
-            <nav className='flex flex-row justify-center align-middle w-full bg-gray-500'>
-                <ul className='flex flex-row pt-2 pb-2 justify-between space-x-20'>
-                    {isAuthenticated ? (
-                        <>
-                        
-                        <li className='py-1 rounded-sm mx-1'>
-                            <a
-                                className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                href='/'
-                            >
-                                Home
-                            </a>
-                        </li>
-                        <li className='py-1 rounded-sm mx-1'>
-                            <a
-                                className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                href='/artist'
-                            >
-                                Artist
-                            </a>
-                        </li>
-                        <li className='px-2 py-1 rounded-sm mx-1'>
-                            <a
-                                className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                href='/album'
-                            >
-                                Album
-                            </a>
-                        </li>   
-                        <li className='px-2 py-1 rounded-sm mx-1'>
-                            <a
-                                className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                href='/profile'
-                            >
-                                Profile
-                            </a>
-                        </li>
-                        <li 
-                            onMouseEnter={handleMouseEnter1}
-                            onMouseLeave={handleMouseLeave1}
-                            className='px-2 py-1 rounded-sm mx-1'>
-                                <ul
-                                    className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                >
-                                    User
-                                </ul>
-                                {isDropdownOpen && (
-                                    <div className="dropdown-content absolute bg-green-500 text-white rounded-md mt-1 z-10">
-                                    <a href="/playlist" className="block px-4 py-2 hover:bg-green-900">Playlist</a>
-                                    <a href="/createsong" className="block px-4 py-2 hover:bg-green-900">Create Song</a>
-                                    <a href="/createartist" className="block px-4 py-2 hover:bg-green-900">Create Artist</a>
-                                    <a href="/createalbum" className="block px-4 py-2 hover:bg-green-900">Create Album</a>
-                                    </div>
-                            )}
-                        </li>
-                        <li 
-                            onMouseEnter={handleMouseEnter}
-                            onMouseLeave={handleMouseLeave}
-                            className='px-2 py-1 rounded-sm mx-1'>
-                                Author
-                            <ul>
-                                {isDropdownOpenOdd && (
-                                    <div className="dropdown-content absolute bg-green-500 text-white rounded-md mt-1 z-10">
-                                        <li>
-                                            <Link to="/author/authors" className="block px-4 py-2 hover:bg-green-900">
-                                                Authors
-                                            </Link>
-                                        </li>
-                                        <li>
-                                            <Link to="/author/books" className="block px-4 py-2 hover:bg-green-900">
-                                                Books
-                                            </Link>
-                                        </li>
-                                    </div>
-                                )}
-                            </ul>
-                        </li>
-                        <li className='px-1 py-0 rounded-sm mx-1'>
-                            <button
-                                className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                onClick={handleLogout}
-                            >
-                                LogOut
-                            </button>
-                        </li>
-                    </>
-                    ) : (
-                        <>
-                        <li className='px-2 py-1 rounded-sm mx-1'>
-                            <a
-                                className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                href='/login'
-                            >
-                                Login
-                            </a>
-                        </li>
-                        <li className='px-2 py-1 rounded-sm mx-1'>
-                            <a
-                                className='text-black hover:text-white transition-all duration-300 rounded-md'
-                                href='/register'
-                            >
-                                Register
-                            </a>
-                        </li>
-                        </>
-                    )}
-                </ul>
-            </nav>
-        </>
-    )
-}
+      {/* Conditionally render based on authentication */}
+      <div className="flex space-x-6">
+        {!isAuthenticated ? (
+          <>
+            {/* Links for login/register if not authenticated */}
+            <a href="/" className="hover:text-gray-400">Login</a>
+            <a href="/" className="hover:text-gray-400">Register</a>
+          </>
+        ) : (
+          <>
+            {/* Links for authenticated users */}
+            <a href="/" className="hover:text-gray-400">Home</a>
+            <a href="/about" className="hover:text-gray-400">About</a>
+            <a href="/services" className="hover:text-gray-400">Services</a>
+
+            {/* User profile dropdown */}
+            <div className="relative">
+              <button
+                className="flex items-center space-x-2 hover:text-gray-400"
+                onClick={toggleDropdown}
+              >
+                <span>Profile</span>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className={`h-4 w-4 transform transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  strokeWidth="2"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg">
+                  <ul>
+                    <li>
+                      <a href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-200">Profile</a>
+                    </li>
+                    <li>
+                      <a href="/" className="block px-4 py-2 text-sm hover:bg-gray-200">Settings</a>
+                    </li>
+                    <li>
+                      <button onClick={handleLogout} className="px-4 py-2 text-sm hover:bg-gray-200">Logout</button>
+                    </li>
+                  </ul>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+      </div>
+    </nav>
+  );
+};
+
+export default Navbar;

@@ -81,8 +81,8 @@ export default function AllSongs() {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 pt-2 pb-16">
-            <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-2 bg-white rounded-xl shadow-xl flex flex-col items-center space-y-4">
+        <div className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 pt-2 pb-24">
+            <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-2 mt-8 bg-white rounded-xl shadow-xl flex flex-col items-center space-y-4">
                 <div className="w-full mb-2 flex justify-center">
                     <img
                         className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
