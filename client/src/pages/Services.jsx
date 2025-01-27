@@ -4,26 +4,14 @@ const servicesData = [
   {
     title: 'Web Development',
     description:
-      'We build responsive, SEO-friendly, and fast websites using modern technologies like React, Node.js, and Tailwind CSS.',
+      'We build responsive, SEO-friendly, and fast websites using modern technologies like Python, Django, Django REST FrameWork(DRF), React, Node.js, and Tailwind CSS.',
     icon: '🌐',
-  },
-  {
-    title: 'Mobile App Development',
-    description:
-      'Our team builds cross-platform mobile apps using React Native and other frameworks that provide smooth user experiences.',
-    icon: '📱',
   },
   {
     title: 'UI/UX Design',
     description:
       'We craft intuitive and beautiful user interfaces that enhance user experiences with modern design principles.',
     icon: '🎨',
-  },
-  {
-    title: 'SEO Services',
-    description:
-      'We optimize your website to rank better on search engines, helping you attract more organic traffic and reach your target audience.',
-    icon: '🔍',
   },
 ];
 

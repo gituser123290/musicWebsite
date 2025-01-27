@@ -21,6 +21,7 @@ const Register = () => {
     formData.append('username', username);
     formData.append('email', email);
     formData.append('password', password);
+    formData.append('confirmPassword',confirmPassword );
     setError('');
 
     try {

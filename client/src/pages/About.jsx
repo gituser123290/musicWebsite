@@ -2,9 +2,19 @@ import React from 'react';
 import grass from '../assets/images/img.jpg'
 import pic from '../assets/images/img.jpg'
 import img from '../assets/images/img.jpg'
+import { useNavigate } from 'react-router-dom';
 
 
 export default function AboutPage() {
+
+  const navigate=useNavigate()
+  function browseArtists() {
+    navigate('/artists')
+  }
+
+  function browseAlbums() {
+    navigate('/albums')
+  }
   return (
     <div className="bg-gray-50 py-12">
       <section className="text-center mb-16">
@@ -36,6 +46,20 @@ export default function AboutPage() {
             <p className="text-gray-600 mt-2">
               Create, save, and share playlists based on your favorite tracks. Organize your music however you like.
             </p>
+          </div>
+          <div onClick={browseArtists} className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+            <div className="text-4xl text-purple-500 mb-4">📅</div>
+            <h3 className="text-xl font-semibold text-gray-800">Browse Artists</h3>
+            <p className="text-gray-600 mt-2">
+              Create, save, and share Artists based on your favorite tracks. Organize your music however you like.
+            </p>
+          </div>
+          <div onClick={browseAlbums} className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+              <div className="text-4xl text-purple-500 mb-4">📅</div>
+              <h3 className="text-xl font-semibold text-gray-800">Browse Albums</h3>
+              <p className="text-gray-600 mt-2">
+                Create, save, and share Albums based on your favorite tracks. Organize your music however you like.
+              </p>
           </div>
         </div>
       </section>

@@ -5,7 +5,7 @@ import api from '../../services/api'
 import Loading from '../../layouts/Loading'
 
 
-
+const image_url = "https://path/to/default/image.jpg";
 export default function Artists() {
     const [artists, setArtists] = useState([])
     const [loading, setLoading] = useState(true)
@@ -27,7 +27,6 @@ export default function Artists() {
                     },
                 })
                 setArtists(response.data)
-                console.log(response.data)
                 setLoading(false)
             } catch (error) {
                 setError(error)
@@ -38,7 +37,7 @@ export default function Artists() {
     }, [navigate])
 
     const handleClick=(id)=>{
-        navigate(`/artist/${id}/`)
+        navigate(`/artists/${id}/`)
     }
 
     if (loading) return <div><Loading/></div>;
@@ -57,7 +56,7 @@ export default function Artists() {
                 >
                     <img 
                         className="w-32 h-32 object-cover rounded-full shadow-md mb-4" 
-                        src={artist.image} 
+                        src={artist?.image ? artist.image : image_url} 
                         alt={artist.name} 
                     />
                     <div className="text-center space-y-2">

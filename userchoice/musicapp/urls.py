@@ -11,6 +11,7 @@ urlpatterns = [
     path('playlist/', views.PlaylistListAPIView.as_view(), name='playlist-list'),
     path('playlist/create/', views.PlaylistCreateAPIView.as_view(), name='playlist-create'),
     path('playlist/<int:pk>/add_song/', views.PlaylistUpdateAPIView.as_view(), name='playlist-update'),
+    path('playlist/<int:pk>/delete/', views.PlaylistDeleteAPIView.as_view(), name='playlist-delete'),
     path('playlists/<int:playlist_id>/songs/<int:song_id>/', views.PlaylistDestroyAPIView.as_view(), name='playlist-delete'),
 
     # Album URLs

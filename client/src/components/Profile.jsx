@@ -35,7 +35,7 @@ export default function Profile() {
 
     const browseSongs = async (e) => {
         e.preventDefault();
-        navigate("/all-songs");
+        navigate("/allsongs");
       }
 
     if (loading) return <Loading />
@@ -51,16 +51,16 @@ export default function Profile() {
                         src={user?.profile_picture} alt={user.username}
                     />
                 </div>
-                <div className="p-6">
+                <div className="p-6 space-y-20">
                     <h2 className="text-xl font-semibold text-gray-800">{user?.username} joined {moment(user?.date_joined).fromNow()}</h2>
                     <h3 className="text-xl font-semibold text-gray-800">{user?.first_name} {user?.last_name}</h3>
                     <p className="text-gray-600">{user?.bio || "No bio available"}</p>
 
-                    <div className="mt-4 flex space-x-4">
+                    <div className="mt-4 flex space-x-14">
                     <a href='/updateprofile' rel="noopener noreferrer">
                             <FaPenSquare
                                 size={24}
-                                className="text-gray-800 hover:text-gray-900 transition-colors duration-300"
+                                className="text-gray-400 hover:text-gray-900 transition-colors duration-300"
                             />
                         </a>
                         <a href='https://x.com/Naurangi23' target="_blank" rel="noopener noreferrer">
@@ -72,13 +72,13 @@ export default function Profile() {
                         <a href='https://github.com/Naurangi123' target="_blank" rel="noopener noreferrer">
                             <FaGithub
                                 size={24}
-                                className="text-gray-800 hover:text-gray-900 transition-colors duration-300"
+                                className="text-gray-500 hover:text-black transition-colors duration-300"
                             />
                         </a>
                         <a href='https://www.linkedin.com/in/naurangi-lal-aa3175228/' target="_blank" rel="noopener noreferrer">
                             <FaLinkedin
                                 size={24}
-                                className="text-blue-700 hover:text-blue-800 transition-colors duration-300"
+                                className="text-blue-500 hover:text-blue-900 transition-colors duration-300"
                             />
                         </a>
                         <a href={`mailto:${user?.email}`} target="_blank" rel="noopener noreferrer">

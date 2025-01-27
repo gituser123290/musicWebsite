@@ -4,6 +4,7 @@ import { FaRegEdit, FaTrash } from "react-icons/fa";
 import { FaPlay } from "react-icons/fa";
 import api from "../../services/api";
 import Loading from "../../layouts/Loading";
+import { FaArrowLeft } from "react-icons/fa";
 
 export default function SongUpdate() {
   const { id } = useParams();
@@ -49,8 +50,8 @@ export default function SongUpdate() {
       }
       try {
         const response = await api.get(`/songs/${id}/`, {
-          headers: { 
-            Authorization: `Token ${token}` 
+          headers: {
+            Authorization: `Token ${token}`
           },
         });
         setSong(response.data);
@@ -114,23 +115,23 @@ export default function SongUpdate() {
     }
   };
 
-  const deleteSong = async () => {
-    const token = sessionStorage.getItem('token')
-    if (!token) {
-      Navigate('/login')
-      return;
-    }
-    try {
-      await api.delete(`/songs/${id}/`, {
-        headers: {
-          Authorization: `Token ${token}`
-        },
-      });
-      navigate(`/`);
-    } catch (error) {
-      setError(error.response?.data?.detail || "An error occurred");
-    }
-  }
+  // const deleteSong = async () => {
+  //   const token = sessionStorage.getItem('token')
+  //   if (!token) {
+  //     Navigate('/login')
+  //     return;
+  //   }
+  //   try {
+  //     await api.delete(`/songs/${id}/`, {
+  //       headers: {
+  //         Authorization: `Token ${token}`
+  //       },
+  //     });
+  //     navigate(`/`);
+  //   } catch (error) {
+  //     setError(error.response?.data?.detail || "An error occurred");
+  //   }
+  // }
 
   const openCommentModal = () => {
     setIsModalOpen(true);
@@ -149,158 +150,165 @@ export default function SongUpdate() {
 
 
   return (
-    <>
-        <div className="flex items-center justify-center flex-col w-full flex-1 mt-4">
-          <div className="items-center p-2 m-2 bg-orange-300 rounded-md hover:bg-orange-600 shadow-xl transition-colors duration-200 cursor-pointer">
-            <button onClick={() => navigate(-1)} className="text-white text-center">
-              Back to Posts
+    <div className="flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600 flex-col w-full">
+      <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-gray-800 p-6 rounded-lg shadow-xl m-2">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-2">
+            <button
+              onClick={() => navigate(-1)}
+              className="text-white text-sm font-semibold flex items-center space-x-2 px-4 py-2 rounded-lg bg-orange-400 hover:bg-orange-500 transition duration-200"
+            >
+              <FaArrowLeft className="text-xl" />
+              <span>Back</span>
             </button>
           </div>
-          <div className="w-3/4 sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-gray-800 p-2 rounded-md shadow-lg">
-            <h1 className="text-center text-cyan-600 text-2xl mb-2">
-              Song Detail
-            </h1>
-            {song ? (
-              <div className="flex flex-col items-center space-y-4">
-                <div className="mb-2">
-                  <img
-                    className="w-full h-auto object-cover rounded-md"
-                    src={song.song_cover}
-                    alt="Song cover"
-                  />
-                </div>
-                <hr />
-                <div className="p-2 columns-2 gap-20">
-                  <h2 className="text-white text-2xl">{song.title}</h2>
-                  <p className="text-white">Artist: {song.artist?.name}</p>
-                  <p className="text-white">Length: {song.duration}</p>
-                  <p className="text-white">Genre: {song.genre}</p>
-                  <div className="flex justify-center space-x-10">
-                    <button
-                      onClick={openCommentModal}
-                      className="mt-2 text-xl text-white py-2 rounded-md hover:text-sky-400"
-                    >
-                      <FaRegEdit />
-                    </button>
-                    <button
-                      onClick={deleteSong}
-                      className="mt-2 text-xl text-white py-2 rounded-md hover:text-red-600"
-                    >
-                      <FaTrash />
-                    </button>
-                    <button
-                      onClick={() => handlePlaySong(song.id)}
-                      className="mt-2 text-xl text-white py-2 rounded-md hover:text-orange-400"
-                    >
-                      <FaPlay />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <p>No song found!</p>
-            )}
-          </div>
         </div>
-        {isModalOpen && (
-          <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white p-6 rounded-md shadow-lg w-1/3 columns-2">
-              <h2 className="text-xl mb-4">Update Song</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Song Name</label>
-                  <input
-                    type="text"
-                    name="title"
-                    value={songDetails.title}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Song Cover</label>
-                  <input
-                    type="file"
-                    name="song_cover"
-                    accept="image/*"
-                    onChange={handleInputChange}
-                    className="w-full p-2 border rounded-md"
-                  />
-                  {songDetails.song_cover && !songDetails.song_cover.name && (
-                    <p className="text-gray-600 mt-2">
-                      {song.song_cover.split("/").pop()}
-                    </p>
-                  )}
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Artist</label>
-                  <select
-                    name="artist_id"
-                    value={songDetails.artist}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                    required
-                  >
-                    <option value="">Select Artist</option>
-                    {artists.map((artist) => (
-                      <option key={artist.id} value={artist.id}>
-                        {artist.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Audio File</label>
-                  <input
-                    type="file"
-                    name="audio"
-                    accept="audio/*"
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                  {songDetails.audio && !songDetails.audio && (
-                    <p className="text-gray-600 mt-2">
-                      {song.audio.split("/").pop()}{" "}
-                    </p>
-                  )}
-                </div>
+        {song ? (
+          <div className="flex flex-col items-center mt-2 space-y-2">
+            <div className="w-full h-auto max-w-xs">
+              <img
+                className="w-full object-cover rounded-lg shadow-md"
+                src={song.song_cover}
+                alt="Song cover"
+              />
+            </div>
 
-                <div className="mb-2">
-                  <label className="block text-gray-700">Duration</label>
-                  <input
-                    type="text"
-                    name="duration"
-                    value={songDetails.duration}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <div className="mb-2">
-                  <label className="block text-gray-700">Genre</label>
-                  <input
-                    type="text"
-                    name="genre"
-                    value={songDetails.genre}
-                    onChange={handleInputChange}
-                    className="w-full p-1 border rounded-md"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  className="w-full p-2 bg-blue-500 text-white rounded-md"
-                >
-                  Submit
-                </button>
-              </form>
+            <div className="w-full text-white">
+              <h2 className="text-2xl font-semibold">{song.title}</h2>
+              <p className="mt-2 text-lg">Artist: {song.artist?.name}</p>
+              <p className="text-lg">Genre: {song.genre}</p>
+            </div>
+
+            <div className="flex justify-center items-center space-x-6 mt-4">
               <button
-                onClick={closeCommentModal}
-                className="absolute top-4 right-4 text-white text-2xl"
+                onClick={openCommentModal}
+                className="text-white text-xl py-2 px-4 rounded-lg hover:bg-sky-500 transition duration-200"
+                aria-label="Edit Comments"
               >
-                &times;
+                <FaRegEdit />
+              </button>
+
+              <button
+                // onClick={deleteSong}
+                className="text-white text-xl py-2 px-4 rounded-lg hover:bg-red-600 transition duration-200"
+                aria-label="Delete Song"
+              >
+                <FaTrash />
+              </button>
+
+              <button
+                onClick={() => handlePlaySong(song.id)}
+                className="text-white text-xl py-2 px-4 rounded-lg hover:bg-orange-400 transition duration-200"
+                aria-label="Play Song"
+              >
+                <FaPlay />
               </button>
             </div>
           </div>
+        ) : (
+          <div className="text-center text-white text-xl">No song found!</div>
         )}
-    </>
+      </div>
+      {isModalOpen && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-md shadow-lg w-1/3 columns-2">
+            <h2 className="text-xl mb-4">Update Song</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="mb-2">
+                <label className="block text-gray-700">Song Name</label>
+                <input
+                  type="text"
+                  name="title"
+                  value={songDetails.title}
+                  onChange={handleInputChange}
+                  className="w-full p-1 border rounded-md"
+                />
+              </div>
+              <div className="mb-2">
+                <label className="block text-gray-700">Song Cover</label>
+                <input
+                  type="file"
+                  name="song_cover"
+                  accept="image/*"
+                  onChange={handleInputChange}
+                  className="w-full p-2 border rounded-md"
+                />
+                {songDetails.song_cover && !songDetails.song_cover.name && (
+                  <p className="text-gray-600 mt-2">
+                    {song.song_cover.split("/").pop()}
+                  </p>
+                )}
+              </div>
+              <div className="mb-2">
+                <label className="block text-gray-700">Artist</label>
+                <select
+                  name="artist_id"
+                  value={songDetails.artist}
+                  onChange={handleInputChange}
+                  className="w-full p-1 border rounded-md"
+                  required
+                >
+                  <option value="">Select Artist</option>
+                  {artists.map((artist) => (
+                    <option key={artist.id} value={artist.id}>
+                      {artist.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="mb-2">
+                <label className="block text-gray-700">Audio File</label>
+                <input
+                  type="file"
+                  name="audio"
+                  accept="audio/*"
+                  onChange={handleInputChange}
+                  className="w-full p-1 border rounded-md"
+                />
+                {songDetails.audio && !songDetails.audio && (
+                  <p className="text-gray-600 mt-2">
+                    {song.audio.split("/").pop()}{" "}
+                  </p>
+                )}
+              </div>
+
+              <div className="mb-2">
+                <label className="block text-gray-700">Duration</label>
+                <input
+                  type="text"
+                  name="duration"
+                  value={songDetails.duration}
+                  onChange={handleInputChange}
+                  className="w-full p-1 border rounded-md"
+                />
+              </div>
+              <div className="mb-2">
+                <label className="block text-gray-700">Genre</label>
+                <input
+                  type="text"
+                  name="genre"
+                  value={songDetails.genre}
+                  onChange={handleInputChange}
+                  className="w-full p-1 border rounded-md"
+                />
+              </div>
+              <button
+                type="submit"
+                className="w-full p-2 bg-blue-500 text-white rounded-md"
+              >
+                Submit
+              </button>
+            </form>
+            <button
+              onClick={closeCommentModal}
+              className="absolute top-4 right-4 text-white text-2xl"
+            >
+              &times;
+            </button>
+          </div>
+        </div>
+      )
+      }
+    </div>
   );
 };

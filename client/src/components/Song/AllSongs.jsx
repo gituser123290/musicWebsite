@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
-import { FaPlay, FaPause, FaRedoAlt } from "react-icons/fa";
+import { FaPlay, FaPause} from "react-icons/fa";
 import api from '../../services/api';
 import Loading from '../../layouts/Loading';
 import { Navigate } from 'react-router-dom';
@@ -13,7 +13,6 @@ export default function AllSongs() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [audioPlayer, setAudioPlayer] = useState(null);
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
-    const [isLooping, setIsLooping] = useState(false);
 
     useEffect(() => {
         const allSongs = async () => {
@@ -65,17 +64,6 @@ export default function AllSongs() {
         setCurrentSongIndex(newIndex);
     };
 
-    const toggleLoop = () => {
-        setIsLooping(!isLooping);
-    };
-
-    const handleSongEnd = () => {
-        if (isLooping) {
-            audioPlayer.play(); 
-        } else {
-            nextSong(); 
-        }
-    };
 
     if (loading) return <div><Loading/></div>;
     if (error) return <div>Error: {error}</div>;
@@ -99,10 +87,8 @@ export default function AllSongs() {
                         controls
                         className="w-full rounded-lg bg-gray-100 p-2"
                         src={`http://localhost:8000${songs[currentSongIndex]?.audio}`}
-                        onEnded={handleSongEnd} 
-                        loop={isLooping}
                     />
-                    <div className="flex justify-center space-x-6 mt-4">
+                    <div className="flex justify-center space-x-10 mt-4">
                         <button
                             onClick={previousSong}
                             className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
@@ -121,13 +107,6 @@ export default function AllSongs() {
                             className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
                         >
                             <TbPlayerTrackNextFilled size={24} />
-                        </button>
-
-                        <button
-                            onClick={toggleLoop}
-                            className={`bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 transition duration-300 ${isLooping ? 'bg-green-600' : ''}`}
-                        >
-                            <FaRedoAlt size={24} />
                         </button>
                     </div>
                 </div>

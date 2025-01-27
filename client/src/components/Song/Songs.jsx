@@ -57,10 +57,9 @@ export default function Songs() {
                     <p className="text-sm py-1 font-medium text-gray-800 tracking-normal">Title: {song.title}</p>
                     <p className="text-xl py-1 font-semibold text-gray-950 tracking-normal">Artist: {song.artist.name}</p>
                     <p className="text-lg py-1 text-gray-900 -tracking-4">Genre: {song.genre}</p>
-                    <p className="text-lg py-1 text-gray-900 -tracking-4">Duration: {song.duration}</p>
                 </div>
                 <div className="flex-1">
-                    <audio className="w-full rounded-lg bg-gray-100 p-2" src={song.audio} controls></audio>
+                    <audio className="w-full rounded-lg bg-gray-100 p-2" src={song.audio}></audio>
                 </div>
             </div>
         ))}

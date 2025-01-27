@@ -49,31 +49,39 @@ class SongSerializer(serializers.ModelSerializer):
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
-    songs = SongSerializer(many=True, read_only=True)  # for reading songs
-    songs_id = serializers.PrimaryKeyRelatedField(queryset=Song.objects.all(), many=True, write_only=True)  # for writing song IDs
+    songs = SongSerializer(many=True, read_only=True)
+    songs_id = serializers.PrimaryKeyRelatedField(queryset=Song.objects.all(), many=True, write_only=True, required=False)
+    user = serializers.PrimaryKeyRelatedField(read_only=True) 
 
     class Meta:
         model = Playlist
         fields = ['id', 'name', 'user', 'songs', 'songs_id', 'is_public', 'created_at']
 
+    def create(self, validated_data):
+
+        song_id = validated_data.pop('songs_id', song_id)
+
+        playlist = Playlist.objects.create(**validated_data)
+
+        if song_id:
+            songs = Song.objects.filter(id__in=song_id)
+            playlist.songs.set(songs)
+
+        return playlist
+
     def update(self, instance, validated_data):
-        # Handle fields like 'name', 'user', etc.
         instance.name = validated_data.get('name', instance.name)
         instance.user = validated_data.get('user', instance.user)
         instance.is_public = validated_data.get('is_public', instance.is_public)
-
-        # Get the list of song IDs from validated_data
-        song_ids = validated_data.get('songs_id', [])
         
-        # Add each song by its ID (not the Song instance)
-        for song_id in song_ids:
-            song = Song.objects.get(id=song_id)  # Ensure you're using the song's ID, not the instance
-            instance.songs.add(song)  # Add the song to the playlist
+        song_id = validated_data.get('songs_id',[])
+
+        songs = Song.objects.filter(id__in=song_id)
+        instance.songs.set(songs) 
 
         instance.save()
         return instance
 
-        
 
 class AlbumSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True,read_only=True)

@@ -22,7 +22,6 @@ const Profile = React.lazy(() => import('./components/Profile'));
 const AllSongs = React.lazy(() => import('./components/Song/AllSongs'));
 const SongDetail = React.lazy(() => import('./components/Song/SongUpdateDelete'));
 const ArtistUpdateDelete = React.lazy(() => import('./components/Artist/ArtistUpdateDelete'));
-const ProductDetail = React.lazy(() => import('./components/Others/ProductDetail'));
 const PlaySong = React.lazy(() => import('./components/Song/PlaySong'));
 const SongPage = React.lazy(() => import('./pages/SongPage'));
 const ArtistPage = React.lazy(() => import('./pages/ArtistPage'));
@@ -32,6 +31,7 @@ const Songs = React.lazy(() => import('./components/Song/Songs'));
 const Login = React.lazy(() => import('./AuthPage/Login'));
 const Register = React.lazy(() => import('./AuthPage/Register'));
 const Playlist = React.lazy(() => import('./components/Playlists/Playlist'));
+const Setting= React.lazy(() => import('./pages/Setting'))
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -59,18 +59,18 @@ function App() {
     { path: '/songs/:id', element: <SongDetail /> },
     { path: '/allsongs', element: <AllSongs /> },
     { path: '/song/:id/play', element: <PlaySong /> },
-    { path: '/product/:id', element: <ProductDetail /> },
-    { path: '/artist', element: <Artists /> },
-    { path: '/artist/:id', element: <ArtistUpdateDelete /> },
+    { path: '/artists', element: <Artists /> },
+    { path: '/artists/:id/', element: <ArtistUpdateDelete /> },
     { path: '/createsong', element: <SongPage /> },
     { path: '/createartist', element: <ArtistPage /> },
-    { path: '/createalbum', element: <AlbumPage loggedInUser={loggedInUser} /> },
-    { path: '/album', element: <Album /> },
+    { path: '/createalbum', element: <AlbumPage /> },
+    { path: '/albums', element: <Album /> },
     { path: '/albums/:id', element: <AlbumUpdateDelete /> },
     { path: '/playlists', element: <Playlist /> },
     { path: '/services', element: <ServicesPage /> },
     { path: '/about', element: <AboutPage /> },
     { path: '/updateprofile', element: <ProfileUpdate /> },
+    { path: '/setting', element: <Setting /> },
   ];
 
   return (

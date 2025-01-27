@@ -5,6 +5,7 @@ import api from '../../services/api';
 import Loading from '../../layouts/Loading';
 
 
+const image_url = "https://path/to/default/image.jpg";
 
 
 const ArtistUpdateDelete = () => {
@@ -23,7 +24,8 @@ const ArtistUpdateDelete = () => {
         birth_date: '',
         nationality:'',
         biography:'',
-        image:'',
+        image:null,
+        image_url:null,
     });
 
     useEffect(() => {
@@ -38,6 +40,7 @@ const ArtistUpdateDelete = () => {
                     nationality: response.data.nationality,
                     biography: response.data.biography,
                     image: response.data.image,
+                    image_url: response.data.image_url,
                 });
                 setLoading(false);
             } catch (error) {
@@ -76,6 +79,10 @@ const ArtistUpdateDelete = () => {
 
             if (artistDetails.image) {
                 formData.append('image', artistDetails.image); 
+            }
+
+            if (artistDetails.image_url) {
+                formData.append('image_url', artistDetails.image_url); 
             }
 
             const response = await api.put(`/artist/${id}/`, formData, {
@@ -136,7 +143,7 @@ const ArtistUpdateDelete = () => {
                             <div className="mb-2">
                                 <img
                                     className="w-full h-auto object-cover rounded-md"
-                                    src={`http://localhost:8000${artist.image}`}
+                                    src={`http://localhost:8000${artist?.image ? artist.image : image_url}`}
                                     alt="artist cover"
                                 />
                             </div>
@@ -229,6 +236,16 @@ const ArtistUpdateDelete = () => {
                                 <input
                                     type="file"
                                     name="image"
+                                    accept="image/*"
+                                    onChange={handleInputChange}
+                                    className="w-full p-2 border rounded-md"
+                                />
+                            </div>
+                            <div className="mb-2">
+                                <label className="block text-gray-700">Artist Image URL</label>
+                                <input
+                                    type="file"
+                                    name="image_url"
                                     accept="image/*"
                                     onChange={handleInputChange}
                                     className="w-full p-2 border rounded-md"

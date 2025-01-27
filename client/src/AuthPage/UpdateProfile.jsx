@@ -56,39 +56,63 @@ export default function ProfileUpdate() {
     const token = sessionStorage.getItem("token");
     if (!token) return;
     api.put("/account/user/update/", formData, {
-        headers: {
-          Authorization: `Token ${token}`,
-        },
+      headers: {
+        Authorization: `Token ${token}`,
+      },
     })
-    .then((response) => {
+      .then((response) => {
         navigate("/profile");
-    })
-    .catch((error) => {
+      })
+      .catch((error) => {
         alert("Profile update failed");
         console.log(error);
-    });
+      });
   };
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
   if (!user) return <p>User not found</p>;
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea
-        name="bio"
-        value={profileData.bio}
-        onChange={handleChange}
-        placeholder="Bio"
-      />
-      <input
-        type="text"
-        name="phone_number"
-        value={profileData.phone_number}
-        onChange={handleChange}
-        placeholder="Phone Number"
-      />
-      <input type="file" name="profile_picture" onChange={handleChange} />
-      <button type="submit">Update Profile</button>
+    <form onSubmit={handleSubmit} class="max-w-lg mx-auto my-3 p-6 bg-gradient-to-r from-purple-300 to-indigo-400 rounded-lg shadow-lg space-y-4">
+      <div class="space-y-2">
+        <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
+        <textarea
+          name="bio"
+          value={profileData.bio}
+          onChange={handleChange}
+          placeholder="Tell us about yourself"
+          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <div class="space-y-2">
+        <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
+        <input
+          type="text"
+          name="phone_number"
+          value={profileData.phone_number}
+          onChange={handleChange}
+          placeholder="Phone Number"
+          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <div class="space-y-2">
+        <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
+        <input
+          type="file"
+          name="profile_picture"
+          onChange={handleChange}
+          class="w-full text-sm text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+      </div>
+
+      <button
+        type="submit"
+        class="w-full py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+      >
+        Update Profile
+      </button>
     </form>
   );
 }

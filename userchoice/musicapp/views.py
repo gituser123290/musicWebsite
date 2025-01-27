@@ -67,25 +67,26 @@ class PlaylistCreateAPIView(generics.CreateAPIView):
     
     def perform_create(self, serializer):
         playlist = serializer.save(user=self.request.user)
-        
-        song_ids = self.request.data.get('songs', [])
-        songs = Song.objects.filter(id__in=song_ids)
+        song_ids = self.request.data.get('songs_id')
+        if song_ids:
 
-        if songs.exists():
+            songs = Song.objects.filter(id__in=song_ids)
+            if songs.count() != len(song_ids):
+                return Response({"detail": "Some of the provided songs were not found."}, status=status.HTTP_400_BAD_REQUEST)
+
             playlist.songs.set(songs)
-        
-
+                
     
-class PlaylistUpdateAPIView(generics.RetrieveUpdateAPIView):
+class PlaylistUpdateAPIView(generics.UpdateAPIView):
     serializer_class = PlaylistSerializer
     permission_classes = [IsAuthenticated]
     authentication_classes=[TokenAuthentication]
     queryset = Playlist.objects.all()
     
     
-    def patch(self, request, *args, **kwargs):
+    def update(self, request, *args, **kwargs):
         playlist = self.get_object()
-        song_ids = request.data.get('songs_id', [])
+        song_ids = request.data.get('songs_id',[])
         
         if not song_ids:
             return Response({"detail": "No song IDs provided."}, status=status.HTTP_400_BAD_REQUEST)
@@ -98,6 +99,17 @@ class PlaylistUpdateAPIView(generics.RetrieveUpdateAPIView):
         serializer = PlaylistSerializer(playlist)
         return Response(serializer.data, status=status.HTTP_200_OK)
     
+    
+    
+class PlaylistDeleteAPIView(generics.DestroyAPIView):
+    serializer_class = PlaylistSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
+    queryset = Playlist.objects.all()
+    
+    def perform_destroy(self, instance):
+        instance.delete()
+        return Response(instance,status=status.HTTP_204_NO_CONTENT)
     
     
 class PlaylistDestroyAPIView(generics.RetrieveDestroyAPIView):
