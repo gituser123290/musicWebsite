@@ -48,14 +48,24 @@ export default function Songs() {
             <div 
                 key={song.id} 
                 onClick={() => handleClick(song.id)} 
-                className="bg-green-400 flex-col justify-center items-center w-[22.4%] p-4 m-4 rounded-lg shadow-2xl hover:scale-105 transition-all duration-300 transform hover:shadow-2xl hover:bg-slate-500"
-            >
+                className="bg-orange-500 flex-col justify-center items-center w-[22.4%] p-4 m-4 rounded-lg shadow-2xl hover:scale-105 transition-all duration-300 transform hover:shadow-2xl hover:bg-gradient-to-r from-purple-500 to-indigo-600">
                 <div className='flex justify-items-center'>
-                    <img className="w-24 h-24 object-cover rounded-full" src={song.song_cover} alt={song.title} />
+                    {song?.song_cover_url ? (
+                    <img
+                        className="w-24 h-24 object-cover rounded-full"
+                        src={song.song_cover_url.startsWith("http") ? song.song_cover_url : `${song.song_cover_url}`}
+                        alt={song.title} />
+                    ) : song?.song_cover ? (
+                    <img
+                        className="w-24 h-24 object-cover rounded-full"
+                        src={song.song_cover.startsWith("http") ? song.song_cover : `${song.song_cover}`}
+                        alt={song.title}
+                    />
+                    ) : null}
                 </div>
                 <div className='flex-1 py-2'>
-                    <p className="text-sm py-1 font-medium text-gray-800 tracking-normal">Title: {song.title}</p>
-                    <p className="text-xl py-1 font-semibold text-gray-950 tracking-normal">Artist: {song.artist.name}</p>
+                    <p className="text-xl py-1 font-semibold text-gray-800 tracking-normal">Title: {song.title}</p>
+                    <p className="text-lg py-1 font-medium text-gray-950 tracking-normal">Artist: {song.artist.name}</p>
                     <p className="text-lg py-1 text-gray-900 -tracking-4">Genre: {song.genre}</p>
                 </div>
                 <div className="flex-1">

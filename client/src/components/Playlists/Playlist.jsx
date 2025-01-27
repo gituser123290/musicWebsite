@@ -15,7 +15,8 @@ const PlaylistComponent = () => {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef(null);
-
+  const [ftBgColor, setFtBgColor] = useState(getRandomColor());
+  const [sdBgColor, setSdBgColor] = useState(getRandomColor());
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,6 +46,15 @@ const PlaylistComponent = () => {
     }
   }, [currentSongIndex, isPlaying]);
 
+  function getRandomColor(){
+    var letters = "0123456789ABCDEF";
+    var color = "#";
+    for (var i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
+    }
+    return color;
+  }
+
   const handlePlayPause = () => {
     if (isPlaying) {
       audioRef.current.pause();
@@ -58,12 +68,17 @@ const PlaylistComponent = () => {
     const nextIndex = (currentSongIndex + 1) % playlists[currentPlaylistIndex].songs.length;
     setCurrentSongIndex(nextIndex);
     setIsPlaying(true);
+    setFtBgColor(getRandomColor());
+    setSdBgColor(getRandomColor());
   };
 
   const handlePrevious = () => {
     const prevIndex = (currentSongIndex - 1 + playlists[currentPlaylistIndex].songs.length) % playlists[currentPlaylistIndex].songs.length;
     setCurrentSongIndex(prevIndex);
     setIsPlaying(true);
+    setFtBgColor(getRandomColor());
+    setSdBgColor(getRandomColor());
+    
   };
 
   const deleteSongToPlaylist = async (playlistId, songId) => {
@@ -115,8 +130,7 @@ const PlaylistComponent = () => {
             playlists.map((playlist) => (
               <div
                 key={playlist.id}
-                className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300"
-              >
+                className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300" style={{ background: `linear-gradient(to right, ${ftBgColor}, ${sdBgColor})` }}>
                 <h2 className="text-3xl font-bold text-center text-white mb-6">{playlist.name}</h2>
                 <div className="space-y-6">
                   {playlist.songs.map((song) => (
@@ -127,11 +141,11 @@ const PlaylistComponent = () => {
                       <div className="flex items-center space-x-4">
                         <img
                           src={`http://localhost:8000${song.song_cover}`}
-                          alt={song.title}
+                          alt={song?.title}
                           className="w-20 h-20 rounded-md shadow-md hover:shadow-lg transition-shadow duration-300"
                         />
                         <div className="text-white">
-                          <h3 className="text-xl font-semibold" onClick={() => handleClick(song.id)}>{song.title}</h3>
+                          <h3 className="text-xl font-semibold" onClick={() => handleClick(song.id)}>{song?.title}</h3>
                           <p className="text-sm text-gray-500">{song.artist?.name}</p>
                           <p className="text-sm text-gray-500">{song.genre} | {song.duration}</p>
                         </div>
@@ -148,27 +162,28 @@ const PlaylistComponent = () => {
             <div className="text-white text-center">No playlists found</div>
           )}
         </div>
-        <div className="audio-controls text-white mt-6 flex flex-col justify-end">
-        <div className=" text-yellow-400 mt-4">
-            <h3>{currentSong.title} - {currentSong.artist?.name}</h3>
+        {/* style={{ background: `linear-gradient(to right, ${ftBgColor}, ${sdBgColor})` }} */}
+        <div className="audio-controls bg-slate-700 text-white mt-6 p-4 rounded-md flex flex-col justify-end">
+          <div className="mt-4 text-blue-600 font-semibold">
+              <h3>{currentSong?.title} - {currentSong?.artist?.name}</h3>
+            </div>
+            <audio
+              ref={audioRef}
+              src={`http://localhost:8000${currentSong?.audio}`}
+              onEnded={handleNext}
+            />
+            <div className="flex justify-between items-center">
+              <button onClick={handlePrevious} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600">
+                <TbPlayerTrackPrevFilled size={25} />
+              </button>
+              <button onClick={handlePlayPause} className="p-4 bg-gray-700 rounded-full hover:bg-gray-600">
+                {isPlaying ? <FaPause size={25} /> : <FaPlay size={25} />}
+              </button>
+              <button onClick={handleNext} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600">
+                <TbPlayerTrackNextFilled size={25} />
+              </button>
+            </div>
           </div>
-          <audio
-            ref={audioRef}
-            src={`http://localhost:8000${currentSong?.audio}`}
-            onEnded={handleNext}
-          />
-          <div className="flex justify-between items-center">
-            <button onClick={handlePrevious} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600">
-              <TbPlayerTrackPrevFilled size={25} />
-            </button>
-            <button onClick={handlePlayPause} className="p-4 bg-gray-700 rounded-full hover:bg-gray-600">
-              {isPlaying ? <FaPause size={25} /> : <FaPlay size={25} />}
-            </button>
-            <button onClick={handleNext} className="p-2 bg-gray-700 rounded-lg hover:bg-gray-600">
-              <TbPlayerTrackNextFilled size={25} />
-            </button>
-          </div>
-        </div>
       </div>
     </div>
   );

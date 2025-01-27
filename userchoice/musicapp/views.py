@@ -8,7 +8,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.parsers import MultiPartParser, FileUploadParser
-
+from pydub.utils import mediainfo
 from .models import Song, Playlist, Album, Artist, Like, Comment, Subscription, PlaylistCollaborator
 from .serializers import SongSerializer, AudioSerializer, PlaylistSerializer, AlbumSerializer, ArtistSerializer, LikeSerializer, CommentSerializer, SubscriptionSerializer, PlaylistCollaboratorSerializer
 
@@ -19,8 +19,24 @@ class SongCreateAPIView(generics.CreateAPIView):
     serializer_class = SongSerializer
     permission_classes = [IsAuthenticated]
 
+    # def perform_create(self, serializer):
+    #     serializer.save(user=self.request.user)
+    
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        song_instance = serializer.save(user=self.request.user)
+        audio_file = self.request.FILES.get('audio')
+        if audio_file:
+            audio_info = mediainfo(audio_file)
+            duration_seconds = float(audio_info['duration']) 
+            hours = int(duration_seconds // 3600) 
+            minutes = int((duration_seconds % 3600) // 60) 
+            seconds = int(duration_seconds % 60)  
+            duration_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
+        else:
+            duration_formatted = "00:00:00"  
+        song_data = SongSerializer(song_instance).data
+        song_data['audio_duration'] = duration_formatted  
+        return Response(song_data)
 
 
 class SongListAPIView(generics.ListAPIView):

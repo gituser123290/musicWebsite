@@ -53,7 +53,6 @@ function App() {
   };
 
   const protectedRoutes = [
-    { path: '/', element: <HomePage /> },
     { path: '/songs', element: <Songs /> },
     { path: '/profile', element: <Profile loggedInUser={loggedInUser} /> },
     { path: '/songs/:id', element: <SongDetail /> },
@@ -81,6 +80,9 @@ function App() {
           {protectedRoutes.map(({ path, element }) => (
             <Route key={path} path={path} element={<ProtectedRoute>{element}</ProtectedRoute>} />
           ))}
+
+          {/* Home Page */}
+          <Route path="/" element= {<HomePage/> }/>
 
           {/* Auth Routes */}
           <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login loggedInUser={loggedInUser} />} />

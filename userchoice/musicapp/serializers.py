@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import Song, Playlist, Album, Artist, Like, Comment, Subscription, PlaylistCollaborator
 from django.contrib.auth.models import User
 from authApp.serializers import UserProfileSerializer
-
+from pydub.utils import mediainfo
 
 
 class ArtistSerializer(serializers.ModelSerializer):
@@ -42,10 +42,35 @@ class SongSerializer(serializers.ModelSerializer):
         
     def validate(self, data):
         if not data.get('song_cover') and not data.get('song_cover_url'):
-            raise serializers.ValidationError("At least one image field must be provided.")
+            raise serializers.ValidationError("At least one image field must be provided: song_cover or song_cover_url.")
+
         if data.get('song_cover') and data.get('song_cover_url'):
-            raise serializers.ValidationError("Only one image field should be provided.")
+            raise serializers.ValidationError("Only one image field should be provided: either 'song_cover' or 'song_cover_url', not both.")
+        if data.get('song_cover') and not data.get('song_cover_url'):
+            return data
+        if data.get('song_cover_url') and not data.get('song_cover'):
+            return data
         return data
+    
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        audio_file_path = instance.audio.path if instance.audio else None
+        if audio_file_path:
+            try:
+                audio_info = mediainfo(audio_file_path)
+                duration_seconds = float(audio_info['duration'])  
+                hours = int(duration_seconds // 3600) 
+                minutes = int((duration_seconds % 3600) // 60) 
+                seconds = int(duration_seconds % 60) 
+                duration_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
+                representation['duration'] = duration_formatted
+            except Exception as e:
+                representation['duration'] = "00:00:00"  
+                print(f"Error retrieving duration: {e}")
+        else:
+            representation['duration'] = "00:00:00"  
+
+        return representation
 
 
 class PlaylistSerializer(serializers.ModelSerializer):
@@ -127,4 +152,4 @@ class PlaylistCollaboratorSerializer(serializers.ModelSerializer):
 class AudioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
-        fields = ['id','title','song_cover','audio']
+        fields = ['id','title','song_cover','song_cover_url','audio']

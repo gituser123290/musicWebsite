@@ -13,6 +13,17 @@ const servicesData = [
       'We craft intuitive and beautiful user interfaces that enhance user experiences with modern design principles.',
     icon: '🎨',
   },
+  {
+    title: 'Upload Song Collection',
+    description: (
+      <>
+        We also offer you the option to upload your favorite songs.{' '}
+        <a className='text-orange-500 hover:text-black text-semibold text-xl rounded-md' href='/createsong'>Upload a Song</a>.{' '}
+        Enjoy a beautifully designed user interface that enhances your experience with modern design principles.
+      </>
+    ),
+    icon: '🎨',
+  }
 ];
 
 const ServiceCard = ({ title, description, icon }) => (

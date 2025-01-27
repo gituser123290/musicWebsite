@@ -166,17 +166,25 @@ export default function SongUpdate() {
         {song ? (
           <div className="flex flex-col items-center mt-2 space-y-2">
             <div className="w-full h-auto max-w-xs">
-              <img
-                className="w-full object-cover rounded-lg shadow-md"
-                src={song.song_cover}
-                alt="Song cover"
-              />
-            </div>
-
+                {song?.song_cover_url ? (
+                  <img
+                    className="w-full object-cover rounded-lg shadow-md"
+                    src={song.song_cover_url.startsWith("http") ? song.song_cover_url : `${song.song_cover_url}`}
+                    alt="Song cover"
+                  />
+                ) : song?.song_cover ? (
+                  <img
+                    className="w-full object-cover rounded-lg shadow-md"
+                    src={song.song_cover.startsWith("http") ? song.song_cover : `${song.song_cover}`}
+                    alt="Song cover"
+                  />
+                ) : null}
+              </div>
             <div className="w-full text-white">
               <h2 className="text-2xl font-semibold">{song.title}</h2>
               <p className="mt-2 text-lg">Artist: {song.artist?.name}</p>
               <p className="text-lg">Genre: {song.genre}</p>
+              <p className="text-lg">Duration: {song.duration}</p>
             </div>
 
             <div className="flex justify-center items-center space-x-6 mt-4">

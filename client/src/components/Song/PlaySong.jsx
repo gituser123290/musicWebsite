@@ -132,7 +132,7 @@ export default function SongDetail() {
   }
   const browseSongs = async (e) => {
     e.preventDefault();
-    navigate("/all-songs");
+    navigate("/allsongs");
   }
   // Audio Player interface
   // Current Song 
@@ -162,13 +162,21 @@ export default function SongDetail() {
       </div>
       <div className="flex justify-center space-x-10 px-8 py-8">
         <div className="flex-1 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl shadow-2xl flex flex-col items-center sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 space-y-6">
-          <div className="w-full mb-4">
-            <img
-              className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
-              src={song.song_cover}
-              alt="Song cover"
-            />
-          </div>
+          <div className="w-full h-auto max-w-xs">
+                {song?.song_cover_url ? (
+                  <img
+                    className="w-full object-cover rounded-lg shadow-md"
+                    src={song.song_cover_url.startsWith("http") ? song.song_cover_url : `${song.song_cover_url}`}
+                    alt="Song cover"
+                  />
+                ) : song?.song_cover ? (
+                  <img
+                    className="w-full object-cover rounded-lg shadow-md"
+                    src={song.song_cover.startsWith("http") ? song.song_cover : `${song.song_cover}`}
+                    alt="Song cover"
+                  />
+                ) : null}
+              </div>
 
           <div className="text-center text-white text-2xl font-semibold">
             <h2>{song?.title}</h2>

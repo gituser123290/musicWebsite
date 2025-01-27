@@ -35,33 +35,40 @@ export default function SongPage() {
     fetchArtists();
   }, []);
 
+  // const handleInputChange = (e) => {
+  //   const { name, value, type, files } = e.target;
+  //   if (type === "file") {
+  //     setSongData((prevDetails) => ({
+  //       ...prevDetails,
+  //       [name]: files[0],
+  //     }));
+  //   } else {
+  //     setSongData((prevDetails) => ({
+  //       ...prevDetails,
+  //       [name]: value,
+  //     }));
+  //   }
+  // };
+
   const handleInputChange = (e) => {
-    const { name, value, type, files } = e.target;
-    if (type === "file") {
-      setSongData((prevDetails) => ({
-        ...prevDetails,
-        [name]: files[0],
-      }));
+    const { name, value, files } = e.target;
+    if (name === "song_cover") {
+      setSongData({ ...songData, [name]: files[0] });
     } else {
-      setSongData((prevDetails) => ({
-        ...prevDetails,
-        [name]: value,
-      }));
+      setSongData({ ...songData, [name]: value });
     }
   };
 
   const validateForm = () => {
-    if (!songData.song_cover && !songData.song_cover_url) {
-      setError("At least one image field (song_cover or song_cover_url) must be provided.");
-      return false;
+    if ((songData.song_cover && !songData.song_cover_url) || (!songData.song_cover && songData.song_cover_url)) {
+      return true;
     }
 
     if (songData.song_cover && songData.song_cover_url) {
-      setError("Only one image field should be provided: either 'song_cover' or 'song_cover_url'.");
-      return false;
+      return true;
     }
-
-    return true;
+    setError("You must provide either one image field (song_cover or song_cover_url), or both.");
+    return false;
   };
 
   const handleSubmit = async (e) => {
@@ -87,7 +94,7 @@ export default function SongPage() {
       });
       navigate("/");
     } catch (error) {
-      setError(error.response?.data?.detail || "An error occurred");
+      setError(error.response?.data?.detail);
       console.error("Error submitting the song:", error);
     } finally {
       setLoading(false);
@@ -162,7 +169,7 @@ export default function SongPage() {
               accept="image/*"
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
-              required={!songData.song_cover_url}
+              required={!songData.song_cover_url} // Song Cover is required if Song Cover URL is not provided
             />
           </div>
           <div className="mb-2">
@@ -173,10 +180,9 @@ export default function SongPage() {
               value={songData.song_cover_url}
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
-              required={!songData.song_cover}
+              required={!songData.song_cover} // Song Cover URL is required if Song Cover is not provided
             />
           </div>
-
           <button
             type="submit"
             className="w-full p-2 bg-blue-500 text-white rounded-md"

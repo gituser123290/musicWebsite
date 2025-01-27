@@ -13,6 +13,8 @@ export default function AllSongs() {
     const [isPlaying, setIsPlaying] = useState(false);
     const [audioPlayer, setAudioPlayer] = useState(null);
     const [currentSongIndex, setCurrentSongIndex] = useState(0);
+    const [ftBgColor, setFtBgColor] = useState(getRandomColor());
+    const [sdBgColor, setSdBgColor] = useState(getRandomColor());
 
     useEffect(() => {
         const allSongs = async () => {
@@ -38,6 +40,15 @@ export default function AllSongs() {
         allSongs();
     }, []);
 
+    function getRandomColor(){
+        var letters = "ABCDEF0123456789";
+        var color = "#";
+        for (var i = 0; i < 6; i++) {
+          color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+      }
+
     const playPauseSong = () => {
         if (isPlaying) {
             audioPlayer.pause();
@@ -53,6 +64,8 @@ export default function AllSongs() {
                 ? 0
                 : currentSongIndex + 1;
         setCurrentSongIndex(newIndex);
+        setFtBgColor(getRandomColor());
+        setSdBgColor(getRandomColor());
         setIsPlaying(!isPlaying)
     };
 
@@ -62,6 +75,8 @@ export default function AllSongs() {
                 ? songs.length - 1
                 : currentSongIndex - 1;
         setCurrentSongIndex(newIndex);
+        setFtBgColor(getRandomColor());
+        setSdBgColor(getRandomColor());
     };
 
 
@@ -69,12 +84,12 @@ export default function AllSongs() {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="flex items-center justify-center bg-gradient-to-r from-blue-500 to-purple-600 pt-2 pb-24">
-            <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-2 mt-8 bg-white rounded-xl shadow-xl flex flex-col items-center space-y-4">
+        <div className="flex items-center justify-center bg-gradient-to-r from-blue-400 to-purple-400 pt-2 pb-24" >
+            <div className="w-full sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 p-2 mt-8 rounded-xl shadow-xl flex flex-col items-center space-y-4" style={{ background: `linear-gradient(to right, ${ftBgColor}, ${sdBgColor})` }}>
                 <div className="w-full mb-2 flex justify-center">
                     <img
                         className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
-                        src={`http://localhost:8000${songs[currentSongIndex]?.song_cover}`}
+                        src={songs[currentSongIndex]?.song_cover ? songs[currentSongIndex].song_cover_url : songs[currentSongIndex].song_cover}
                         alt="Song cover"
                     />
                 </div>
@@ -85,7 +100,7 @@ export default function AllSongs() {
                     <audio
                         ref={(audio) => setAudioPlayer(audio)}
                         controls
-                        className="w-full rounded-lg bg-gray-100 p-2"
+                        className="w-full rounded-lg p-2"
                         src={`http://localhost:8000${songs[currentSongIndex]?.audio}`}
                     />
                     <div className="flex justify-center space-x-10 mt-4">

@@ -5,7 +5,7 @@ import { LiaBookReaderSolid } from "react-icons/lia";
 import { AiOutlineLogout } from "react-icons/ai";
 import { FcServices } from "react-icons/fc";
 
-const Navbar = ({ isAuthenticated, handleLogout }) => {
+export default function Navbar({ isAuthenticated, handleLogout }){
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
   const toggleDropdown = () => {
@@ -14,27 +14,20 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
 
   return (
     <nav className="bg-gray-800 text-white px-6 py-4 flex items-center justify-between">
-      {/* Logo on the left */}
       <div className="text-2xl font-semibold">
         <a href="/"><GiMusicSpell size={28}/></a>
       </div>
-
-      {/* Conditionally render based on authentication */}
       <div className="flex space-x-6">
         {!isAuthenticated ? (
           <>
-            {/* Links for login/register if not authenticated */}
-            <a href="/" className="hover:text-gray-400">Login</a>
-            <a href="/" className="hover:text-gray-400">Register</a>
+            <a href="/login" className="hover:text-gray-400">Login</a>
+            <a href="/register" className="hover:text-gray-400">Register</a>
           </>
         ) : (
           <>
-            {/* Links for authenticated users */}
             <a href="/" className="hover:text-gray-400"><IoHomeOutline size={28}/></a>
             <a href="/about" className="hover:text-gray-400"><LiaBookReaderSolid size={28}/></a>
             <a href="/services" className="hover:text-gray-400"><FcServices size={28}/></a>
-
-            {/* User profile dropdown */}
             <div className="relative">
               <button
                 className="flex items-center space-x-2 hover:text-gray-400"
@@ -78,5 +71,3 @@ const Navbar = ({ isAuthenticated, handleLogout }) => {
     </nav>
   );
 };
-
-export default Navbar;

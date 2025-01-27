@@ -4,8 +4,6 @@ import { useNavigate } from 'react-router-dom'
 import api from '../../services/api'
 import Loading from '../../layouts/Loading'
 
-
-const image_url = "https://path/to/default/image.jpg";
 export default function Artists() {
     const [artists, setArtists] = useState([])
     const [loading, setLoading] = useState(true)
@@ -56,7 +54,7 @@ export default function Artists() {
                 >
                     <img 
                         className="w-32 h-32 object-cover rounded-full shadow-md mb-4" 
-                        src={artist?.image ? artist.image : image_url} 
+                        src={artist?.image ? artist.image : artist.image_url} 
                         alt={artist.name} 
                     />
                     <div className="text-center space-y-2">

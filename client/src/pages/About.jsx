@@ -15,6 +15,12 @@ export default function AboutPage() {
   function browseAlbums() {
     navigate('/albums')
   }
+
+  function browseSongs() {
+    navigate('/songs')
+  }
+
+
   return (
     <div className="bg-gray-50 py-12">
       <section className="text-center mb-16">
@@ -26,7 +32,7 @@ export default function AboutPage() {
       <section className="max-w-6xl mx-auto px-6 mb-16">
         <h2 className="text-3xl font-semibold text-gray-800 text-center mb-8">Our Features</h2>
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+          <div onClick={browseSongs} className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
             <div className="text-4xl text-blue-500 mb-4">🎵</div>
             <h3 className="text-xl font-semibold text-gray-800">Endless Music Library</h3>
             <p className="text-gray-600 mt-2">
