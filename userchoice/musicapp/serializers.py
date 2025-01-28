@@ -84,7 +84,9 @@ class PlaylistSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
 
-        song_id = validated_data.pop('songs_id', song_id)
+        # song_id = validated_data.pop('songs_id', song_id)
+        
+        song_id = validated_data.get('songs_id',[])
 
         playlist = Playlist.objects.create(**validated_data)
 

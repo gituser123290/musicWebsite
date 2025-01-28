@@ -85,12 +85,11 @@ class PlaylistCreateAPIView(generics.CreateAPIView):
         playlist = serializer.save(user=self.request.user)
         song_ids = self.request.data.get('songs_id')
         if song_ids:
-
             songs = Song.objects.filter(id__in=song_ids)
             if songs.count() != len(song_ids):
                 return Response({"detail": "Some of the provided songs were not found."}, status=status.HTTP_400_BAD_REQUEST)
-
             playlist.songs.set(songs)
+        return playlist
                 
     
 class PlaylistUpdateAPIView(generics.UpdateAPIView):

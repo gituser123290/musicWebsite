@@ -106,8 +106,25 @@ const PlaylistComponent = () => {
       setError(error.message);
     }
   };
+
+  const deletePlaylist = async (playlistId) => {
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
   
-  
+    try {
+      await api.delete(`playlist/${playlistId}/delete/`, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      alert(`Playlist Deleted Successfully👍${playlistId}`);
+    } catch (error) {
+      setError(error.message);
+    }
+  };
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -130,7 +147,8 @@ const PlaylistComponent = () => {
             playlists.map((playlist) => (
               <div
                 key={playlist.id}
-                className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300" style={{ background: `linear-gradient(to right, ${ftBgColor}, ${sdBgColor})` }}>
+                className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300 m-2" style={{ background: `linear-gradient(to right, ${ftBgColor}, ${sdBgColor})` }}>
+                <FaTrash onClick={() => deletePlaylist(playlist.id)} size={10} className='cursor-pointer'/>
                 <h2 className="text-3xl font-bold text-center text-white mb-6">{playlist.name}</h2>
                 <div className="space-y-6">
                   {playlist.songs.map((song) => (

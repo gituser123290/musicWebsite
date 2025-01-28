@@ -20,6 +20,10 @@ export default function AboutPage() {
     navigate('/songs')
   }
 
+  function browsePlaylist() {
+    navigate('/playlists')
+  }
+
 
   return (
     <div className="bg-gray-50 py-12">
@@ -46,7 +50,7 @@ export default function AboutPage() {
               Enjoy your music in high definition, no buffering, and seamless playback across all devices.
             </p>
           </div>
-          <div className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
+          <div onClick={browsePlaylist} className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl transition-shadow duration-300">
             <div className="text-4xl text-purple-500 mb-4">📅</div>
             <h3 className="text-xl font-semibold text-gray-800">Custom Playlists</h3>
             <p className="text-gray-600 mt-2">

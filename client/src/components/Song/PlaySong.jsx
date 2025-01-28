@@ -117,7 +117,7 @@ export default function SongDetail() {
     try {
       await api.patch(`/playlist/${id}/add_song/`,
         {
-          song: song.id,
+          songs_id: song.id,
         },
         {
           headers: {
@@ -256,6 +256,7 @@ export default function SongDetail() {
                   placeholder="Write a comment..."
                   value={commentText}
                   onChange={(e) => setCommentText(e.target.value)}
+                  required
                 />
               </div>
               <div className="flex justify-center gap-1 mt-4">
