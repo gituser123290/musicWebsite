@@ -89,7 +89,7 @@ export default function AllSongs() {
                 <div className="w-full mb-2 flex justify-center">
                     <img
                         className="w-full max-w-xs h-auto object-cover rounded-lg shadow-md"
-                        src={songs[currentSongIndex]?.song_cover ? songs[currentSongIndex].song_cover_url : songs[currentSongIndex].song_cover}
+                        src={songs[currentSongIndex]?.song_cover_url}
                         alt="Song cover"
                     />
                 </div>

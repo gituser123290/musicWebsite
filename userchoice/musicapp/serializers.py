@@ -11,17 +11,17 @@ class ArtistSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
         
-    def validate(self, data):
-        image = data.get('image')
-        image_url = data.get('image_url')
+    # def validate(self, data):
+    #     image = data.get('image')
+    #     image_url = data.get('image_url')
 
-        if not image and not image_url:
-            raise serializers.ValidationError("At least one image field (image or image_url) must be provided.")
+    #     if not image and not image_url:
+    #         raise serializers.ValidationError("At least one image field (image or image_url) must be provided.")
 
-        if image and image_url:
-            raise serializers.ValidationError("Only one image field should be provided: either 'image' or 'image_url'.")
+    #     if image and image_url:
+    #         raise serializers.ValidationError("Only one image field should be provided: either 'image' or 'image_url'.")
 
-        return data
+    #     return data
 
         
         
@@ -40,17 +40,17 @@ class SongSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['user']
         
-    def validate(self, data):
-        if not data.get('song_cover') and not data.get('song_cover_url'):
-            raise serializers.ValidationError("At least one image field must be provided: song_cover or song_cover_url.")
+    # def validate(self, data):
+    #     if not data.get('song_cover') and not data.get('song_cover_url'):
+    #         raise serializers.ValidationError("At least one image field must be provided: song_cover or song_cover_url.")
 
-        if data.get('song_cover') and data.get('song_cover_url'):
-            raise serializers.ValidationError("Only one image field should be provided: either 'song_cover' or 'song_cover_url', not both.")
-        if data.get('song_cover') and not data.get('song_cover_url'):
-            return data
-        if data.get('song_cover_url') and not data.get('song_cover'):
-            return data
-        return data
+    #     if data.get('song_cover') and data.get('song_cover_url'):
+    #         raise serializers.ValidationError("Only one image field should be provided: either 'song_cover' or 'song_cover_url', not both.")
+    #     if data.get('song_cover') and not data.get('song_cover_url'):
+    #         return data
+    #     if data.get('song_cover_url') and not data.get('song_cover'):
+    #         return data
+    #     return data
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
@@ -154,4 +154,4 @@ class PlaylistCollaboratorSerializer(serializers.ModelSerializer):
 class AudioSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
-        fields = ['id','title','song_cover','song_cover_url','audio']
+        fields = ['id','title','song_cover_url','audio']

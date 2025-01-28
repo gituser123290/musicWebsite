@@ -1,13 +1,13 @@
 import Loading from '../../layouts/Loading';
 import api from '../../services/api';
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
-import { FaPlay, FaPause, FaTrash } from "react-icons/fa";
+import { FaPlay, FaPause, FaTrash,FaArrowLeft } from "react-icons/fa";
 import { useEffect, useState, useRef } from 'react';
 import { Navigate,useNavigate } from 'react-router-dom';
 
 
 
-const PlaylistComponent = () => {
+export default function Playlist() {
   const [playlists, setPlaylists] = useState(null);
   const [error, setError] = useState(null);
   // eslint-disable-next-line
@@ -132,12 +132,16 @@ const PlaylistComponent = () => {
   if (!playlists) return <Loading />;
 
   const currentPlaylist = playlists[currentPlaylistIndex];
+  if (!currentPlaylist || !currentPlaylist.songs || currentPlaylist.songs.length === 0) {
+    return;
+  }
   const currentSong = currentPlaylist.songs[currentSongIndex];
+  
+  
 
   const handleClick = (songId) => {
     navigate(`/songs/${songId}/`);
   };
-  
 
   return (
     <div className="bg-gray-900 py-8 px-4">
@@ -148,31 +152,36 @@ const PlaylistComponent = () => {
               <div
                 key={playlist.id}
                 className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300 m-2" style={{ background: `linear-gradient(to right, ${ftBgColor}, ${sdBgColor})` }}>
-                <FaTrash onClick={() => deletePlaylist(playlist.id)} size={10} className='cursor-pointer'/>
+                <FaTrash onClick={() => deletePlaylist(playlist.id)} size={20} className='cursor-pointer float-right hover:text-red-600'/>
+                <FaArrowLeft onClick={() => navigate(-1)} size={14} className='cursor-pointer'/>
                 <h2 className="text-3xl font-bold text-center text-white mb-6">{playlist.name}</h2>
                 <div className="space-y-6">
-                  {playlist.songs.map((song) => (
-                    <div
-                      key={song.id}
-                      className="bg-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-600 transition-all duration-300 transform hover:scale-100"
-                    >
-                      <div className="flex items-center space-x-4">
+                  {playlist && playlist.songs.length > 0 ? (
+                    playlist.songs.map((song) => (
+                      <div
+                        key={song.id}
+                        className="bg-gray-700 rounded-lg p-4 flex items-center justify-between hover:bg-gray-600 transition-all duration-300 transform hover:scale-100"
+                      >
+                        <div className="flex items-center space-x-4">
                         <img
-                          src={`http://localhost:8000${song.song_cover}`}
-                          alt={song?.title}
-                          className="w-20 h-20 rounded-md shadow-md hover:shadow-lg transition-shadow duration-300"
-                        />
-                        <div className="text-white">
-                          <h3 className="text-xl font-semibold" onClick={() => handleClick(song.id)}>{song?.title}</h3>
-                          <p className="text-sm text-gray-500">{song.artist?.name}</p>
-                          <p className="text-sm text-gray-500">{song.genre} | {song.duration}</p>
+                              className="w-20 h-20  object-cover rounded-md shadow-md"
+                              src={song.song_cover_url.startsWith("http") ? song.song_cover_url : `${song.song_cover_url}`}
+                              alt="Song cover"
+                            />
+                          <div className="text-white">
+                            <h3 className="text-xl font-semibold cursor-pointer" onClick={() => handleClick(song.id)}>{song?.title}</h3>
+                            <p className="text-sm text-gray-500">{song.artist?.name}</p>
+                            <p className="text-sm text-gray-500">{song.genre} | {song.duration}</p>
+                          </div>
+                        </div>
+                        <div className='cursor-pointer hover:text-red-600'>
+                          <FaTrash onClick={() => deleteSongToPlaylist(playlist.id, song.id)} size={10}/>
                         </div>
                       </div>
-                      <div className='cursor-pointer hover:text-red-600'>
-                        <FaTrash onClick={() => deleteSongToPlaylist(playlist.id, song.id)} size={10}/>
-                      </div>
-                    </div>
-                  ))}
+                    ))
+                  ):(
+                    <div className="text-white text-center">No songs found in this playlist</div>
+                  )}
                 </div>
               </div>
             ))
@@ -207,4 +216,4 @@ const PlaylistComponent = () => {
   );
 };
 
-export default PlaylistComponent;
+

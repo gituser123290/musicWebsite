@@ -56,5 +56,10 @@ class UserProfileUpdateView(generics.UpdateAPIView):
     
     def get_object(self):
         return self.request.user
+    
+    def get_serializer_class(self):
+        # Lazy import of the serializer to prevent circular import
+        from authApp.serializers import UserProfileSerializer
+        return UserProfileSerializer
 
 

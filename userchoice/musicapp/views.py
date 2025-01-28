@@ -97,23 +97,33 @@ class PlaylistUpdateAPIView(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes=[TokenAuthentication]
     queryset = Playlist.objects.all()
-    
+
     
     def update(self, request, *args, **kwargs):
-        playlist = self.get_object()
-        song_ids = request.data.get('songs_id',[])
-        
-        if not song_ids:
-            return Response({"detail": "No song IDs provided."}, status=status.HTTP_400_BAD_REQUEST)
+        # Get the playlist object that belongs to the authenticated user
+        try:
+            playlist = self.get_object()
+            if playlist.user != request.user:
+                return Response({"detail": "You do not have permission to modify this playlist."}, status=status.HTTP_403_FORBIDDEN)
+        except Playlist.DoesNotExist:
+            return Response({"detail": "Playlist not found."}, status=status.HTTP_404_NOT_FOUND)
 
-        songs = Song.objects.filter(id__in=song_ids)
-        if len(songs) != len(song_ids): 
-            return Response({"detail": "Some song IDs are invalid."}, status=status.HTTP_400_BAD_REQUEST)
+        # Get the song_id from the request
+        song_id = request.data.get('song_id')
+        if not song_id:
+            return Response({"detail": "Song ID is required."}, status=status.HTTP_400_BAD_REQUEST)
 
-        playlist.songs.add(*songs)
+        try:
+            song = Song.objects.get(id=song_id)
+        except Song.DoesNotExist:
+            return Response({"detail": "Song not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        # Add the song to the playlist
+        playlist.songs.add(song)
+
+        # Return the updated playlist data
         serializer = PlaylistSerializer(playlist)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
     
     
 class PlaylistDeleteAPIView(generics.DestroyAPIView):

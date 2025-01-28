@@ -8,7 +8,6 @@ class Song(models.Model):
     artist = models.ForeignKey('Artist',on_delete=models.CASCADE,related_name='artists')
     genre = models.CharField(max_length=100) 
     audio = models.FileField(upload_to='songs/',null=True, blank=True)  
-    song_cover=models.ImageField(upload_to='song_covers/',blank=True,null=True)
     song_cover_url=models.URLField(max_length=500,blank=True,null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='songs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -24,7 +23,7 @@ class Playlist(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return self.name
+        return f"{self.user.username}'s {self.name}"
 
 
 class Album(models.Model):
@@ -32,7 +31,6 @@ class Album(models.Model):
     artist = models.ForeignKey('Artist',on_delete=models.CASCADE,related_name='artist')
     release_date = models.DateField()
     songs = models.ManyToManyField(Song, related_name='albums')
-    cover_image = models.ImageField(upload_to='album_covers/', blank=True, null=True)
     cover_image_url = models.URLField(max_length=500,blank=True, null=True)
 
     def __str__(self):
@@ -41,7 +39,6 @@ class Album(models.Model):
 class Artist(models.Model):
     name = models.CharField(max_length=200)
     bio = models.TextField(blank=True, null=True)
-    image=models.ImageField(upload_to="artist_image/",blank=True,null=True)
     image_url = models.URLField(max_length=500,blank=True, null=True)
     website = models.URLField(blank=True, null=True)
     social_media = models.JSONField(blank=True, null=True)

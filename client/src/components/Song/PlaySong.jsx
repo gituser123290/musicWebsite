@@ -11,6 +11,7 @@ export default function SongDetail() {
   const [song, setSong] = useState([]);
   const [comments, setComments] = useState([]);
   const [like, setLike] = useState([]);
+  // const [playlists, setPlaylists] = useState([]);
   const [isPlaying, setIsPlaying] = useState(false);
   const [audioPlayer, setAudioPlayer] = useState(null);
   const [commentText, setCommentText] = useState("");
@@ -40,6 +41,7 @@ export default function SongDetail() {
           },
         });
         setComments(commentsResponse.data);
+
         const likeResponse = await api.get(`/likes/${id}/`, {
           headers: {
             Authorization: `Token ${token}`,
@@ -114,10 +116,17 @@ export default function SongDetail() {
       navigate("/login");
       return;
     }
+    
     try {
-      await api.patch(`/playlist/${id}/add_song/`,
+      const playlistsResponse = await api.get('/playlist', {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
+      });
+      const playlistId = playlistsResponse.data[0].id;
+      await api.put(`/playlist/${playlistId}/add_song/`,
         {
-          songs_id: song.id,
+          song_id: song.id,
         },
         {
           headers: {
@@ -163,21 +172,12 @@ export default function SongDetail() {
       <div className="flex justify-center space-x-10 px-8 py-8">
         <div className="flex-1 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl shadow-2xl flex flex-col items-center sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3 space-y-6">
           <div className="w-full h-auto max-w-xs">
-                {song?.song_cover_url ? (
                   <img
                     className="w-full object-cover rounded-lg shadow-md"
                     src={song.song_cover_url.startsWith("http") ? song.song_cover_url : `${song.song_cover_url}`}
                     alt="Song cover"
                   />
-                ) : song?.song_cover ? (
-                  <img
-                    className="w-full object-cover rounded-lg shadow-md"
-                    src={song.song_cover.startsWith("http") ? song.song_cover : `${song.song_cover}`}
-                    alt="Song cover"
-                  />
-                ) : null}
-              </div>
-
+            </div>
           <div className="text-center text-white text-2xl font-semibold">
             <h2>{song?.title}</h2>
           </div>
@@ -269,9 +269,8 @@ export default function SongDetail() {
                 <div className="flex justify-center space-x-8 mt-2">
                   <button 
                     className="p-0 hover:text-amber-400 text-3xl"
-                    onClick={addSongToPlaylist}
                   >
-                    <FaPlusSquare size={24} />
+                    <FaPlusSquare onClick={addSongToPlaylist} size={24} />
                   </button>
                   <button 
                     onClick={handleLike} 
