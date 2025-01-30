@@ -8,22 +8,9 @@ from pydub.utils import mediainfo
 class ArtistSerializer(serializers.ModelSerializer):
     class Meta:
         model = Artist
-        fields = '__all__'
-        
-        
-    # def validate(self, data):
-    #     image = data.get('image')
-    #     image_url = data.get('image_url')
-
-    #     if not image and not image_url:
-    #         raise serializers.ValidationError("At least one image field (image or image_url) must be provided.")
-
-    #     if image and image_url:
-    #         raise serializers.ValidationError("Only one image field should be provided: either 'image' or 'image_url'.")
-
-    #     return data
-
-        
+        # fields = ['id', 'name', 'bio','image_url','nationalilty','website','social_media']
+        fields='__all__'
+            
         
     def update(self, instance, validated_data):
         for attr, value in validated_data.items():
@@ -37,7 +24,7 @@ class SongSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Song
-        fields = '__all__'
+        fields = ['id', 'title', 'artist', 'artist_id','genre', 'audio', 'song_cover_url','user']
         read_only_fields = ['user']
         
     # def validate(self, data):
@@ -76,11 +63,11 @@ class SongSerializer(serializers.ModelSerializer):
 class PlaylistSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True, read_only=True)
     songs_id = serializers.PrimaryKeyRelatedField(queryset=Song.objects.all(), many=True, write_only=True, required=False)
-    user = serializers.PrimaryKeyRelatedField(read_only=True) 
+    user = serializers.PrimaryKeyRelatedField(read_only=True)
 
     class Meta:
         model = Playlist
-        fields = ['id', 'name', 'user', 'songs', 'songs_id', 'is_public', 'created_at']
+        fields = ['id', 'name', 'user','songs', 'songs_id', 'is_public', 'created_at']
 
     def create(self, validated_data):
 
@@ -119,12 +106,12 @@ class AlbumSerializer(serializers.ModelSerializer):
         model = Album
         fields = ['id', 'name','artist','artist_id', 'release_date', 'songs', 'cover_image']
         
-    def validate(self, data):
-        if not data.get('cover_image') and not data.get('cover_image_url'):
-            raise serializers.ValidationError("At least one image field must be provided.")
-        if data.get('cover_image') and data.get('cover_image_url'):
-            raise serializers.ValidationError("Only one image field should be provided.")
-        return data
+    # def validate(self, data):
+    #     if not data.get('cover_image') and not data.get('cover_image_url'):
+    #         raise serializers.ValidationError("At least one image field must be provided.")
+    #     if data.get('cover_image') and data.get('cover_image_url'):
+    #         raise serializers.ValidationError("Only one image field should be provided.")
+    #     return data
 
 
 class LikeSerializer(serializers.ModelSerializer):

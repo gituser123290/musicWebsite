@@ -3,44 +3,44 @@ import { useNavigate } from "react-router-dom";
 import api from "../services/api";
 
 export default function ArtistPage() {
-    const [error, setError] = useState(null)
-    const [songData, setSongData] = useState({
+    const [error, setError] = useState(null);
+    const [artistData, setArtistData] = useState({
         name: "",
         bio: "",
-        image: null,
-        image_url: null,
-        website:"",
-        social_media: null,
+        image_url: "",
+        website: "",
+        social_media: "",
         nationality: "",
     });
 
-    const navigate=useNavigate()
+    const navigate = useNavigate();
 
     const handleInputChange = (e) => {
-        const { name, value, type, files } = e.target;
-        if (type === "file") {
-            setSongData((prevDetails) => ({
-                ...prevDetails,
-                image: files[0],
-            }));
-        } else {
-            setSongData((prevDetails) => ({
-                ...prevDetails,
-                [name]: value,
-            }));
-        }
+        const { name, value } = e.target;
+        setArtistData((prevDetails) => ({
+            ...prevDetails,
+            [name]: value,
+        }));
     };
 
     const handleArtist = async (e) => {
         e.preventDefault();
         const token = localStorage.getItem('token');
         if (!token) {
-            alert("You need to be logged in to create an artist");
             return;
         }
         const formData = new FormData();
-        for (let key in songData) {
-        formData.append(key, songData[key]);
+        for (let key in artistData) {
+            if (key === 'social_media') {
+                try {
+                    // You can structure social_media as JSON here, if required
+                    formData.append(key, JSON.stringify(artistData[key]));
+                } catch (error) {
+                    console.log("Error in parsing social media JSON", error);
+                }
+            } else {
+                formData.append(key, artistData[key]);
+            }
         }
         try {
             const response = await api.post('/artist/create/', formData, {
@@ -49,17 +49,16 @@ export default function ArtistPage() {
                     'Authorization': `Token ${token}`,
                 },
             });
-            setSongData(response.data);
-            console.log(response.data);
-            navigate('/artist')            
+            setArtistData(response.data);
+            navigate('/artist');
         } catch (error) {
             setError(error);
             console.log(error.message);
         }
     };
 
-    if(error){
-        return <p>Error: {error}</p>
+    if (error) {
+        return <p>Error: {error.message}</p>;
     }
 
     return (
@@ -76,91 +75,83 @@ export default function ArtistPage() {
                             </label>
                             <input
                                 type="text"
-                                name="name" 
+                                name="name"
                                 id="name"
-                                onChange={handleInputChange}
                                 placeholder="Enter Artist name"
+                                value={artistData.name}
+                                onChange={handleInputChange}
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                                 required
                             />
                         </div>
                         <div>
-                            <label htmlFor="genre" className="block text-lg text-gray-700 mb-2">
+                            <label htmlFor="bio" className="block text-lg text-gray-700 mb-2">
                                 Bio
                             </label>
                             <input
                                 type="text"
                                 name="bio"
                                 id="bio"
-                                onChange={handleInputChange}
-                                placeholder="Bio"
-                                className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-                                required
-                            />
-                        </div>
-                        <div>
-                            <label htmlFor="birth_date" className="block text-lg text-gray-700 mb-2">
-                                Image
-                            </label>
-                            <input
-                                type="file"
-                                name="image"
-                                id="image"
-                                accept="image/*"
+                                placeholder="Enter Bio"
+                                value={artistData.bio}
                                 onChange={handleInputChange}
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                                 required
                             />
                         </div>
                         <div>
-                            <label htmlFor="birth_date" className="block text-lg text-gray-700 mb-2">
+                            <label htmlFor="image_url" className="block text-lg text-gray-700 mb-2">
                                 Image URL
                             </label>
                             <input
-                                type="url"
+                                type="text"
                                 name="image_url"
                                 id="image_url"
+                                placeholder="Enter Image URL"
+                                value={artistData.image_url}
                                 onChange={handleInputChange}
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                                 required
                             />
                         </div>
                         <div>
-                            <label htmlFor="nationality" className="block text-lg text-gray-700 mb-2">
+                            <label htmlFor="website" className="block text-lg text-gray-700 mb-2">
                                 Website
                             </label>
                             <input
                                 type="text"
                                 name="website"
                                 id="website"
+                                placeholder="Enter Website URL"
+                                value={artistData.website}
                                 onChange={handleInputChange}
-                                placeholder="Enter nationality"
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
                                 required
                             />
                         </div>
                         <div>
-                            <label htmlFor="biography" className="block text-lg text-gray-700 mb-2">
-                                Social Media
+                            <label htmlFor="social_media" className="block text-lg text-gray-700 mb-2">
+                                Social Media (JSON format)
                             </label>
                             <input
-                                type="json"
+                                type="text"
                                 name="social_media"
                                 id="social_media"
-                                placeholder="Social Media Name"
+                                placeholder='{"twitter": "url", "instagram": "url"}'
+                                value={artistData.social_media}
                                 onChange={handleInputChange}
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
-                                required
                             />
                         </div>
                         <div>
-                            <label htmlFor="image" className="block text-lg text-gray-700 mb-2">
+                            <label htmlFor="nationality" className="block text-lg text-gray-700 mb-2">
                                 Nationality
                             </label>
                             <input
                                 type="text"
                                 name="nationality"
                                 id="nationality"
+                                value={artistData.nationality}
                                 placeholder="Nationality Name"
                                 onChange={handleInputChange}
                                 className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"

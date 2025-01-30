@@ -13,6 +13,7 @@ import ProfileUpdate from './AuthPage/UpdateProfile';
 import AboutPage from './pages/About';
 import HomePage from './pages/Home';
 import NotFound from './layouts/NotFound';
+import CreatePlayList from './pages/CreatePlayList';
 
 // Lazy-loaded components
 const Artists = React.lazy(() => import('./components/Artist/Artists'));
@@ -32,6 +33,8 @@ const Login = React.lazy(() => import('./AuthPage/Login'));
 const Register = React.lazy(() => import('./AuthPage/Register'));
 const Playlist = React.lazy(() => import('./components/Playlists/Playlist'));
 const Setting= React.lazy(() => import('./pages/Setting'))
+
+
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -70,6 +73,8 @@ function App() {
     { path: '/about', element: <AboutPage /> },
     { path: '/updateprofile', element: <ProfileUpdate /> },
     { path: '/setting', element: <Setting /> },
+    { path: '/createplaylist', element: <CreatePlayList /> },
+    // { path: '/playlists/:id', element: <Playlist /> },
   ];
 
   return (

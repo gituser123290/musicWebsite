@@ -26,9 +26,9 @@ urlpatterns = [
     path('artists/<int:pk>/', views.ArtistRetrieveUpdateDestroyAPIView.as_view(), name='artist-detail'),
 
     # Like URLs
-    path('likes/<int:song_id>/', views.LikeListAPIView.as_view(), name='like-list'),
-    path('like/<int:song_id>/', views.LikeCreateAPIView.as_view(), name='like-create'),
-    path('like/<int:pk>/', views.LikeRetrieveUpdateDestroyAPIView.as_view(), name='like-detail'),
+    path('songs/<int:song_id>/likes/', views.LikeListAPIView.as_view(), name='like-list'),
+    path('songs/<int:song_id>/like/', views.LikeCreateAPIView.as_view(), name='like-create'),
+    path('songs/<int:song_id>/like/delete/', views.LikeDestroyAPIView.as_view(), name='like-delete'),
 
     # Comment URLs
     path('comments/<int:song_id>/', views.CommentListAPIView.as_view(), name='comment-list'),

@@ -6,8 +6,7 @@ export default function SongPage() {
   const [error, setError] = useState(null);
   const [songData, setSongData] = useState({
     title: "",
-    song_cover: null,
-    song_cover_url: '',
+    song_cover_url: "",
     artist_id: "",
     audio: null,
     genre: "Pop",
@@ -28,58 +27,34 @@ export default function SongPage() {
         });
         setArtists(response.data);
       } catch (error) {
-        setError("Failed to load artists", error.message);
+        setError("Failed to load artists: " + error.message);
       }
     };
 
     fetchArtists();
   }, []);
 
-  // const handleInputChange = (e) => {
-  //   const { name, value, type, files } = e.target;
-  //   if (type === "file") {
-  //     setSongData((prevDetails) => ({
-  //       ...prevDetails,
-  //       [name]: files[0],
-  //     }));
-  //   } else {
-  //     setSongData((prevDetails) => ({
-  //       ...prevDetails,
-  //       [name]: value,
-  //     }));
-  //   }
-  // };
-
   const handleInputChange = (e) => {
-    const { name, value, files } = e.target;
-    if (name === "song_cover") {
-      setSongData({ ...songData, [name]: files[0] });
+    const { name, value, type, files } = e.target;
+    if (type === "file") {
+      setSongData((prevDetails) => ({
+        ...prevDetails,
+        [name]: files[0],
+      }));
     } else {
-      setSongData({ ...songData, [name]: value });
+      setSongData((prevDetails) => ({
+        ...prevDetails,
+        [name]: value,
+      }));
     }
-  };
-
-  const validateForm = () => {
-    if ((songData.song_cover && !songData.song_cover_url) || (!songData.song_cover && songData.song_cover_url)) {
-      return true;
-    }
-
-    if (songData.song_cover && songData.song_cover_url) {
-      return true;
-    }
-    setError("You must provide either one image field (song_cover or song_cover_url), or both.");
-    return false;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validateForm()) {
-      return;
-    }
-
     setLoading(true);
     const token = sessionStorage.getItem("token");
     if (!token) return;
+
     const formData = new FormData();
     for (let key in songData) {
       formData.append(key, songData[key]);
@@ -94,8 +69,7 @@ export default function SongPage() {
       });
       navigate("/");
     } catch (error) {
-      setError(error.response?.data?.detail);
-      console.error("Error submitting the song:", error);
+      setError(error.response?.data?.detail || "Something went wrong");
     } finally {
       setLoading(false);
     }
@@ -149,6 +123,7 @@ export default function SongPage() {
               ))}
             </select>
           </div>
+
           <div className="mb-2">
             <label className="block text-gray-700">Audio File</label>
             <input
@@ -162,27 +137,17 @@ export default function SongPage() {
           </div>
 
           <div className="mb-2">
-            <label className="block text-gray-700">Song Cover</label>
-            <input
-              type="file"
-              name="song_cover"
-              accept="image/*"
-              onChange={handleInputChange}
-              className="w-full p-1 border rounded-md"
-              required={!songData.song_cover_url} // Song Cover is required if Song Cover URL is not provided
-            />
-          </div>
-          <div className="mb-2">
             <label className="block text-gray-700">Song Cover URL</label>
             <input
-              type="url"
+              type="text"
               name="song_cover_url"
               value={songData.song_cover_url}
               onChange={handleInputChange}
               className="w-full p-1 border rounded-md"
-              required={!songData.song_cover} // Song Cover URL is required if Song Cover is not provided
+              required
             />
           </div>
+
           <button
             type="submit"
             className="w-full p-2 bg-blue-500 text-white rounded-md"

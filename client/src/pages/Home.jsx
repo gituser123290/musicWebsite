@@ -11,10 +11,6 @@ export default function HomePage(){
     function songs(){
         navigate('/songs');
     }
-
-    function playlists(){
-        navigate('/playlists');
-    }
     function browseSongs(){
         navigate('/allsongs');
     }
@@ -76,10 +72,15 @@ export default function HomePage(){
                 Browse through our extensive library of songs, albums, and playlists.
               </p>
             </div>
-            <div onClick={playlists} className="p-6 bg-green-100 rounded-lg shadow-md">
+            <div className="p-6 bg-green-100 rounded-lg shadow-md">
               <h3 className="text-xl font-semibold text-gray-800">Create Playlists</h3>
               <p className="text-gray-600 mt-2">
-                Curate your own playlists and share them with your friends.
+                Create your own playlists and share them with your friends
+                If You have a Playlists
+                {' '}
+                <a className='text-orange-500 hover:text-black text-semibold text-xl rounded-md' href='/playlists'>Browse Your Playlist</a>{' '}.
+                Otherwise you can create a new Playlists
+                <a className='text-orange-500 hover:text-black text-semibold text-xl rounded-md' href='/createplaylist'>Create New Playlist</a>.{' '}
               </p>
             </div>
             <div onClick={browseSongs} className="p-6 bg-yellow-100 rounded-lg shadow-md">

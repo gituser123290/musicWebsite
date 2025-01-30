@@ -126,6 +126,13 @@ export default function Playlist() {
     }
   };
 
+
+  useEffect(() => {
+    if (playlists && playlists.length === 0) {
+      navigate('/createplaylist');
+    }
+  }, [playlists, navigate]);
+
   if (error) {
     return <div>Error: {error.message}</div>;
   }
@@ -154,7 +161,7 @@ export default function Playlist() {
                 className="bg-gray-800 rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300 m-2" style={{ background: `linear-gradient(to right, ${ftBgColor}, ${sdBgColor})` }}>
                 <FaTrash onClick={() => deletePlaylist(playlist.id)} size={20} className='cursor-pointer float-right hover:text-red-600'/>
                 <FaArrowLeft onClick={() => navigate(-1)} size={14} className='cursor-pointer'/>
-                <h2 className="text-3xl font-bold text-center text-white mb-6">{playlist.name}</h2>
+                <h2 className="text-3xl font-bold text-center text-white mb-6">Your {playlist.songs.length} {playlist.name}</h2>
                 <div className="space-y-6">
                   {playlist && playlist.songs.length > 0 ? (
                     playlist.songs.map((song) => (

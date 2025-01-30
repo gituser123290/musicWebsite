@@ -1,4 +1,7 @@
+from django.http import Http404
 import requests
+import os
+import tempfile
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.exceptions import NotFound
@@ -18,24 +21,38 @@ class SongCreateAPIView(generics.CreateAPIView):
     parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = SongSerializer
     permission_classes = [IsAuthenticated]
-
-    # def perform_create(self, serializer):
-    #     serializer.save(user=self.request.user)
     
     def perform_create(self, serializer):
         song_instance = serializer.save(user=self.request.user)
         audio_file = self.request.FILES.get('audio')
-        if audio_file:
-            audio_info = mediainfo(audio_file)
-            duration_seconds = float(audio_info['duration']) 
-            hours = int(duration_seconds // 3600) 
-            minutes = int((duration_seconds % 3600) // 60) 
-            seconds = int(duration_seconds % 60)  
-            duration_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
-        else:
-            duration_formatted = "00:00:00"  
+        
+        try:
+            if audio_file:
+                # Save the uploaded file to a temporary location
+                with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
+                    for chunk in audio_file.chunks():
+                        temp_audio_file.write(chunk)
+                    temp_audio_file_path = temp_audio_file.name
+                
+                # Use mediainfo to get the audio duration
+                audio_info = mediainfo(temp_audio_file_path)
+                duration_seconds = float(audio_info['duration'])
+                hours = int(duration_seconds // 3600)
+                minutes = int((duration_seconds % 3600) // 60)
+                seconds = int(duration_seconds % 60)
+                duration_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
+
+                # Clean up the temporary file
+                os.remove(temp_audio_file_path)
+            else:
+                duration_formatted = "00:00:00"
+        except Exception as e:
+            duration_formatted = "00:00:00"
+            print(f"Error retrieving duration: {e}")
+        
+        # Add the duration to the response data
         song_data = SongSerializer(song_instance).data
-        song_data['audio_duration'] = duration_formatted  
+        song_data['audio_duration'] = duration_formatted
         return Response(song_data)
 
 
@@ -44,7 +61,7 @@ class SongListAPIView(generics.ListAPIView):
     permission_classes = [AllowAny]
 
     def get_queryset(self):
-        return Song.objects.all()
+        return Song.objects.all().order_by('-id')
 
 
 class SongRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -260,27 +277,38 @@ class LikeCreateAPIView(generics.CreateAPIView):
     
     def perform_create(self, serializer):
         song_id = self.kwargs.get('song_id')
-
         try:
             song = Song.objects.get(id=song_id)
         except Song.DoesNotExist:
             raise NotFound("Song not found.")
-        
         like = Like.objects.filter(user=self.request.user, song=song).first()
-
         if like:
-            like.delete()
-        else:
-            serializer.save(user=self.request.user, song=song)
-
-        like_count = Like.objects.filter(song=song).count()
-        return Response(like_count, status=status.HTTP_200_OK)
+            return Response({"detail": "You have already liked this song."}, status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(user=self.request.user, song=song)
+        return Response({"detail": "Like created successfully."}, status=status.HTTP_201_CREATED)
         
-
-class LikeRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+class LikeDestroyAPIView(generics.DestroyAPIView):
     serializer_class = LikeSerializer
     permission_classes = [IsAuthenticated]
+    authentication_classes=[TokenAuthentication]
     queryset = Like.objects.all()
+    
+    def get_object(self):
+        user = self.request.user
+        song_id = self.kwargs.get('song_id')
+        try:
+            like = Like.objects.select_related('user', 'song').get(user=user, song_id=song_id)
+        except Like.DoesNotExist:
+            raise NotFound("Like does not exist.")
+        return like
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def destroy(self, request, *args, **kwargs):
+        obj = self.get_object()
+        self.perform_destroy(obj)
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 # Comment Views

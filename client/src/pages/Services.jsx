@@ -23,6 +23,28 @@ const servicesData = [
       </>
     ),
     icon: '🎨',
+  },
+  {
+    title: 'Upload Artists Collection',
+    description: (
+      <>
+        We also offer you the option to upload your favorite Artist.{' '}
+        <a className='text-orange-500 hover:text-black text-semibold text-xl rounded-md' href='/createartist'>Upload Artist</a>.{' '}
+        Enjoy a beautifully designed user interface that enhances your experience with modern design principles.
+      </>
+    ),
+    icon: '👩‍🎨',
+  },
+  {
+    title: 'Upload Albums Collection',
+    description: (
+      <>
+        We also offer you the option to upload your favorite Albums.{' '}
+        <a className='text-orange-500 hover:text-black text-semibold text-xl rounded-md' href='/createalbum'>Upload a Album</a>.{' '}
+        Enjoy a beautifully designed user interface that enhances your experience with modern design principles.
+      </>
+    ),
+    icon: '🎓',
   }
 ];
 
