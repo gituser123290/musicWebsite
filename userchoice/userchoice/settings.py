@@ -12,16 +12,15 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-
+DEBUG = True
 # myproject/settings.py
 
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'musicwebsite-66yc.onrender.com','musicwebsite-66yc.onrender.com',
-    'www.musicwebsite-66yc.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'musicwebsite-66yc.onrender.com','musicwebsite-66yc.onrender.com']
 
- DEBUG = False
+
 
 
 
@@ -195,3 +194,5 @@ CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
     "http://localhost:3000",
 ]
+
+CORS_ALLOW_ALL_ORIGINS = True
