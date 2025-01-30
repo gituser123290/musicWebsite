@@ -50,7 +50,7 @@ export default function Navbar({ isAuthenticated, handleLogout }){
                 </svg>
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg">
+                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
                   <ul>
                     <li>
                       <a href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-200"><IoPersonCircleOutline size={28}/></a>

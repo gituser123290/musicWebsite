@@ -21,6 +21,8 @@ import os
 #     DEBUG = False
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+
+# DEBUG = True
 # myproject/settings.py
 
 AUTH_USER_MODEL = 'authApp.UserProfile'
