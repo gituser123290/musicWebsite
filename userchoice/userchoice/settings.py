@@ -18,8 +18,12 @@ DEBUG = True
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
 
+<<<<<<< HEAD
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'musicwebsite-66yc.onrender.com']
 
+=======
+ALLOWED_HOSTS = ['musicwebsite-66yc.onrender.com']
+>>>>>>> cb15d2da48dce32133bff4f68965d7902f6217c8
 
 
 # Application definition
