@@ -18,12 +18,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'musicwebsite-66yc.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'musicwebsite-66yc.onrender.com','musicwebsite-66yc.onrender.com',
+    'www.musicwebsite-66yc.onrender.com']
 
-# if any(host in ['localhost', '127.0.0.1'] for host in ALLOWED_HOSTS):
-#     DEBUG = True
-# else:
-#     DEBUG = False
  DEBUG = False
 
 
@@ -88,7 +85,7 @@ ROOT_URLCONF = 'userchoice.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, "templates")],
+        'DIRS': [],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
