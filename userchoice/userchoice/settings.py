@@ -24,7 +24,7 @@ else:
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','musicwebsite-66yc.onrender.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1','musicwebsite-ohd6.onrender.com']
 
 
 
