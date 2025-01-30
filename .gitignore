@@ -1,3 +1,4 @@
 /uch
 
 node_modules
+.env
