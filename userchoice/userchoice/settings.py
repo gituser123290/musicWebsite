@@ -14,7 +14,7 @@ DEBUG = True
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['musicwebsite-66yc.onrender.com']
 
 
 # Application definition
