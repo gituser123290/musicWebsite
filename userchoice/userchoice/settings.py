@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import os
-
+import dj_database_url
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -15,16 +15,21 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 import os
 
 # Set debug based on environment
-if os.getenv('DJANGO_ENV', 'localhost') == 'localhost':
-    DEBUG = True
-else:
-    DEBUG = False
+# if os.getenv('DJANGO_ENV', 'localhost') == 'localhost':
+#     DEBUG = True
+# else:
+#     DEBUG = False
+
+DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 # myproject/settings.py
 
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1','musicwebsite-ohd6.onrender.com']
+# ALLOWED_HOSTS = ['localhost', '127.0.0.1','musicwebsite-ohd6.onrender.com']
+
+# Allowed hosts
+ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(' ') if not DEBUG else []
 
 
 
@@ -78,7 +83,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     
@@ -109,12 +114,17 @@ WSGI_APPLICATION = 'userchoice.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
+       'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+   }
+
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
+#     }
+# }
 
 # DATABASES = {
 #     'default': {
@@ -185,6 +195,9 @@ STATICFILES_DIRS = [
     BASE_DIR / 'static',        
 ]
 MEDIA_ROOT = BASE_DIR / 'static/images'
+
+
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 
 # DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760
