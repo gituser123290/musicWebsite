@@ -12,13 +12,18 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 # myproject/settings.py
 
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'musicwebsite-66yc.onrender.com']
+
+if any(host in ['localhost', '127.0.0.1'] for host in ALLOWED_HOSTS):
+    DEBUG = True
+else:
+    DEBUG = False
 
 
 
