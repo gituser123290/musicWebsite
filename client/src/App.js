@@ -34,8 +34,6 @@ const Register = React.lazy(() => import('./AuthPage/Register'));
 const Playlist = React.lazy(() => import('./components/Playlists/Playlist'));
 const Setting= React.lazy(() => import('./pages/Setting'))
 
-
-
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
@@ -74,7 +72,6 @@ function App() {
     { path: '/updateprofile', element: <ProfileUpdate /> },
     { path: '/setting', element: <Setting /> },
     { path: '/createplaylist', element: <CreatePlayList /> },
-    // { path: '/playlists/:id', element: <Playlist /> },
   ];
 
   return (
@@ -82,9 +79,8 @@ function App() {
       <Navbar isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
       <Suspense fallback={<Loading />}>
         <Routes>
-
-         {/* Home Page */}
-         <Route path="/" element= {<HomePage/> }/>
+          {/* Home Page */}
+          <Route path="/" element={<HomePage />} />
 
           {/* Protected Routes */}
           {protectedRoutes.map(({ path, element }) => (
@@ -94,6 +90,7 @@ function App() {
           {/* Auth Routes */}
           <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login loggedInUser={loggedInUser} />} />
           <Route path="/register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
+
           {/* 404 Not Found */}
           <Route path="*" element={<NotFound />} />
         </Routes>

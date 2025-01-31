@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkclient=self.webpackChunkclient||[]).push([[795],{795:(e,t,n)=>{n.r(t),n.d(t,{default:()=>c});n(43);var s=n(265),l=n(579);function c(e){let{children:t}=e;return sessionStorage.getItem("token")?t:(0,l.jsx)(s.C5,{to:"/login"})}}}]);
+//# sourceMappingURL=795.db4595a4.chunk.js.map

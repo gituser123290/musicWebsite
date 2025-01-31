@@ -68,7 +68,8 @@ export default function SongPage() {
           Authorization: `Token ${token}`,
         },
       });
-      navigate("/");
+      alert('Successfully created Song:')
+      navigate("/songs");
     } catch (error) {
       setError(error.response?.data?.detail || "Something went wrong");
     } finally {
