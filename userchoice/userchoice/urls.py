@@ -14,9 +14,9 @@ if settings.DEBUG:
 
 # API URLs
 urlpatterns += [
-    path('api/account/', include('authApp.urls')),  # Account management
-    path('api/music/', include('musicapp.urls')),   # Music-related API
-    path('api/book/', include('book.urls')),        # Book-related API
+    path('account/', include('authApp.urls')),  # Account management
+    path('', include('musicapp.urls')),   # Music-related API
+    path('book/', include('book.urls')),        # Book-related API
 ]
 
 # Serve media files in development
