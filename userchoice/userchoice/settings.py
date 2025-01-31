@@ -107,6 +107,8 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+        'rest_framework.permissions.AllowAny',
     ],
 }
 
@@ -141,6 +143,3 @@ CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
     "https://music-website-uhdd.onrender.com"
 ]
-
-# Enable all origins for development; restrict for production
-CORS_ALLOW_ALL_ORIGINS = DEBUG
