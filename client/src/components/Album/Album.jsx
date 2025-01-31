@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { VscPreview } from "react-icons/vsc";
 // import { RiCloseLargeFill } from "react-icons/ri";
-import api from '../../services/api';
+import {apiUrl} from '../../services/api';
 import Loading from '../../layouts/Loading';
 import { Navigate, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 export default function Album() {
@@ -23,7 +24,7 @@ export default function Album() {
                 return;
             }
             try {
-                const response = await api.get('/albums/',{
+                const response = await axios.get(apiUrl+'/albums',{
                     headers:{
                         Authorization: `Token ${token}`,
                     }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { apiUrl } from "../services/api";
+import axios from "axios";
 
 export default function ArtistPage() {
     const [error, setError] = useState(null);
@@ -43,7 +44,7 @@ export default function ArtistPage() {
             }
         }
         try {
-            const response = await api.post('/artist/create/', formData, {
+            const response = await axios.post(apiUrl+'/artist/create/', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                     'Authorization': `Token ${token}`,

@@ -1,9 +1,10 @@
 import React from 'react'
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import api from '../../services/api'
+import  { apiUrl } from '../../services/api'
 import Loading from '../../layouts/Loading'
 import { FaArrowAltCircleRight } from 'react-icons/fa'
+import axios from 'axios'
 
 export default function Artists() {
     const [artists, setArtists] = useState([])
@@ -20,7 +21,7 @@ export default function Artists() {
                 return
             }
             try {
-                const response = await api.get('/artists/',{
+                const response = await axios.get(apiUrl+'/artists/',{
                     headers: {
                         'Authorization': `Token ${token}`,
                     },

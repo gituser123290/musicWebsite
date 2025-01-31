@@ -10,31 +10,21 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
-
 # SECURITY WARNING: don't run with debug turned on in production!
-import os
-
-# Set debug based on environment
-# if os.getenv('DJANGO_ENV', 'localhost') == 'localhost':
-#     DEBUG = True
-# else:
-#     DEBUG = False
 
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 # DEBUG = True
-# myproject/settings.py
 
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
-
+# For localhost
 # ALLOWED_HOSTS = ['localhost', '127.0.0.1','musicwebsite-ohd6.onrender.com']
 
+
+# For production
 # Allowed hosts
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(' ') if not DEBUG else []
-
-
-
 
 
 # Application definition
@@ -128,18 +118,6 @@ DATABASES = {
 #     }
 # }
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': os.getenv('DB_NAME'),
-#         'USER': os.getenv('DB_USER'),
-#         'PASSWORD': os.getenv('DB_PASSWORD'),
-#         'HOST': os.getenv('DB_HOST'),
-#         'PORT': '5432',
-#     }
-# }
-
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -200,6 +178,13 @@ MEDIA_ROOT = BASE_DIR / 'static/images'
 
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+
+if not DEBUG:    # Tell Django to copy static assets into a path called `staticfiles` (this is specific to Render)
+    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+    # Enable the WhiteNoise storage backend, which compresses static files to reduce disk use
+    # and renames the files with unique names for each version to support long-term caching
+    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 
 # DATA_UPLOAD_MAX_MEMORY_SIZE = 10485760

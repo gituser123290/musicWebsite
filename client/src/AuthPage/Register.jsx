@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import api from '../services/api';
+import  { apiUrl } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 const Register = () => {
@@ -25,7 +26,7 @@ const Register = () => {
     setError('');
 
     try {
-      const response = await api.post('/account/register/', formData)
+      const response = await axios.post(apiUrl+'/account/register/', formData)
       const {token}=response.data;
       if(token){
         sessionStorage.setItem('token',token)

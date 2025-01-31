@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import api from '../services/api'
+import  { apiUrl } from '../services/api'
 import Loading from '../layouts/Loading'
 import moment from 'moment';
 import { FaTwitter, FaGithub, FaLinkedin, FaEnvelope, FaPenSquare,FaSpotify } from 'react-icons/fa';
 import { PiPlaylistFill } from "react-icons/pi";
+import axios from 'axios';
 
 export default function Profile() {
     const [user, setUser] = useState([])
@@ -18,14 +19,13 @@ export default function Profile() {
             const token = sessionStorage.getItem('token')
             if (!token) return;
             try {
-                const response = await api.get('/account/user/', {
+                const response = await axios.get(apiUrl+'/account/user/', {
                     headers: {
                         Authorization: `Token ${token}`,
                     }
                 })
                 setUser(response.data)
                 setLoading(false)
-                console.log(response.data);
             } catch (error) {
                 setError(error.message)
                 setLoading(false)

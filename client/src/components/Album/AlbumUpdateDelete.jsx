@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { FaRegEdit, FaTrash } from "react-icons/fa";
-import api from '../../services/api';
+import { apiUrl } from '../../services/api';
 import Loading from '../../layouts/Loading';
+import axios from 'axios';
 
 export default function AlbumUpdateDelete() {
     const { id } = useParams();
@@ -35,14 +36,14 @@ export default function AlbumUpdateDelete() {
                     return;
                 }
 
-                const artistsResponse = await api.get('/artists/', {
+                const artistsResponse = await axios.get(apiUrl+'/artists/', {
                     headers: {
                       Authorization: `Token ${token}`,
                     },
                   });
                   setArtists(artistsResponse.data);
 
-                const response = await api.get(`/albums/${id}/`, {
+                const response = await axios.get(`${apiUrl}/albums/${id}/`, {
                     headers: {
                         Authorization: `Token ${token}`,
                     },
@@ -98,7 +99,7 @@ export default function AlbumUpdateDelete() {
             formData.append(key, setSongDetails[key]);
         }
         try {
-            const response = await api.put(`/albums/${id}/`, formData, {
+            const response = await axios.put(`${apiUrl}/albums/${id}/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     Authorization: `Token ${token}`,
@@ -118,7 +119,7 @@ export default function AlbumUpdateDelete() {
             return;
         }
         try {
-            await api.delete(`/albums/delete/${id}/`, {
+            await axios.delete(`${apiUrl}/albums/delete/${id}/`, {
                 headers: {
                     Authorization: `Token ${token}`,
                 },

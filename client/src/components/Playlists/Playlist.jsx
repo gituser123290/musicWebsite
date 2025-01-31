@@ -1,9 +1,10 @@
 import Loading from '../../layouts/Loading';
-import api from '../../services/api';
+import {apiUrl} from '../../services/api';
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
 import { FaPlay, FaPause, FaTrash,FaArrowLeft } from "react-icons/fa";
 import { useEffect, useState, useRef } from 'react';
 import { Navigate,useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 
@@ -27,7 +28,7 @@ export default function Playlist() {
         return;
       }
       try {
-        const response = await api.get('/playlist/', {
+        const response = await axios.get(apiUrl+'/playlist', {
           headers: {
             Authorization: `Token ${token}`
           }
@@ -89,7 +90,7 @@ export default function Playlist() {
     }
   
     try {
-      await api.delete(`/playlists/${playlistId}/songs/${songId}/`, {
+      await axios.delete(`${apiUrl}/playlists/${playlistId}/songs/${songId}`, {
         headers: {
           Authorization: `Token ${token}`,
         },
@@ -115,7 +116,7 @@ export default function Playlist() {
     }
   
     try {
-      await api.delete(`playlist/${playlistId}/delete/`, {
+      await axios.delete(`${apiUrl}/playlist/${playlistId}/delete`, {
         headers: {
           Authorization: `Token ${token}`,
         },

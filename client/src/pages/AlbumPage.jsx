@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
-import api from '../services/api';
+import {apiUrl} from '../services/api';
+import axios from 'axios'
 
 export default function ArtistPage() {
     const [error, setError] = useState(null);
@@ -23,7 +24,7 @@ export default function ArtistPage() {
                 return;
             }
             try {
-                const response = await api.get('/artists/', {
+                const response = await axios.get(apiUrl+'artists/', {
                     headers: {
                         Authorization: `Token ${token}`, 
                     },
@@ -59,7 +60,7 @@ export default function ArtistPage() {
         formData.append(key, songData[key]);
         }
         try {
-            const response = await api.post('/albums/create/', formData, {
+            const response = await axios.post(apiUrl+'/albums/create/', formData, {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },

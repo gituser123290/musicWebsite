@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate, Navigate } from "react-router-dom";
 import { FaRegEdit, FaTrash } from "react-icons/fa";
 import { FaPlay } from "react-icons/fa";
-import api from "../../services/api";
+import {apiUrl} from "../../services/api";
 import Loading from "../../layouts/Loading";
 import { FaArrowLeft } from "react-icons/fa";
+import axios from "axios";
 
 export default function SongUpdate() {
   const { id } = useParams();
@@ -33,7 +34,7 @@ export default function SongUpdate() {
         return;
       }
       try {
-        const response = await api.get("/artists/", {
+        const response = await axios.get(apiUrl+"/artists", {
           headers: { Authorization: `Token ${token}` },
         });
         setArtists(response.data);
@@ -49,7 +50,7 @@ export default function SongUpdate() {
         return;
       }
       try {
-        const response = await api.get(`/songs/${id}/`, {
+        const response = await axios.get(`${apiUrl}/songs/${id}/`, {
           headers: {
             Authorization: `Token ${token}`
           },
@@ -101,7 +102,7 @@ export default function SongUpdate() {
       return;
     }
     try {
-      await api.put(`/songs/${id}/`, formData, {
+      await axios.put(`${apiUrl}/songs/${id}/`, formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Token ${token}`,

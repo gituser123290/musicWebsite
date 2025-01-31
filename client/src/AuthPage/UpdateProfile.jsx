@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import api from "../services/api";
+import  { apiUrl } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function ProfileUpdate() {
   const [profileData, setProfileData] = useState({
@@ -19,7 +20,7 @@ export default function ProfileUpdate() {
       const token = sessionStorage.getItem("token");
       if (!token) return;
       try {
-        const response = await api.get("/account/user/", {
+        const response = await axios.get(apiUrl+"/account/user/", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -55,7 +56,7 @@ export default function ProfileUpdate() {
 
     const token = sessionStorage.getItem("token");
     if (!token) return;
-    api.put("/account/user/update/", formData, {
+    axios.put(apiUrl+"/account/user/update", formData, {
       headers: {
         Authorization: `Token ${token}`,
       },

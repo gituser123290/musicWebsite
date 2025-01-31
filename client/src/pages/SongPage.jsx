@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "../services/api";
+import { apiUrl } from "../services/api";
+import axios from 'axios';
 
 export default function SongPage() {
   const [error, setError] = useState(null);
@@ -20,7 +21,7 @@ export default function SongPage() {
       const token = sessionStorage.getItem("token");
       if (!token) return;
       try {
-        const response = await api.get("/artists/", {
+        const response = await axios.get(apiUrl+"/artists", {
           headers: {
             Authorization: `Token ${token}`,
           },
@@ -61,7 +62,7 @@ export default function SongPage() {
     }
 
     try {
-      await api.post("/songs/create/", formData, {
+      await axios.post(apiUrl+"/songs/create/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Token ${token}`,

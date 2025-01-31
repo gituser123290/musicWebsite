@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
-import api from '../../services/api'
 import Loading from '../../layouts/Loading'
+import {apiUrl} from '../../services/api';
+import axios from 'axios';
 
 export default function Songs() {
     const [songs, setSongs] = useState([])
@@ -17,13 +18,13 @@ export default function Songs() {
                 return;
             }
             try {
-                const response = await api.get('/songs/', {
+                const response = await axios.get(apiUrl+'/songs', {
                     headers: {
-                        Authorization: `Token ${token}`
+                        Authorization:`Token ${token}`
                     }
                 })
                 setSongs(response.data)
-                console.log(response.data)
+                console.log(response)
                 setLoading(false)
             } catch (error) {
                 console.log(error.message);

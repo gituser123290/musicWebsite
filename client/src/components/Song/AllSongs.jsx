@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { TbPlayerTrackPrevFilled, TbPlayerTrackNextFilled } from "react-icons/tb";
 import { FaPlay, FaPause} from "react-icons/fa";
-import api from '../../services/api';
+import { apiUrl } from '../../services/api';
 import Loading from '../../layouts/Loading';
 import { Navigate } from 'react-router-dom';
+import axios from 'axios';
 
 
 export default function AllSongs() {
@@ -24,7 +25,7 @@ export default function AllSongs() {
                 return;
             }
             try {
-                const response = await api.get("/audio_files/",{
+                const response = await axios.get(apiUrl+"/audio_files/",{
                     headers:{
                         Authorization:`Token ${token}`
                     }

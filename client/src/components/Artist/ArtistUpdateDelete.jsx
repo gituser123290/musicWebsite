@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams,useNavigate } from 'react-router-dom';
 import { FaRegEdit, FaTrash } from "react-icons/fa";
-import api from '../../services/api';
+import  { apiUrl } from '../../services/api';
 import Loading from '../../layouts/Loading';
+import axios from 'axios';
 
 
 const image_url = "https://path/to/default/image.jpg";
@@ -31,7 +32,7 @@ const ArtistUpdateDelete = () => {
     useEffect(() => {
         const fetchartistDetail = async () => {
             try {
-                const response = await api.get(`/artist/${id}/`);
+                const response = await axios.get(`${apiUrl}/artist/${id}/`);
                 setArtist(response.data);
                 setartistDetails({
                     name: response.data.name,
@@ -85,7 +86,7 @@ const ArtistUpdateDelete = () => {
                 formData.append('image_url', artistDetails.image_url); 
             }
 
-            const response = await api.put(`/artist/${id}/`, formData, {
+            const response = await axios.put(`${apiUrl}/artist/${id}/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
@@ -102,7 +103,7 @@ const ArtistUpdateDelete = () => {
 
     const handleDelete = async () => {
         try {
-            await api.delete(`/artist/${id}/`);
+            await axios.delete(`${apiUrl}/artist/${id}/`);
             setArtist(null);
             closeDeleteModal()
         } catch (error) {

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import api from "../services/api";
+import  { apiUrl } from "../services/api";
 import Loading from "../layouts/Loading";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function CreatePlayList() {
     const [name, setName] = useState("");
@@ -14,7 +15,7 @@ export default function CreatePlayList() {
         const token = sessionStorage.getItem("token");
         if (!token) return;
         try {
-            await api.post("/playlist/create/",
+            await axios.post(apiUrl+"/playlist/create/",
                 { name: name, is_public: is_public },
                 {
                     headers: {
