@@ -46,7 +46,7 @@ const Login = ({ loggedInUser }) => {
         
         <button className='px-2 py-2 bg-green-400 w-20 ml-64 rounded-md hover:bg-green-900' type="submit">Login</button>
 
-        {error && <p className='text-xl text-fuchsia-400' >{error}</p>}
+        {error && <p className='text-xl text-red-600' >{error}</p>}
       </form>
       <p className='text-center text-xl'>
         Don't have an account yet. Please{' '}
