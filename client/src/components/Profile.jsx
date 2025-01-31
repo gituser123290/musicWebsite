@@ -61,7 +61,7 @@ export default function Profile() {
                     <h2 className="text-xl font-semibold text-gray-800">{user?.username} joined {moment(user?.date_joined).fromNow()}</h2>
                     <h3 className="text-xl font-semibold text-gray-800">{user?.first_name} {user?.last_name} <span className='text-sm'>last login {moment(user?.last_login).fromNow()}</span></h3>
                     <p className="text-gray-600">{user?.bio || "No bio available"}</p>
-                    <p className="text-xl font-semibold text-gray-800 cursor-pointer" onClick={browsePlaylist}>Playlist: {user?.playlists[0].name} have total {user?.playlists[0].songs.length} Songs</p>
+                    <p className="text-sm font-semibold text-gray-800 cursor-pointer" onClick={browsePlaylist}>Playlist: {user?.playlists[0].name} have total {user?.playlists[0].songs.length} Songs</p>
 
                     <div className="mt-4 flex space-x-10">
                     <a href='/updateprofile' rel="noopener noreferrer">

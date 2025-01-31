@@ -11,7 +11,7 @@ export default function SongDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [song, setSong] = useState([]);
-  const [audioUrl, setAudioUrl] = useState('');
+  // const [audioUrl, setAudioUrl] = useState('');
   const [comments, setComments] = useState([]);
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
@@ -38,7 +38,7 @@ export default function SongDetail() {
           },
         });
 
-        setAudioUrl(`${apiUrl}${songResponse.data.audio}`);
+        // setAudioUrl(`${apiUrl}${songResponse.data.audio}`);
         console.log(`Songs: ${songResponse.data.audio}`);
         setSong(songResponse.data);
         // Fetch comments
