@@ -54,6 +54,7 @@ class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
         fields = ['profile_picture', 'bio', 'phone_number']
+        read_only_fields=['username', 'playlists']
     
     def update(self, instance, validated_data):
         instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)

@@ -82,12 +82,14 @@ function App() {
       <Navbar isAuthenticated={isAuthenticated} handleLogout={handleLogout} />
       <Suspense fallback={<Loading />}>
         <Routes>
+
+         {/* Home Page */}
+         <Route path="/" element= {<HomePage/> }/>
+
+          {/* Protected Routes */}
           {protectedRoutes.map(({ path, element }) => (
             <Route key={path} path={path} element={<ProtectedRoute>{element}</ProtectedRoute>} />
           ))}
-
-          {/* Home Page */}
-          <Route path="/" element= {<HomePage/> }/>
 
           {/* Auth Routes */}
           <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login loggedInUser={loggedInUser} />} />

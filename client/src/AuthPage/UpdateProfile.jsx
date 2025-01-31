@@ -56,7 +56,7 @@ export default function ProfileUpdate() {
 
     const token = sessionStorage.getItem("token");
     if (!token) return;
-    axios.put(apiUrl+"/account/user/update", formData, {
+    axios.put(apiUrl+"/account/user/update/", formData, {
       headers: {
         Authorization: `Token ${token}`,
       },
