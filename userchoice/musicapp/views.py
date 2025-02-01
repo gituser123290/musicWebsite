@@ -86,11 +86,15 @@ class SongCreateAPIView(generics.CreateAPIView):
                 # Convert duration in seconds to hours, minutes, and seconds
                 duration_formatted = self.format_duration(duration_seconds)
 
+                # Save the calculated duration to the Song model
+                song_instance.audio_duration = duration_formatted
+                song_instance.save()  # Save the song instance to the database
+
                 # Clean up the temporary file
                 os.remove(temp_audio_file_path)
             except Exception as e:
                 print(f"Error retrieving duration: {e}")
-            # In case of an error, duration remains "00:00:00"
+                # In case of an error, duration remains "00:00:00"
         
         # Serialize the song instance and add the audio duration
         song_data = SongSerializer(song_instance).data
