@@ -16,44 +16,94 @@ from .models import Song, Playlist, Album, Artist, Like, Comment, Subscription, 
 from .serializers import SongSerializer, AudioSerializer, PlaylistSerializer, AlbumSerializer, ArtistSerializer, LikeSerializer, CommentSerializer, SubscriptionSerializer, PlaylistCollaboratorSerializer
 
 
-# Song Views
+# # Song Views
+# class SongCreateAPIView(generics.CreateAPIView):
+#     parser_classes = [MultiPartParser, FileUploadParser]
+#     serializer_class = SongSerializer
+#     permission_classes = [IsAuthenticated]
+    
+#     def perform_create(self, serializer):
+#         song_instance = serializer.save(user=self.request.user)
+#         audio_file = self.request.FILES.get('audio')
+        
+#         try:
+#             if audio_file:
+#                 # Save the uploaded file to a temporary location
+#                 with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
+#                     for chunk in audio_file.chunks():
+#                         temp_audio_file.write(chunk)
+#                     temp_audio_file_path = temp_audio_file.name
+                
+#                 # Use mediainfo to get the audio duration
+#                 audio_info = mediainfo(temp_audio_file_path)
+#                 duration_seconds = float(audio_info['duration'])
+#                 hours = int(duration_seconds // 3600)
+#                 minutes = int((duration_seconds % 3600) // 60)
+#                 seconds = int(duration_seconds % 60)
+#                 duration_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
+
+#                 # Clean up the temporary file
+#                 os.remove(temp_audio_file_path)
+#             else:
+#                 duration_formatted = "00:00:00"
+#         except Exception as e:
+#             duration_formatted = "00:00:00"
+#             print(f"Error retrieving duration: {e}")
+        
+#         # Add the duration to the response data
+#         song_data = SongSerializer(song_instance).data
+#         song_data['audio_duration'] = duration_formatted
+#         return Response(song_data)
+
+
 class SongCreateAPIView(generics.CreateAPIView):
     parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = SongSerializer
     permission_classes = [IsAuthenticated]
-    
+
     def perform_create(self, serializer):
+        # Save the song instance with the user info
         song_instance = serializer.save(user=self.request.user)
+
+        # Get the audio file from the request
         audio_file = self.request.FILES.get('audio')
-        
-        try:
-            if audio_file:
-                # Save the uploaded file to a temporary location
+
+        # Initialize duration as "00:00:00" by default
+        duration_formatted = "00:00:00"
+
+        if audio_file:
+            try:
+                # Save the uploaded audio file to a temporary location
                 with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
                     for chunk in audio_file.chunks():
                         temp_audio_file.write(chunk)
                     temp_audio_file_path = temp_audio_file.name
-                
+
                 # Use mediainfo to get the audio duration
                 audio_info = mediainfo(temp_audio_file_path)
                 duration_seconds = float(audio_info['duration'])
-                hours = int(duration_seconds // 3600)
-                minutes = int((duration_seconds % 3600) // 60)
-                seconds = int(duration_seconds % 60)
-                duration_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
+
+                # Convert duration in seconds to hours, minutes, and seconds
+                duration_formatted = self.format_duration(duration_seconds)
 
                 # Clean up the temporary file
                 os.remove(temp_audio_file_path)
-            else:
-                duration_formatted = "00:00:00"
-        except Exception as e:
-            duration_formatted = "00:00:00"
-            print(f"Error retrieving duration: {e}")
+            except Exception as e:
+                print(f"Error retrieving duration: {e}")
+            # In case of an error, duration remains "00:00:00"
         
-        # Add the duration to the response data
+        # Serialize the song instance and add the audio duration
         song_data = SongSerializer(song_instance).data
         song_data['audio_duration'] = duration_formatted
+
         return Response(song_data)
+
+    def format_duration(self, duration_seconds):
+        """Convert seconds to a formatted string (HH:MM:SS)"""
+        hours = int(duration_seconds // 3600)
+        minutes = int((duration_seconds % 3600) // 60)
+        seconds = int(duration_seconds % 60)
+        return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 
 class SongListAPIView(generics.ListAPIView):
