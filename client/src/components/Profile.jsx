@@ -54,7 +54,7 @@ export default function Profile() {
                 <div className="md:flex-shrink-0">
                     <img
                         className="w-24 h-24 rounded-full mx-auto mt-6"
-                        src={user?.profile_picture} alt={user.username}
+                        src={user.profile_picture} alt={user.username}
                     />
                 </div>
                 <div className="p-6 space-y-10">
