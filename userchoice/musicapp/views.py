@@ -61,6 +61,47 @@ class SongCreateAPIView(generics.CreateAPIView):
     serializer_class = SongSerializer
     permission_classes = [IsAuthenticated]
 
+    # def perform_create(self, serializer):
+    #     # Save the song instance with the user info
+    #     song_instance = serializer.save(user=self.request.user)
+
+    #     # Get the audio file from the request
+    #     audio_file = self.request.FILES.get('audio')
+
+    #     # Initialize duration as "00:00:00" by default
+    #     duration_formatted = "00:00:00"
+
+    #     if audio_file:
+    #         try:
+    #             # Save the uploaded audio file to a temporary location
+    #             with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
+    #                 for chunk in audio_file.chunks():
+    #                     temp_audio_file.write(chunk)
+    #                 temp_audio_file_path = temp_audio_file.name
+
+    #             # Use mediainfo to get the audio duration
+    #             audio_info = mediainfo(temp_audio_file_path)
+    #             duration_seconds = float(audio_info['duration'])
+
+    #             # Convert duration in seconds to hours, minutes, and seconds
+    #             duration_formatted = self.format_duration(duration_seconds)
+
+    #             # Save the calculated duration to the Song model
+    #             song_instance.audio_duration = duration_formatted
+    #             song_instance.save()  # Save the song instance to the database
+
+    #             # Clean up the temporary file
+    #             os.remove(temp_audio_file_path)
+    #         except Exception as e:
+    #             print(f"Error retrieving duration: {e}")
+    #             # In case of an error, duration remains "00:00:00"
+        
+    #     # Serialize the song instance and add the audio duration
+    #     song_data = SongSerializer(song_instance).data
+    #     song_data['audio_duration'] = duration_formatted
+
+    #     return Response(song_data)
+    
     def perform_create(self, serializer):
         # Save the song instance with the user info
         song_instance = serializer.save(user=self.request.user)
@@ -86,9 +127,9 @@ class SongCreateAPIView(generics.CreateAPIView):
                 # Convert duration in seconds to hours, minutes, and seconds
                 duration_formatted = self.format_duration(duration_seconds)
 
-                # Save the calculated duration to the Song model
+                # Save the calculated duration to the Song model and persist it
                 song_instance.audio_duration = duration_formatted
-                song_instance.save()  # Save the song instance to the database
+                song_instance.save()  # This ensures the audio_duration is saved permanently in the database
 
                 # Clean up the temporary file
                 os.remove(temp_audio_file_path)
@@ -98,9 +139,10 @@ class SongCreateAPIView(generics.CreateAPIView):
         
         # Serialize the song instance and add the audio duration
         song_data = SongSerializer(song_instance).data
-        song_data['audio_duration'] = duration_formatted
+        song_data['audio_duration'] = song_instance.audio_duration  # Ensure the updated field is included in the response
 
         return Response(song_data)
+
 
     def format_duration(self, duration_seconds):
         """Convert seconds to a formatted string (HH:MM:SS)"""
