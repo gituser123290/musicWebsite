@@ -1,0 +1,103 @@
+@media (min-width: 400px) {
+    .login {
+        margin-top: 50px;
+        margin-left: 5rem;
+        width: 75%;
+    }
+}
+
+@media (min-width: 400px) {
+    .btn_login {
+        margin-left: 7rem;
+        width: 56%;
+    }
+}
+
+@media (min-width: 640px) {
+    .login {
+        margin-top: 50px;
+        margin-left: 6rem;
+        width: 75%;
+    }
+}
+
+@media (min-width: 768px) {
+    .login {
+        margin-top: 50px;
+        margin-left: 8rem;
+        width: 50%;
+    }
+}
+
+
+@media (min-width: 1024px) {
+    .login {
+        margin-top: 50px;
+        margin-left: 10rem;
+        width: 50%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .login {
+        margin-top: 50px;
+        margin-left: 18rem;
+        width: 50%;
+
+    }
+}
+
+/* register */
+
+@media (min-width: 400px) {
+    .register {
+        padding-left: 40px;
+        padding-right: 40px;
+        margin-top: 25px;
+        margin-left: 70px;
+        width: 75%;
+    }
+}
+
+@media (min-width: 400px) {
+    .btn_register {
+                padding-left: 68px;
+        padding-right: 66px;
+        margin-top: 25px;
+        margin-left: 45px;
+        width: 73%;
+    }
+}
+
+@media (min-width: 640px) {
+    .register {
+        margin-top: 50px;
+        margin-left: 9rem;
+        width: 63%;
+    }
+}
+
+@media (min-width: 768px) {
+    .register {
+        margin-top: 50px;
+        margin-left: 15rem;
+        width: 50%;
+    }
+}
+
+
+@media (min-width: 1024px) {
+    .register {
+        margin-top: 50px;
+        margin-left: 18rem;
+        width: 50%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .register {
+        margin-top: 50px;
+        margin-left: 22rem;
+        width: 40%;
+    }
+}

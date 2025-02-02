@@ -1,58 +1,65 @@
 import React, { useState } from 'react';
-import {apiUrl} from '../services/api';
+import { apiUrl } from '../services/api';
 import { useNavigate } from 'react-router-dom';
+import '../styles/custom.css';
 import axios from 'axios';
 
 const Login = ({ loggedInUser }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigate = useNavigate(); 
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(apiUrl+'/account/login/', { username, password });
+      const response = await axios.post(apiUrl + '/account/login/', { username, password });
       const token = response.data.token;
       sessionStorage.setItem('token', token);
-      loggedInUser(true); 
-      navigate('/'); 
+      loggedInUser(true);
+      navigate('/');
     } catch (error) {
       setError('Invalid credentials');
     }
   };
 
   return (
-    <div className='flex justify-center flex-col ml-96 m-12 p-4 w-1/3 h-auto bg-gray-400 rounded-md'>
+    <div className="flex justify-center flex-col m-4 login bg-gray-400 rounded-lg shadow-lg">
+  <form onSubmit={handleLogin} className="flex flex-col w-full space-y-6">
+    <h2 className="text-center text-3xl sm:text-2xl md:text-xl lg:text-lg xl:text-xl text-white font-extrabold mb-4 sm:mb-6 md:mb-8 lg:mb-10">Login</h2>
+    
+    <input
+      className="bg-zinc-300 px-4 py-3 m-4 rounded-lg text-black w-full sm:w-4/6 md:w-3/5 lg:w-2/3 xl:w-1/2 mx-auto focus:outline-none focus:ring-2 focus:ring-green-500 mb-4 sm:mb-6 md:mb-8 lg:mb-10"
+      type="text"
+      placeholder="Username"
+      value={username}
+      onChange={(e) => setUsername(e.target.value)}
+    />
+    
+    <input
+      className="bg-zinc-300 px-4 py-3 rounded-lg w-full sm:w-4/6 md:w-3/5 lg:w-2/3 xl:w-1/2 mx-auto focus:outline-none focus:ring-2 focus:ring-green-500 mb-4 sm:mb-6 md:mb-8 lg:mb-10"
+      type="password"
+      placeholder="Password"
+      value={password}
+      onChange={(e) => setPassword(e.target.value)}
+    />
+    
+    <button 
+      className="px-6 py-3 bg-green-400 text-white btn_login w-full sm:w-4/6 md:w-3/5 lg:w-2/3 xl:w-1/2 lg:ml-32 mx-auto rounded-md hover:bg-green-600 transition-colors mb-6 sm:mb-8 md:mb-10 md:ml-24 lg:mb-12"
+      type="submit">
+      Login
+    </button>
 
-      <form onSubmit={handleLogin} className='flex flex-col m-2 w-full justify-center align-middle'>
-        <h2 className='text-center text-2xl text-white font-extrabold'>Login</h2>
-        
-        <input
-          className='bg-zinc-300 px-2 py-2 m-4 rounded-lg text-black'
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-        
-        <input
-          className='bg-zinc-300 px-2 py-2 m-4 rounded-lg'
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-        
-        <button className='px-2 py-2 bg-green-400 w-20 ml-64 rounded-md hover:bg-green-900' type="submit">Login</button>
+    {error && <p className="text-xl text-red-600 text-center mt-2 sm:mt-4 md:mt-6 lg:mt-8">{error}</p>}
+  </form>
 
-        {error && <p className='text-xl text-red-600' >{error}</p>}
-      </form>
-      <p className='text-center text-xl'>
-        Don't have an account yet. Please{' '}
-        <a className='px-1 py-1 underline hover:uppercase rounded-md text-black' href="/register">Register</a>
-      </p>
-    </div>
+  <p className="text-center text-lg sm:text-xl md:text-lg lg:text-xl mt-4 sm:mt-6 md:mt-8 lg:mt-10">
+    Don't have an account yet? Please{' '}
+    <a className="px-1 py-1 underline hover:uppercase rounded-md text-black" href="/register">Register</a>
+  </p>
+</div>
+
+
   );
 };
 
