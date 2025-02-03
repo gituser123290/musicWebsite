@@ -11,7 +11,6 @@ from .serializers import RegisterSerializer,UserProfileSerializer,UserProfileUpd
 from django.contrib.auth import authenticate
 from rest_framework import generics
 from rest_framework.response import Response
-from .models import UserProfile
 
 
 
@@ -64,5 +63,3 @@ class UserProfileUpdateView(generics.UpdateAPIView):
         # Lazy import of the serializer to prevent circular import
         from authApp.serializers import UserProfileSerializer
         return UserProfileSerializer
-
-

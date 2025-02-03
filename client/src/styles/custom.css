@@ -98,3 +98,50 @@
         width: 40%;
     }
 }
+
+
+/* profile */
+@media (min-width: 400px) {
+    .profile {
+        padding-left: 4px;
+        padding-right: 16px;
+        margin-top: 25px;
+        margin-left: 6.5rem;
+        width: 55%;
+
+    }
+}
+
+
+@media (min-width: 640px) {
+    .profile {
+        margin-top: 50px;
+        margin-left: 10rem;
+        width: 50%;
+    }
+}
+
+@media (min-width: 768px) {
+    .profile {
+        margin-top: 14px;
+        margin-left: 21rem;
+        width: 34%;
+    }
+}
+
+
+@media (min-width: 1024px) {
+    .profile {
+        margin-top: 50px;
+        margin-left: 18rem;
+        width: 50%;
+    }
+}
+
+@media (min-width: 1280px) {
+    .profile {
+        margin-top: 50px;
+        margin-left: 22rem;
+        width: 40%;
+    }
+}

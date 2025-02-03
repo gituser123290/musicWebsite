@@ -45,7 +45,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
         model = get_user_model()
         fields = [
             'id', 'username', 'first_name', 'last_name', 'email', 
-            'profile_picture','playlists', 'bio', 'phone_number', 'date_joined','last_login'
+            'user_picture','playlists', 'bio', 'phone_number', 'date_joined','last_login'
         ]
     # def get_playlists(self, obj):
     #     return PlaylistSerializer(Playlist.objects.filter(user=obj), many=True).data
@@ -53,11 +53,11 @@ class UserProfileSerializer(serializers.ModelSerializer):
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ['profile_picture', 'bio', 'phone_number']
+        fields = ['user_picture', 'bio', 'phone_number']
         read_only_fields=['username', 'playlists']
     
     def update(self, instance, validated_data):
-        instance.profile_picture = validated_data.get('profile_picture', instance.profile_picture)
+        instance.profile_picture = validated_data.get('user_picture', instance.profile_picture)
         instance.bio = validated_data.get('bio', instance.bio)
         instance.phone_number = validated_data.get('phone_number', instance.phone_number)
         instance.save()

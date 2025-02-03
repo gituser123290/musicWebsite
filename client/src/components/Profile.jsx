@@ -54,16 +54,16 @@ export default function Profile() {
                 <div className="md:flex-shrink-0">
                     <img
                         className="w-24 h-24 rounded-full mx-auto mt-6"
-                        src={user.profile_picture} alt={user.username}
+                        src={user.user_picture} alt={user.username}
                     />
                 </div>
                 <div className="p-6 space-y-10">
                     <h2 className="text-xl font-semibold text-gray-800">{user?.username} joined {moment(user?.date_joined).fromNow()}</h2>
                     <h3 className="text-xl font-semibold text-gray-800">{user?.first_name} {user?.last_name} <span className='text-sm'>last login {moment(user?.last_login).fromNow()}</span></h3>
                     <p className="text-gray-600">{user?.bio || "No bio available"}</p>
-                    <p className="text-sm font-semibold text-gray-800 cursor-pointer" onClick={browsePlaylist}>Playlist: {user?.playlists[0].name} have total {user?.playlists[0].songs.length} Songs</p>
+                    <p className="text-sm font-semibold text-gray-800 cursor-pointer" onClick={browsePlaylist}>Playlist: {user?.playlists[0]?.name} have total {user?.playlists[0]?.songs.length} Songs</p>
 
-                    <div className="mt-4 flex space-x-10">
+                    <div className="mt-4 flex sm:flex-wrap space-x-10 profile">
                     <a href='/updateprofile' rel="noopener noreferrer">
                             <FaPenSquare
                                 size={24}
