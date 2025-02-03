@@ -5,11 +5,11 @@ from django.conf import settings
 
 class Song(models.Model):
     title = models.CharField(max_length=200)
-    artist = models.ForeignKey('Artist',on_delete=models.CASCADE,related_name='artists')
+    artist = models.ForeignKey('Artist', on_delete=models.CASCADE, related_name='artists')
     genre = models.CharField(max_length=100) 
-    audio = models.FileField(upload_to='songs/',null=True, blank=True)  
-    audio_duration = models.CharField(max_length=10, blank=True, null=True)
-    song_cover_url=models.URLField(max_length=500,blank=True,null=True)
+    audio = models.FileField(upload_to='songs/', null=True, blank=True)  
+    audio_duration = models.CharField(max_length=10, blank=True, null=True) 
+    song_cover_url = models.URLField(max_length=500, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='songs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 

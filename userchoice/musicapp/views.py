@@ -1,6 +1,9 @@
 from django.http import Http404
 import requests
 import os
+import subprocess
+import os
+from MediaInfo import mediainfo
 import tempfile
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
@@ -17,91 +20,35 @@ from .serializers import SongSerializer, AudioSerializer, PlaylistSerializer, Al
 
 
 # # Song Views
-# class SongCreateAPIView(generics.CreateAPIView):
-#     parser_classes = [MultiPartParser, FileUploadParser]
-#     serializer_class = SongSerializer
-#     permission_classes = [IsAuthenticated]
-    
-#     def perform_create(self, serializer):
-#         song_instance = serializer.save(user=self.request.user)
-#         audio_file = self.request.FILES.get('audio')
-        
-#         try:
-#             if audio_file:
-#                 # Save the uploaded file to a temporary location
-#                 with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
-#                     for chunk in audio_file.chunks():
-#                         temp_audio_file.write(chunk)
-#                     temp_audio_file_path = temp_audio_file.name
-                
-#                 # Use mediainfo to get the audio duration
-#                 audio_info = mediainfo(temp_audio_file_path)
-#                 duration_seconds = float(audio_info['duration'])
-#                 hours = int(duration_seconds // 3600)
-#                 minutes = int((duration_seconds % 3600) // 60)
-#                 seconds = int(duration_seconds % 60)
-#                 duration_formatted = f"{hours:02}:{minutes:02}:{seconds:02}"
-
-#                 # Clean up the temporary file
-#                 os.remove(temp_audio_file_path)
-#             else:
-#                 duration_formatted = "00:00:00"
-#         except Exception as e:
-#             duration_formatted = "00:00:00"
-#             print(f"Error retrieving duration: {e}")
-        
-#         # Add the duration to the response data
-#         song_data = SongSerializer(song_instance).data
-#         song_data['audio_duration'] = duration_formatted
-#         return Response(song_data)
-
-
 class SongCreateAPIView(generics.CreateAPIView):
     parser_classes = [MultiPartParser, FileUploadParser]
     serializer_class = SongSerializer
     permission_classes = [IsAuthenticated]
-
-    # def perform_create(self, serializer):
-    #     # Save the song instance with the user info
-    #     song_instance = serializer.save(user=self.request.user)
-
-    #     # Get the audio file from the request
-    #     audio_file = self.request.FILES.get('audio')
-
-    #     # Initialize duration as "00:00:00" by default
-    #     duration_formatted = "00:00:00"
-
-    #     if audio_file:
-    #         try:
-    #             # Save the uploaded audio file to a temporary location
-    #             with tempfile.NamedTemporaryFile(delete=False) as temp_audio_file:
-    #                 for chunk in audio_file.chunks():
-    #                     temp_audio_file.write(chunk)
-    #                 temp_audio_file_path = temp_audio_file.name
-
-    #             # Use mediainfo to get the audio duration
-    #             audio_info = mediainfo(temp_audio_file_path)
-    #             duration_seconds = float(audio_info['duration'])
-
-    #             # Convert duration in seconds to hours, minutes, and seconds
-    #             duration_formatted = self.format_duration(duration_seconds)
-
-    #             # Save the calculated duration to the Song model
-    #             song_instance.audio_duration = duration_formatted
-    #             song_instance.save()  # Save the song instance to the database
-
-    #             # Clean up the temporary file
-    #             os.remove(temp_audio_file_path)
-    #         except Exception as e:
-    #             print(f"Error retrieving duration: {e}")
-    #             # In case of an error, duration remains "00:00:00"
-        
-    #     # Serialize the song instance and add the audio duration
-    #     song_data = SongSerializer(song_instance).data
-    #     song_data['audio_duration'] = duration_formatted
-
-    #     return Response(song_data)
     
+    
+    def get_audio_duration_ffmpeg(file_path):
+        """Use FFmpeg to get the duration of an audio file."""
+        try:
+            # Run FFmpeg command to extract duration
+            result = subprocess.run(
+                ['ffmpeg', '-i', file_path],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+            )
+
+            # Look for duration in stderr (FFmpeg outputs metadata to stderr)
+            for line in result.stderr.split('\n'):
+                if "Duration" in line:
+                    # Extract the duration in the format HH:MM:SS.mmm
+                    duration_str = line.split('Duration:')[1].split(',')[0].strip()
+                    return duration_str
+            return None
+        except Exception as e:
+            print(f"Error getting duration with FFmpeg: {e}")
+            return None
+
+
     def perform_create(self, serializer):
         # Save the song instance with the user info
         song_instance = serializer.save(user=self.request.user)
@@ -120,12 +67,23 @@ class SongCreateAPIView(generics.CreateAPIView):
                         temp_audio_file.write(chunk)
                     temp_audio_file_path = temp_audio_file.name
 
-                # Use mediainfo to get the audio duration
+                # First try using mediainfo to get the audio duration
                 audio_info = mediainfo(temp_audio_file_path)
-                duration_seconds = float(audio_info['duration'])
-
-                # Convert duration in seconds to hours, minutes, and seconds
-                duration_formatted = self.format_duration(duration_seconds)
+                if 'duration' in audio_info:
+                    duration_seconds = float(audio_info['duration'])
+                    duration_formatted = self.format_duration(duration_seconds)
+                else:
+                    # If mediainfo fails, fall back to FFmpeg
+                    print("Mediainfo did not return duration, trying FFmpeg...")
+                    duration_str = self.get_audio_duration_ffmpeg(temp_audio_file_path)
+                    if duration_str:
+                        # Convert the HH:MM:SS.mmm format to a seconds-based format
+                        hours, minutes, seconds = map(float, duration_str.split(":"))
+                        duration_seconds = hours * 3600 + minutes * 60 + seconds
+                        duration_formatted = self.format_duration(duration_seconds)
+                    else:
+                        print("Error: Could not retrieve duration using FFmpeg.")
+                        duration_formatted = "00:00:00"
 
                 # Save the calculated duration to the Song model and persist it
                 song_instance.audio_duration = duration_formatted
@@ -133,10 +91,11 @@ class SongCreateAPIView(generics.CreateAPIView):
 
                 # Clean up the temporary file
                 os.remove(temp_audio_file_path)
+
             except Exception as e:
                 print(f"Error retrieving duration: {e}")
-                # In case of an error, duration remains "00:00:00"
-        
+                duration_formatted = "00:00:00"
+
         # Serialize the song instance and add the audio duration
         song_data = SongSerializer(song_instance).data
         song_data['audio_duration'] = song_instance.audio_duration  # Ensure the updated field is included in the response
@@ -150,6 +109,7 @@ class SongCreateAPIView(generics.CreateAPIView):
         minutes = int((duration_seconds % 3600) // 60)
         seconds = int(duration_seconds % 60)
         return f"{hours:02}:{minutes:02}:{seconds:02}"
+
 
 
 class SongListAPIView(generics.ListAPIView):
