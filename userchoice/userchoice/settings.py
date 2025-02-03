@@ -13,8 +13,6 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-AUTH_USER_MODEL = 'authApp.UserProfile'
-
 # Allowed hosts configuration (for production)
 ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(' ') if not DEBUG else ["127.0.0.1", "localhost"]
 
@@ -61,7 +59,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django_browser_reload.middleware.BrowserReloadMiddleware",
@@ -87,7 +85,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'userchoice.wsgi.application'
 
-# Database configuration (Use DATABASE_URL from environment for production)
+# Database configuration (use DATABASE_URL from environment for production)
 DATABASES = {
     'default': dj_database_url.parse(os.environ.get('DATABASE_URL', f'sqlite:///{BASE_DIR / "db.sqlite3"}'))  # Fallback to local DB if no URL set
 }
@@ -122,16 +120,19 @@ USE_TZ = True
 STATIC_URL = '/static/'
 MEDIA_URL = '/images/'
 
+# Directories to look for static files (Ensure unique paths)
 STATICFILES_DIRS = [
-    BASE_DIR / 'theme/static',  
-    BASE_DIR / 'static',        
+    BASE_DIR / 'theme/static/css',  # Make sure theme has its unique path
+    BASE_DIR / 'static/css',        # Your main static files
 ]
+
+# Root directory for user-uploaded media files
 MEDIA_ROOT = BASE_DIR / 'static/images'
 
-# Define the static files root directory for production
+# STATIC_ROOT for production (WhiteNoise)
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Enable static files compression and caching for production with WhiteNoise
+# Static files storage for production (WhiteNoise)
 if not DEBUG:
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
