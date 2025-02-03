@@ -3,7 +3,6 @@ import requests
 import os
 import subprocess
 import os
-from MediaInfo import mediainfo
 import tempfile
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny

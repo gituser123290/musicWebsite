@@ -11,10 +11,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+# DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+DEBUG=True
+
+ALLOWED_HOSTS=[]
 
 # Allowed hosts configuration (for production)
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(' ') if not DEBUG else ["127.0.0.1", "localhost"]
+# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(' ') if not DEBUG else ["127.0.0.1", "localhost"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -33,14 +36,8 @@ INSTALLED_APPS = [
     'musicapp',
     'authApp',
     
-    'django_browser_reload'
 ]
 
-# Removed Tailwind specific settings
-
-INTERNAL_IPS = [
-    "127.0.0.1",
-]
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -57,7 +54,6 @@ MIDDLEWARE = [
     'whitenoise.middleware.WhiteNoiseMiddleware',  # WhiteNoise for static files
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django_browser_reload.middleware.BrowserReloadMiddleware",
 ]
 
 ROOT_URLCONF = 'userchoice.urls'
@@ -127,8 +123,8 @@ MEDIA_ROOT = BASE_DIR / 'static/images'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 # Static files storage for production (WhiteNoise)
-if not DEBUG:
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+# if not DEBUG:
+#     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
