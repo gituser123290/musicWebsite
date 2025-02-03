@@ -9,6 +9,8 @@ urlpatterns = [
     
     # Browser Reload for development (only enabled if DEBUG is True)
 ]
+
+# Add the browser reload route only in development
 if settings.DEBUG:
     urlpatterns.append(path("__reload__/", include("django_browser_reload.urls")))
 
@@ -21,3 +23,7 @@ urlpatterns += [
 
 # Serve media files in development
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+# Serve static files in production using WhiteNoise or Django's default handling
+if not settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

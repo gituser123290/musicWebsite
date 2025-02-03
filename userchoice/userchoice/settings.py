@@ -24,8 +24,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    'tailwind',
-    'theme', 
     'rest_framework',
     'rest_framework.authtoken',
     
@@ -38,14 +36,11 @@ INSTALLED_APPS = [
     'django_browser_reload'
 ]
 
-TAILWIND_APP_NAME = 'theme'
+# Removed Tailwind specific settings
 
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
-
-# Path to npm for Tailwind CSS build
-NPM_BIN_PATH = "C:/Program Files/nodejs/npm.cmd"
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',
@@ -122,7 +117,6 @@ MEDIA_URL = '/images/'
 
 # Directories to look for static files (Ensure unique paths)
 STATICFILES_DIRS = [
-    BASE_DIR / 'theme/static/css',  # Make sure theme has its unique path
     BASE_DIR / 'static/css',        # Your main static files
 ]
 
