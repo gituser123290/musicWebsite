@@ -1,8 +1,6 @@
 from django.http import Http404
 import requests
 import os
-import subprocess
-import os
 import tempfile
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
@@ -24,30 +22,6 @@ class SongCreateAPIView(generics.CreateAPIView):
     serializer_class = SongSerializer
     permission_classes = [IsAuthenticated]
     
-    
-    def get_audio_duration_ffmpeg(file_path):
-        """Use FFmpeg to get the duration of an audio file."""
-        try:
-            # Run FFmpeg command to extract duration
-            result = subprocess.run(
-                ['ffmpeg', '-i', file_path],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-                text=True,
-            )
-
-            # Look for duration in stderr (FFmpeg outputs metadata to stderr)
-            for line in result.stderr.split('\n'):
-                if "Duration" in line:
-                    # Extract the duration in the format HH:MM:SS.mmm
-                    duration_str = line.split('Duration:')[1].split(',')[0].strip()
-                    return duration_str
-            return None
-        except Exception as e:
-            print(f"Error getting duration with FFmpeg: {e}")
-            return None
-
-
     def perform_create(self, serializer):
         # Save the song instance with the user info
         song_instance = serializer.save(user=self.request.user)
@@ -66,23 +40,14 @@ class SongCreateAPIView(generics.CreateAPIView):
                         temp_audio_file.write(chunk)
                     temp_audio_file_path = temp_audio_file.name
 
-                # First try using mediainfo to get the audio duration
+                # Try using mediainfo to get the audio duration
                 audio_info = mediainfo(temp_audio_file_path)
                 if 'duration' in audio_info:
                     duration_seconds = float(audio_info['duration'])
                     duration_formatted = self.format_duration(duration_seconds)
                 else:
-                    # If mediainfo fails, fall back to FFmpeg
-                    print("Mediainfo did not return duration, trying FFmpeg...")
-                    duration_str = self.get_audio_duration_ffmpeg(temp_audio_file_path)
-                    if duration_str:
-                        # Convert the HH:MM:SS.mmm format to a seconds-based format
-                        hours, minutes, seconds = map(float, duration_str.split(":"))
-                        duration_seconds = hours * 3600 + minutes * 60 + seconds
-                        duration_formatted = self.format_duration(duration_seconds)
-                    else:
-                        print("Error: Could not retrieve duration using FFmpeg.")
-                        duration_formatted = "00:00:00"
+                    print("Mediainfo could not retrieve the duration.")
+                    duration_formatted = "00:00:00"
 
                 # Save the calculated duration to the Song model and persist it
                 song_instance.audio_duration = duration_formatted
@@ -100,7 +65,6 @@ class SongCreateAPIView(generics.CreateAPIView):
         song_data['audio_duration'] = song_instance.audio_duration  # Ensure the updated field is included in the response
 
         return Response(song_data)
-
 
     def format_duration(self, duration_seconds):
         """Convert seconds to a formatted string (HH:MM:SS)"""
