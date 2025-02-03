@@ -185,7 +185,7 @@ export default function SongUpdate() {
               <h2 className="text-2xl font-semibold">{song.title}</h2>
               <p className="mt-2 text-lg">Artist: {song.artist?.name}</p>
               <p className="text-lg">Genre: {song.genre}</p>
-              <p className="text-lg">Duration: {song.duration}</p>
+              <p className="text-lg">Duration: {song.audio_duration}</p>
             </div>
 
             <div className="flex justify-center items-center space-x-6 mt-4">
