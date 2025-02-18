@@ -200,7 +200,7 @@ export default function SongDetail() {
               controls
               className="w-full rounded-lg bg-gray-100 p-2"
               src={song.audio}
-              type="audio/*"
+              type="audio/mp3"
             />
             <div className="flex justify-center space-x-8 mt-4">
               <button className="bg-blue-600 text-white p-4 rounded-full shadow-lg hover:bg-blue-700 hover:shadow-2xl transition duration-300">

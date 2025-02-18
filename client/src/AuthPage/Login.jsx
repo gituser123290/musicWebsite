@@ -3,11 +3,13 @@ import { apiUrl } from '../services/api';
 import { useNavigate } from 'react-router-dom';
 import '../styles/custom.css';
 import axios from 'axios';
+// import Loading from '../layouts/Loading';
 
 const Login = ({ loggedInUser }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleLogin = async (e) => {
@@ -20,8 +22,11 @@ const Login = ({ loggedInUser }) => {
       navigate('/');
     } catch (error) {
       setError('Invalid credentials');
+      setLoading(false);
     }
   };
+
+  // if(loading) return <div className="loading"><Loading/></div>;
 
   return (
     <div className="flex justify-center flex-col m-4 login bg-gray-400 rounded-lg shadow-lg">
@@ -46,8 +51,10 @@ const Login = ({ loggedInUser }) => {
     
     <button 
       className="px-6 py-3 bg-green-400 text-white btn_login w-full sm:w-4/6 md:w-3/5 lg:w-2/3 xl:w-1/2 lg:ml-32 mx-auto rounded-md hover:bg-green-600 transition-colors mb-6 sm:mb-8 md:mb-10 md:ml-24 lg:mb-12"
-      type="submit">
-      Login
+      type="submit"
+      disabled={loading}
+      >
+      {loading ? "Logging..." : "Login"}
     </button>
 
     {error && <p className="text-xl text-red-600 text-center mt-2 sm:mt-4 md:mt-6 lg:mt-8">{error}</p>}

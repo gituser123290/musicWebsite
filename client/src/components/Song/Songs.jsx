@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate, Navigate } from 'react-router-dom'
 import Loading from '../../layouts/Loading'
 import {apiUrl} from '../../services/api';
+import '../../styles/custom.css';
 import axios from 'axios';
 
 export default function Songs() {
@@ -24,7 +25,6 @@ export default function Songs() {
                     }
                 })
                 setSongs(response.data)
-                console.log(response)
                 setLoading(false)
             } catch (error) {
                 console.log(error.message);
@@ -44,12 +44,12 @@ export default function Songs() {
     if (error) return <p>Error: {error.message}</p>
 
     return (
-        <div className="flex flex-wrap p-0 m-0 h-auto w-full">
+        <div className="flex flex-wrap p-0 m-0 h-auto gap-3 w-full">
             {songs.map(song => (
                 <div
                     key={song.id}
                     onClick={() => handleClick(song.id)}
-                    className="bg-orange-500 flex-col justify-center items-center w-1/5 sm:w-[28%] md:w-[30.333333%] lg:w-[23.4%] xl:w-[24.4%] p-4 m-2 rounded-lg shadow-2xl hover:scale-105 transition-all duration-300 transform hover:shadow-2xl hover:bg-gradient-to-r from-purple-500 to-indigo-600">
+                    className="bg-orange-500 flex-col justify-center songs items-center w-1/5 p-4 m-2 rounded-lg shadow-2xl hover:scale-105 transition-all duration-300 transform hover:shadow-2xl hover:bg-gradient-to-r from-purple-500 to-indigo-600">
 
                     {/* Song Image */}
                     <div className='flex justify-center mb-4'>

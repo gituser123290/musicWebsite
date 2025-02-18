@@ -145,3 +145,41 @@
         width: 40%;
     }
 }
+/* songs media css */
+@media (min-width:300px) {
+    .songs{
+        width: 44%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width:400px) {
+    .songs{
+        width: 30%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width:640px) {
+    .songs{
+        width:31%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width:768px) {
+    .songs{
+        width: 23%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+@media (min-width:1024px) {
+    .songs{
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
