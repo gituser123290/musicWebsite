@@ -44,9 +44,9 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     # Only include WhiteNoise in production
-    'whitenoise.middleware.WhiteNoiseMiddleware' if not DEBUG else None,
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     # Only include CORS middleware in production
-    "corsheaders.middleware.CorsMiddleware" if not DEBUG else None,
+    "corsheaders.middleware.CorsMiddleware",
 ]
 
 ROOT_URLCONF = 'userchoice.urls'
