@@ -42,10 +42,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # Only include WhiteNoise in production
-    'whitenoise.middleware.WhiteNoiseMiddleware',
-    # Only include CORS middleware in production
+    'django.middleware.clickjacking.XFrameOptionsMiddleware', 
     "corsheaders.middleware.CorsMiddleware",
 ]
 
@@ -116,6 +113,7 @@ MEDIA_ROOT = BASE_DIR / 'static/images'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:3000",
