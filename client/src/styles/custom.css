@@ -183,3 +183,44 @@
         margin-bottom: 10px;
     }
 }
+
+/* Play song css */
+
+@media (min-width:300px) {
+    .songs_play{
+        width: 44%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width:400px) {
+    .songs_play{
+        width: 30%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width:640px) {
+    .songs_play{
+        width:31%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+
+@media (min-width:768px) {
+    .songs_play{
+        width: 23%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
+@media (min-width:1024px) {
+    .songs_play{
+        width: 100%;
+        margin-top: 10px;
+        margin-bottom: 10px;
+    }
+}
