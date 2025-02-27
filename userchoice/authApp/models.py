@@ -13,7 +13,7 @@ class UserProfile(AbstractUser):
     
     def __str__(self):
         return self.username
-    
+
 # Signal to create the auth token when a user is created
 @receiver(post_save, sender=settings.AUTH_USER_MODEL)
 def create_auth_token(sender, instance=None, created=False, **kwargs):
