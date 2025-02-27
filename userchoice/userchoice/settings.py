@@ -116,10 +116,9 @@ MEDIA_ROOT = BASE_DIR / 'static/images'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# CORS settings (only for production)
-if not DEBUG:
-    CORS_ALLOWED_ORIGINS = [
-        "http://127.0.0.1:3000",
-        "http://localhost:3000",
-        "https://music-app-iota-sable.vercel.app"
-    ]
+
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:3000",
+    "http://localhost:3000",
+    "https://music-app-iota-sable.vercel.app"
+]
