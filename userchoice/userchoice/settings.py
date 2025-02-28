@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'book',
     'musicapp',
     'authApp',
-    'whitenoise.runserver_nostatic',  # Optional: Add Whitenoise for development too
+    'whitenoise.runserver_nostatic',
 ]
 
 AUTHENTICATION_BACKENDS = (
@@ -117,14 +117,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_CREDENTIALS = True
 
+CORS_ORIGIN_WHITELIST=[ 'https://localhost:3000',"http://127.0.0.1:3000","https://music-app-iota-sable.vercel.app", ]
 CORS_ALLOWED_ORIGINS = [
     "https://music-app-iota-sable.vercel.app",
     "http://127.0.0.1:3000",
     "http://localhost:3000",
 ]
 
-if not DEBUG:
-    SECURE_SSL_REDIRECT = True
-    CSRF_COOKIE_SECURE = True
-    SESSION_COOKIE_SECURE = True
-    X_FRAME_OPTIONS = 'DENY'
