@@ -184,7 +184,7 @@ export default function SongDetail() {
         </button>
       </div>
       <div className="flex justify-center space-x-10 px-8 py-8 songs_play">
-        <div className="flex-1 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl shadow-2xl flex flex-col items-center sm:w-full md:w-2/3 lg:w-1/2 xl:w-1/3 space-y-6">
+        <div className="flex-1 p-6 bg-gradient-to-r from-purple-500 to-indigo-600 rounded-xl shadow-2xl flex flex-col items-center sm:w-full space-y-6">
           <div className="w-full h-auto max-w-xs">
             <img
               className="w-full object-cover rounded-lg shadow-md"
