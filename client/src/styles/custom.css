@@ -186,33 +186,57 @@
 
 @media (min-width:300px) {
     .songs_play{
-        width: 44%;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
         margin-top: 10px;
         margin-bottom: 10px;
+
+    }
+    .songs_play_second{
+        margin-top: 15px;
+        width: 100%;
+        margin-left: 3px;
     }
 }
 
 @media (min-width:400px) {
     .songs_play{
-        width: 30%;
+        width: 100%;
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+    .songs_play_second{
+        margin-top: 15px;
+        width: 100%;
+        margin-left: 3px;
     }
 }
 
 @media (min-width:640px) {
     .songs_play{
-        width:31%;
+        width:100%;
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+    .songs_play_second{
+        margin-top: 15px;
+        width: 100%;
+        margin-left: 3px;
     }
 }
 
 @media (min-width:768px) {
     .songs_play{
-        width: 23%;
+        width: 100%;
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+
+    .songs_play_second{
+        margin-top: 15px;
+        width: 100%;
+        margin-left: 3px;
     }
 }
 @media (min-width:1024px) {
@@ -220,5 +244,10 @@
         width: 100%;
         margin-top: 10px;
         margin-bottom: 10px;
+    }
+    .songs_play_second{
+        margin-top: 15px;
+        width: 100%;
+        margin-left: 3px;
     }
 }

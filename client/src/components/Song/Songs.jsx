@@ -44,7 +44,7 @@ export default function Songs() {
     if (error) return <p>Error: {error.message}</p>
 
     return (
-        <div className="flex flex-wrap p-0 m-0 h-auto gap-3 w-full">
+        <div className="flex flex-wrap p-0 m-0 h-auto w-full">
             {songs.map(song => (
                 <div
                     key={song.id}

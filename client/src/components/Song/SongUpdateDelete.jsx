@@ -151,7 +151,7 @@ export default function SongUpdate() {
 
 
   return (
-    <div className="flex items-center justify-center bg-gradient-to-r from-purple-500 to-indigo-600 flex-col w-full">
+    <div className="flex items-center justify-center flex-col w-full">
       <div className="w-full sm:w-2/3 md:w-1/2 lg:w-1/3 xl:w-1/4 bg-gray-800 p-6 rounded-lg shadow-xl m-2">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
