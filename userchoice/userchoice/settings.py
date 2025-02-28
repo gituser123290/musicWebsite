@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    "corsheaders",  # Added CORS app
+    "corsheaders",
     'book',
     'musicapp',
     'authApp',
@@ -39,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware',  # Make sure CORS middleware is listed before CommonMiddleware
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -103,12 +103,10 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = '/static/'
+STATICFILES_DIRS = [BASE_DIR / 'static']  # Development setting
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # Production setting
 
-if not DEBUG:
-    STATICFILES_DIRS = [BASE_DIR / 'static']
-    STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-
-    STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/images/'
 MEDIA_ROOT = BASE_DIR / 'static/images'
@@ -117,12 +115,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Allow only specific origins
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  # Local development
-    "https://music-app-iota-sable.vercel.app",  # Production frontend
-    "https://musicwebsite-glzx.onrender.com",  # Backend API URL
+    "http://localhost:3000",
+    "https://music-app-iota-sable.vercel.app",
+    "https://musicwebsite-glzx.onrender.com",
 ]
 
-# Temporarily enable all origins for debugging (use only in development)
-CORS_ORIGIN_ALLOW_ALL = True
+CORS_ALLOW_METHODS = [
+    'GET',
+    'POST',
+    'PUT',
+    'DELETE',
+    'OPTIONS',
+]
+
+CORS_ALLOW_HEADERS = [
+    'accept',
+    'accept-language',
+    'content-language',
+    'content-type',
+    'authorization',
+]
