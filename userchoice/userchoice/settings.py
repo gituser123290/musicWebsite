@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    "corsheaders",  
+    "corsheaders",  # Added CORS app
     'book',
     'musicapp',
     'authApp',
@@ -39,7 +39,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'corsheaders.middleware.CorsMiddleware', 
+    'corsheaders.middleware.CorsMiddleware',  # Make sure CORS middleware is listed before CommonMiddleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -117,14 +117,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_CREDENTIALS = True
 
+# Allow only specific origins
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",  
-    "https://music-app-iota-sable.vercel.app",  
-    "https://musicwebsite-glzx.onrender.com",  
+    "http://localhost:3000",  # Local development
+    "https://music-app-iota-sable.vercel.app",  # Production frontend
+    "https://musicwebsite-glzx.onrender.com",  # Backend API URL
 ]
 
-CORS_ORIGIN_WHITELIST = [
-    "http://localhost:3000", 
-    "https://music-app-iota-sable.vercel.app",
-    "https://musicwebsite-glzx.onrender.com",
-]
+# Temporarily enable all origins for debugging (use only in development)
+CORS_ORIGIN_ALLOW_ALL = True
