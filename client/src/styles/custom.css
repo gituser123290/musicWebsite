@@ -148,9 +148,8 @@
 /* songs media css */
 @media (min-width:300px) {
     .songs{
-        width: 44%;
+        width: 42%;
         margin-top: 10px;
-        margin-bottom: 10px;
     }
 }
 
@@ -158,7 +157,6 @@
     .songs{
         width: 30%;
         margin-top: 10px;
-        margin-bottom: 10px;
     }
 }
 
