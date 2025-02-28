@@ -24,7 +24,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'rest_framework.authtoken',
-    "corsheaders",
+    "corsheaders",  
     'book',
     'musicapp',
     'authApp',
@@ -37,14 +37,14 @@ AUTHENTICATION_BACKENDS = (
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
-    'whitenoise.middleware.WhiteNoiseMiddleware', 
+    'whitenoise.middleware.WhiteNoiseMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware', 
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware', 
-    "corsheaders.middleware.CorsMiddleware",
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'userchoice.urls'
@@ -117,10 +117,14 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 CORS_ALLOW_CREDENTIALS = True
 
-CORS_ORIGIN_WHITELIST=[ 'https://localhost:3000',"http://127.0.0.1:3000","https://music-app-iota-sable.vercel.app", ]
 CORS_ALLOWED_ORIGINS = [
-    "https://music-app-iota-sable.vercel.app",
-    "http://127.0.0.1:3000",
-    "http://localhost:3000",
+    "http://localhost:3000",  
+    "https://music-app-iota-sable.vercel.app",  
+    "https://musicwebsite-glzx.onrender.com",  
 ]
 
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000", 
+    "https://music-app-iota-sable.vercel.app",
+    "https://musicwebsite-glzx.onrender.com",
+]

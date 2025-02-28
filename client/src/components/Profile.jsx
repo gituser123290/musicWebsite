@@ -25,6 +25,7 @@ export default function Profile() {
                     }
                 })
                 setUser(response.data)
+                console.log(response.data)
                 setLoading(false)
             } catch (error) {
                 setError(error.message)
