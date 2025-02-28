@@ -196,7 +196,7 @@
     .songs_play_second{
         margin-top: 15px;
         width: 100%;
-        margin-left: 3px;
+        margin-left: 1px;
     }
 }
 
@@ -209,7 +209,7 @@
     .songs_play_second{
         margin-top: 15px;
         width: 100%;
-        margin-left: 3px;
+        margin-left: 1px;
     }
 }
 
@@ -222,7 +222,7 @@
     .songs_play_second{
         margin-top: 15px;
         width: 100%;
-        margin-left: 3px;
+        margin-left: 1px;
     }
 }
 
@@ -236,7 +236,7 @@
     .songs_play_second{
         margin-top: 15px;
         width: 100%;
-        margin-left: 3px;
+        margin-left: 1px;
     }
 }
 @media (min-width:1024px) {
@@ -248,6 +248,6 @@
     .songs_play_second{
         margin-top: 15px;
         width: 100%;
-        margin-left: 3px;
+        margin-left: 1px;
     }
 }
