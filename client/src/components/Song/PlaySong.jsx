@@ -216,7 +216,7 @@ export default function SongDetail() {
             </div>
           </div>
         </div>
-        <div className="flex-1 p-6 bg-gradient-to-r songs_play_second from-purple-500 to-indigo-600 rounded-xl shadow-2xl flex flex-col items-center space-y-8 sm:w-3/4 md:w-2/3 lg:w-1/2 xl:w-1/3">
+        <div className="flex-1 p-6 bg-gradient-to-r songs_play_second from-purple-500 to-indigo-600 rounded-xl shadow-2xl flex flex-col items-center space-y-8">
           <div className="text-center text-white text-2xl font-semibold">
             <h2>{song.title}</h2>
           </div>
