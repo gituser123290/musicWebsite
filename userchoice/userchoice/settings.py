@@ -25,7 +25,6 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     "corsheaders",
-    'book',
     'musicapp',
     'authApp',
     'whitenoise.runserver_nostatic',

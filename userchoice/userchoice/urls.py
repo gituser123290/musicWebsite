@@ -8,7 +8,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('account/', include('authApp.urls')),  # Account management
     path('', include('musicapp.urls')),   # Music-related API
-    path('book/', include('book.urls')), 
     
 ]
 
