@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import  { apiUrl } from "../services/api";
+import { apiUrl } from "../services/api";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
@@ -11,8 +11,7 @@ export default function ProfileUpdate() {
   });
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,16 +19,15 @@ export default function ProfileUpdate() {
       const token = sessionStorage.getItem("token");
       if (!token) return;
       try {
-        const response = await axios.get(apiUrl+"/account/user/", {
+        const response = await axios.get(`${apiUrl}/account/user/`, {
           headers: {
             Authorization: `Token ${token}`,
           },
         });
         setUser(response.data);
         setLoading(false);
-        console.log(response.data);
       } catch (error) {
-        setError(error.message);
+        setError("Failed to fetch user data");
         setLoading(false);
       }
     };
@@ -45,7 +43,7 @@ export default function ProfileUpdate() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const formData = new FormData();
     formData.append("bio", profileData.bio);
@@ -56,64 +54,72 @@ export default function ProfileUpdate() {
 
     const token = sessionStorage.getItem("token");
     if (!token) return;
-    axios.patch(apiUrl+"/account/user/update/", formData, {
-      headers: {
-        Authorization: `Token ${token}`,
-      },
-    })
-      .then((response) => {
-        navigate("/profile");
-      })
-      .catch((error) => {
-        alert("Profile update failed");
-        console.log(error);
+    try {
+      await axios.patch(`${apiUrl}/account/user/update/`, formData, {
+        headers: {
+          Authorization: `Token ${token}`,
+        },
       });
+      navigate("/profile");
+    } catch (error) {
+      setError("Profile update failed");
+    }
   };
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error}</p>;
-  if (!user) return <p>User not found</p>;
+  if (loading) return <div className="text-center text-white">Loading...</div>;
+  if (error) return <div className="text-center text-red-500">{error}</div>;
+  if (!user) return <div className="text-center text-white">User not found</div>;
+
   return (
-    <form onSubmit={handleSubmit} class="max-w-lg mx-auto my-3 p-6 bg-gradient-to-r from-purple-300 to-indigo-400 rounded-lg shadow-lg space-y-4">
-      <div class="space-y-2">
-        <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
-        <textarea
-          name="bio"
-          value={profileData.bio}
-          onChange={handleChange}
-          placeholder="Tell us about yourself"
-          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div class="space-y-2">
-        <label for="phone_number" class="block text-sm font-medium text-gray-700">Phone Number</label>
-        <input
-          type="text"
-          name="phone_number"
-          value={profileData.phone_number}
-          onChange={handleChange}
-          placeholder="Phone Number"
-          class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <div class="space-y-2">
-        <label for="profile_picture" class="block text-sm font-medium text-gray-700">Profile Picture</label>
-        <input
-          type="file"
-          name="profile_picture"
-          onChange={handleChange}
-          class="w-full text-sm text-gray-700 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-        />
-      </div>
-
-      <button
-        type="submit"
-        class="w-full py-3 px-4 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+    <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-black flex items-center justify-center px-4">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-xl bg-zinc-800/70 backdrop-blur-md border border-zinc-700 p-8 rounded-xl shadow-2xl space-y-6 text-white"
       >
-        Update Profile
-      </button>
-    </form>
+        <h2 className="text-3xl font-extrabold text-center mb-4 tracking-tight">Edit Your Profile</h2>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium">Bio</label>
+          <textarea
+            name="bio"
+            value={profileData.bio}
+            onChange={handleChange}
+            placeholder="Tell us about yourself..."
+            className="w-full p-3 rounded-lg bg-zinc-700 border border-zinc-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium">Phone Number</label>
+          <input
+            type="text"
+            name="phone_number"
+            value={profileData.phone_number}
+            onChange={handleChange}
+            placeholder="Your contact number"
+            className="w-full p-3 rounded-lg bg-zinc-700 border border-zinc-600 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+        </div>
+
+        <div>
+          <label className="block mb-1 text-sm font-medium">Profile Picture</label>
+          <input
+            type="file"
+            name="profile_picture"
+            onChange={handleChange}
+            className="w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-green-500 file:text-white hover:file:bg-green-600 cursor-pointer"
+          />
+        </div>
+
+        {error && <p className="text-red-500 text-center">{error}</p>}
+
+        <button
+          type="submit"
+          className="w-full py-3 px-6 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg transition duration-300 shadow-lg focus:outline-none focus:ring-2 focus:ring-green-400"
+        >
+          Save Changes
+        </button>
+      </form>
+    </div>
   );
 }

@@ -11,9 +11,9 @@ SECRET_KEY = os.getenv('DJANGO_SECRET_KEY')
 
 AUTH_USER_MODEL = 'authApp.UserProfile'
 
-DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
+DEBUG = True
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS", "").split(' ') if not DEBUG else ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -66,17 +66,16 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'userchoice.wsgi.application'
 
-if not DEBUG:
-    DATABASES = {
-        'default': dj_database_url.parse(os.environ.get('DATABASE_URL'))
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'music_db',
+        'USER':'root',
+        'PASSWORD':'naurangi@234',
+        'HOST':'localhost',
+        'PORT':'3306',
     }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': BASE_DIR / 'db.sqlite3',
-        }
-    }
+}
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
@@ -103,12 +102,12 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']  # Development setting
-STATIC_ROOT = BASE_DIR / 'staticfiles'  # Production setting
+# STATIC_ROOT = BASE_DIR / 'staticfiles'  # Production setting
 
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
-MEDIA_URL = '/images/'
-MEDIA_ROOT = BASE_DIR / 'static/images'
+MEDIA_URL = '/media/' 
+MEDIA_ROOT = BASE_DIR/ 'upload'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
@@ -116,7 +115,7 @@ CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
-    "https://127.0.0.1:3000",
+    "http://127.0.0.1:3000",
     "https://music-app-iota-sable.vercel.app"
 ]
 

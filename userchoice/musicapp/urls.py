@@ -4,6 +4,7 @@ from . import views
 urlpatterns = [
     # Song URLs
     path('songs/', views.SongListAPIView.as_view(), name='song-list'),
+    path('songs/bulk_create/', views.BulkCreateSongAPIView.as_view(), name='bulk-create-songs'),
     path('songs/create/', views.SongCreateAPIView.as_view(), name='song-create'),
     path('songs/<int:pk>/', views.SongRetrieveUpdateDestroyAPIView.as_view(), name='song-detail'),
 

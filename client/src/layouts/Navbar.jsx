@@ -13,24 +13,24 @@ export default function Navbar({ isAuthenticated, handleLogout }){
   };
 
   return (
-    <nav className="bg-gray-800 text-white px-6 py-4 flex items-center justify-between">
+    <nav className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white px-6 py-4 flex items-center justify-between">
       <div className="text-2xl font-semibold">
         <a href="/"><GiMusicSpell size={28}/></a>
       </div>
       <div className="flex space-x-6">
         {!isAuthenticated ? (
           <>
-            <a href="/login" className="hover:text-gray-400">Login</a>
-            <a href="/register" className="hover:text-gray-400">Register</a>
+            <a href="/login" className="hover:text-black">Login</a>
+            <a href="/register" className="hover:text-black">Register</a>
           </>
         ) : (
           <>
-            <a href="/" className="hover:text-gray-400"><IoHomeOutline size={28}/></a>
-            <a href="/about" className="hover:text-gray-400"><LiaBookReaderSolid size={28}/></a>
-            <a href="/services" className="hover:text-gray-400"><FcServices size={28}/></a>
+            <a href="/" className="hover:text-black"><IoHomeOutline size={28}/></a>
+            <a href="/about" className="hover:text-black"><LiaBookReaderSolid size={28}/></a>
+            <a href="/services" className="hover:text-black"><FcServices size={28}/></a>
             <div className="relative">
               <button
-                className="flex items-center space-x-2 hover:text-gray-400"
+                className="flex items-center space-x-2 hover:text-black"
                 onClick={toggleDropdown}
               >
                 <span><IoPersonCircleOutline size={28}/></span>
@@ -50,16 +50,16 @@ export default function Navbar({ isAuthenticated, handleLogout }){
                 </svg>
               </button>
               {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white text-black rounded-md shadow-lg z-10">
+                <div className="absolute right-0 mt-2 w-48 bg-green-600 text-black rounded-md shadow-lg z-50">
                   <ul>
                     <li>
-                      <a href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-200"><IoPersonCircleOutline size={28}/></a>
+                      <a href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-800"><IoPersonCircleOutline size={28}/></a>
                     </li>
                     <li>
-                      <a href="/setting" className="block px-4 py-2 text-sm hover:bg-gray-200"><IoSettings size={28}/></a>
+                      <a href="/setting" className="block px-4 py-2 text-sm hover:bg-gray-800"><IoSettings size={28}/></a>
                     </li>
                     <li>
-                      <button onClick={handleLogout} className="px-4 py-2 text-sm hover:bg-gray-200"><AiOutlineLogout size={28}/></button>
+                      <button onClick={handleLogout} className="px-4 w-full py-2 text-sm hover:bg-gray-800"><AiOutlineLogout size={28}/></button>
                     </li>
                   </ul>
                 </div>

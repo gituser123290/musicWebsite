@@ -1,133 +1,160 @@
 import React, { useEffect, useState } from 'react';
 import { VscPreview } from "react-icons/vsc";
-// import { RiCloseLargeFill } from "react-icons/ri";
-import {apiUrl} from '../../services/api';
+import { FiX } from "react-icons/fi";
+import { apiUrl } from '../../services/api';
 import Loading from '../../layouts/Loading';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-
+import { FaSpotify } from 'react-icons/fa';
 
 export default function Album() {
-    const [albums, setAlbums] = useState([]);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [selectedArtist, setSelectedArtist] = useState(null);
+  const [albums, setAlbums] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedArtist, setSelectedArtist] = useState(null);
+  const navigate = useNavigate();
 
-    const navigate=useNavigate()
-
-    useEffect(() => {
-        const fetchAlbumData = async () => {
-            const token = sessionStorage.getItem('token');
-            if (!token) {
-                Navigate('/login');
-                return;
-            }
-            try {
-                const response = await axios.get(apiUrl+'/albums',{
-                    headers:{
-                        Authorization: `Token ${token}`,
-                    }
-                }
-                );
-                setAlbums(response.data);
-                setLoading(false);
-            } catch (error) {
-                setError(error);
-                setLoading(false);
-            }
-        };
-        fetchAlbumData();
-    }, []);
-
-    const handleClick=(id)=>{
-        navigate(`/albums/${id}/`)
-    }
-
-    const openModal = (artist) => {
-        setSelectedArtist(artist);
-        setIsModalOpen(true);
+  useEffect(() => {
+    const fetchAlbumData = async () => {
+      const token = sessionStorage.getItem('token');
+      if (!token) {
+        navigate('/login');
+        return;
+      }
+      try {
+        const response = await axios.get(apiUrl + '/albums', {
+          headers: {
+            Authorization: `Token ${token}`,
+          }
+        });
+        setAlbums(response.data);
+        setLoading(false);
+      } catch (error) {
+        setError(error);
+        setLoading(false);
+      }
     };
+    fetchAlbumData();
+  }, [navigate]);
 
-    const closeModal = () => {
-        setIsModalOpen(false);
-        setSelectedArtist(null);
-    };
+  const handleClick = (id) => {
+    navigate(`/albums/${id}/`)
+  }
 
-    if (loading) return <Loading/>;
-    if (error) return <p>Error: {error.message}</p>;
+  const openModal = (artist) => {
+    setSelectedArtist(artist);
+    setIsModalOpen(true);
+  };
 
-    return (
-        <div className="flex justify-center items-center w-full py-8 mb-12">
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 p-4 w-full">
-            {albums && albums.length > 0 ?(
-                albums.map((album) => {
-                        const artist = { 
-                            name: album.artist.name,
-                            image: album.cover_image,
-                            songs: album.songs.length,
-                            date:album.release_date,
-                            social_media:album.artist.social_media.spotify
-                        };
-    
-                        return (
-                            <div onClick={()=>handleClick(album.id)} 
-                                key={album.id}
-                                className="flex justify-center items-center flex-col bg-slate-300 rounded-lg shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out"
-                            >
-                                <div className="w-full">
-                                    <img
-                                        className="w-full h-48 object-cover rounded-t-lg"
-                                        src={album.cover_image}
-                                        alt={album.name}
-                                    />
-                                </div>
-                                <div className="px-4 py-3 w-full text-center">
-                                    <h2 className="text-xl font-bold text-gray-900">{album.name}</h2>
-                                    <p className="text-sm text-gray-600">Singer: {album.artist.name}</p>
-                                    <p className="text-sm text-gray-600">Plateform: {album.artist.social_media.spotify}</p>
-                                    <p className="text-sm text-gray-600">Release Date: {album.release_date}</p>
-                                    <p className='text-sm text-gray-500'>Total Songs: {album.songs.length}</p>
-                                    <div className="mt-2">
-                                        <button
-                                            className="text-indigo-600 underline hover:text-indigo-800"
-                                            onMouseEnter={() => openModal(artist)}
-                                        >
-                                            <VscPreview/>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        );
-                    })
-                ):(
-                    <p className='text-red-600 text-2xl'>No albums found.</p>
-                )}
-                
-            </div>
-            <Modal isOpen={isModalOpen} onClose={closeModal} artist={selectedArtist} />
-        </div>
-    );
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedArtist(null);
+  };
+
+  if (loading) return <Loading />;
+  if (error) return <p className="text-center text-red-600 mt-10">Error: {error.message}</p>;
+
+  return (
+    <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+      <h1 className="text-4xl font-extrabold text-gray-900 mb-8 text-center">Albums</h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
+        {albums && albums.length > 0 ? (
+          albums.map((album) => {
+            const artist = {
+              name: album.artist.name,
+              image: album.artist.image_url,
+              songs: album.songs.length,
+              date: album.release_date,
+              social_media: album.artist.social_media.spotify,
+            };
+
+            return (
+              <div
+                key={album.id}
+                className="relative group bg-white rounded-xl shadow-lg overflow-hidden cursor-pointer transform transition-transform hover:scale-105"
+                onClick={() => handleClick(album.id)}
+              >
+                <img
+                  src={album.cover_image_url}
+                  alt={album.name}
+                  className="w-full h-56 object-cover"
+                />
+                <div className="p-4">
+                  <h2 className="text-lg font-semibold text-gray-900 truncate">{album.name}</h2>
+                  <p className="text-sm text-gray-600 mt-1">Artist: {album.artist.name}</p>
+                  <p className="text-sm flex items-center text-green-600 mt-1">
+                    <FaSpotify className="mr-1" /> {album.artist.social_media.spotify}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">Release Date: {album.release_date}</p>
+                  <p className="text-sm text-gray-400 mt-1">Songs: {album.songs.length}</p>
+                </div>
+                {/* Preview Button on hover */}
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation(); // Prevent navigating when clicking preview
+                    openModal(artist);
+                  }}
+                  className="absolute top-3 right-3 bg-white bg-opacity-90 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-md hover:bg-indigo-600 hover:text-white"
+                  aria-label="Preview Artist"
+                >
+                  <VscPreview size={20} />
+                </button>
+              </div>
+            );
+          })
+        ) : (
+          <p className='text-center text-red-600 text-xl col-span-full'>No albums found.</p>
+        )}
+      </div>
+
+      <Modal isOpen={isModalOpen} onClose={closeModal} artist={selectedArtist} />
+    </div>
+  );
 }
 
 const Modal = ({ isOpen, onClose, artist }) => {
-    if (!isOpen) return null;
-    return (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50  mt-4 mb-20">
-            <div onMouseLeave={onClose} className="bg-white p-6 rounded-lg max-w-md w-full">
-                <h2 className="text-2xl font-bold mb-4">Artist Details</h2>
-                <div className="w-full mb-6 flex justify-center">
-                    <img
-                    className="w-full max-w-xs h-32 object-cover rounded-lg shadow-md"
-                    src={artist.image}
-                    alt="Song cover"
-                    />
-                </div>
-                <p><strong>Name: </strong> {artist.name}</p>
-                <p><strong>Songs: </strong> {artist.songs}</p>
-                <p><strong>Social_media: </strong>{artist.social_media}</p>
-                <p><strong>Debut Year: </strong> {artist.date}</p>
-            </div>
+  if (!isOpen || !artist) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black bg-opacity-70 flex justify-center items-center z-50 p-4"
+      onClick={onClose}
+    >
+      <div
+        className="bg-white rounded-xl shadow-xl max-w-md w-full relative"
+        onClick={(e) => e.stopPropagation()} // Prevent modal close on click inside
+      >
+        <button
+          onClick={onClose}
+          className="absolute top-3 right-3 text-gray-600 hover:text-gray-900 transition"
+          aria-label="Close modal"
+        >
+          <FiX size={24} />
+        </button>
+        <div className="p-6 text-center">
+          <img
+            src={artist.image}
+            alt={artist.name}
+            className="mx-auto mb-4 w-40 h-40 rounded-full object-cover shadow-lg"
+          />
+          <h2 className="text-3xl font-bold mb-2">{artist.name}</h2>
+          <p className="text-gray-600 mb-1"><strong>Total Songs:</strong> {artist.songs}</p>
+          <p className="text-gray-600 mb-1">
+            <strong>Spotify:</strong>{' '}
+            <a
+              href={artist.social_media}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-indigo-600 underline hover:text-indigo-800"
+            >
+              Listen on Spotify
+            </a>
+          </p>
+          <p className="text-gray-600"><strong>Release Date:</strong> {artist.date}</p>
         </div>
-    );
+      </div>
+    </div>
+  );
 };

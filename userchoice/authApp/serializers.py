@@ -29,7 +29,7 @@ class RegisterSerializer(serializers.ModelSerializer):
 class SongSerializer(serializers.ModelSerializer):
     class Meta:
         model = Song
-        fields = ['id', 'title', 'artist']
+        fields = ['id', 'title', 'artist','song_cover_url']
 
 class PlaylistSerializer(serializers.ModelSerializer):
     songs = SongSerializer(many=True)

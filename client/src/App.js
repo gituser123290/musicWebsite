@@ -2,6 +2,7 @@ import React, { useState, useEffect, Suspense } from 'react';
 import { Navigate } from 'react-router-dom';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './index.css';
+import './styles/custom.css'
 
 // Layouts and Components
 import Navbar from './layouts/Navbar'

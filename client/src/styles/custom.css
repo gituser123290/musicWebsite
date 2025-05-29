@@ -1,253 +1,29 @@
-@media (min-width: 400px) {
-    .login {
-        margin-top: 50px;
-        margin-left: 5rem;
-        width: 75%;
-    }
+.scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: #6366f1 #1f2937;
 }
 
-@media (min-width: 400px) {
-    .btn_login {
-        margin-left: 7rem;
-        width: 56%;
-    }
+.scrollbar-thin::-webkit-scrollbar {
+    height: 8px;
 }
 
-@media (min-width: 640px) {
-    .login {
-        margin-top: 50px;
-        margin-left: 6rem;
-        width: 75%;
-    }
+.scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #6366f1;
+    border-radius: 10px;
 }
 
-@media (min-width: 768px) {
-    .login {
-        margin-top: 50px;
-        margin-left: 8rem;
-        width: 50%;
-    }
+.scrollbar-thin::-webkit-scrollbar-track {
+    background-color: #1f2937;
 }
 
-
-@media (min-width: 1024px) {
-    .login {
-        margin-top: 50px;
-        margin-left: 10rem;
-        width: 50%;
-    }
+.bg-animated-gradient {
+  background: linear-gradient(270deg, #ff5f6d, #ffc371, #24c6dc, #662d8c);
+  background-size: 800% 800%;
+  animation: gradientShift 20s ease infinite;
 }
 
-@media (min-width: 1280px) {
-    .login {
-        margin-top: 50px;
-        margin-left: 18rem;
-        width: 50%;
-
-    }
-}
-
-/* register */
-
-@media (min-width: 400px) {
-    .register {
-        padding-left: 4px;
-        padding-right: 16px;
-        margin-top: 25px;
-        margin-left: 6.5rem;
-        width: 55%
-    }
-}
-
-@media (min-width: 400px) {
-    .btn_register {
-        margin-left: 15px;
-        width: 60%;
-    }
-}
-
-@media (min-width: 640px) {
-    .register {
-        margin-top: 50px;
-        margin-left: 10rem;
-        width: 50%;;
-    }
-}
-
-@media (min-width: 768px) {
-    .register {
-        margin-top: 14px;
-        margin-left: 21rem;
-        width: 34%;
-    }
-}
-
-
-@media (min-width: 1024px) {
-    .register {
-        margin-top: 50px;
-        margin-left: 18rem;
-        width: 50%;
-    }
-}
-
-@media (min-width: 1280px) {
-    .register {
-        margin-top: 50px;
-        margin-left: 22rem;
-        width: 40%;
-    }
-}
-
-
-/* profile */
-@media (min-width: 400px) {
-    .profile {
-        padding-left: 4px;
-        padding-right: 16px;
-        margin-top: 25px;
-        margin-left: 6.5rem;
-        width: 55%;
-
-    }
-}
-
-
-@media (min-width: 640px) {
-    .profile {
-        margin-top: 50px;
-        margin-left: 10rem;
-        width: 50%;
-    }
-}
-
-@media (min-width: 768px) {
-    .profile {
-        margin-top: 14px;
-        margin-left: 21rem;
-        width: 34%;
-    }
-}
-
-
-@media (min-width: 1024px) {
-    .profile {
-        margin-top: 50px;
-        margin-left: 18rem;
-        width: 50%;
-    }
-}
-
-@media (min-width: 1280px) {
-    .profile {
-        margin-top: 50px;
-        margin-left: 22rem;
-        width: 40%;
-    }
-}
-/* songs media css */
-@media (min-width:300px) {
-    .songs{
-        width: 42%;
-        margin-top: 10px;
-    }
-}
-
-@media (min-width:400px) {
-    .songs{
-        width: 30%;
-        margin-top: 10px;
-    }
-}
-
-@media (min-width:640px) {
-    .songs{
-        width:31%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-}
-
-@media (min-width:768px) {
-    .songs{
-        width: 23%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-}
-@media (min-width:1024px) {
-    .songs{
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-}
-
-/* Play song css */
-
-@media (min-width:300px) {
-    .songs_play{
-        display: flex;
-        flex-direction: column;
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-
-    }
-    .songs_play_second{
-        margin-top: 15px;
-        width: 100%;
-        margin-left: 1px;
-    }
-}
-
-@media (min-width:400px) {
-    .songs_play{
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    .songs_play_second{
-        margin-top: 15px;
-        width: 100%;
-        margin-left: 1px;
-    }
-}
-
-@media (min-width:640px) {
-    .songs_play{
-        width:100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    .songs_play_second{
-        margin-top: 15px;
-        width: 100%;
-        margin-left: 1px;
-    }
-}
-
-@media (min-width:768px) {
-    .songs_play{
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-
-    .songs_play_second{
-        margin-top: 15px;
-        width: 100%;
-        margin-left: 1px;
-    }
-}
-@media (min-width:1024px) {
-    .songs_play{
-        width: 100%;
-        margin-top: 10px;
-        margin-bottom: 10px;
-    }
-    .songs_play_second{
-        margin-top: 15px;
-        width: 100%;
-        margin-left: 1px;
-    }
+@keyframes gradientShift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }

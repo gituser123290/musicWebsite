@@ -10,15 +10,37 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.parsers import MultiPartParser, FileUploadParser
+from rest_framework.parsers import MultiPartParser, FileUploadParser,FormParser,JSONParser
 from pydub.utils import mediainfo
-from .models import Song, Playlist, Album, Artist, Like, Comment, Subscription, PlaylistCollaborator
-from .serializers import SongSerializer, AudioSerializer, PlaylistSerializer, AlbumSerializer, ArtistSerializer, LikeSerializer, CommentSerializer, SubscriptionSerializer, PlaylistCollaboratorSerializer
+from .models import *
+from .serializers import *
 
+def format_duration(self, duration_seconds):
+    """Convert seconds to a formatted string (HH:MM:SS)"""
+    hours = int(duration_seconds // 3600)
+    minutes = int((duration_seconds % 3600) // 60)
+    seconds = int(duration_seconds % 60)
+    return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 # # Song Views
+class BulkCreateSongAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request):
+        data = request.data
+        
+        if not isinstance(data, list):
+            return Response({'error': 'Expected a list of song objects'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
+        serializer = SongSerializers(data=data, many=True, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response({'message': 'Songs created successfully', 'data': serializer.data}, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 class SongCreateAPIView(generics.CreateAPIView):
-    parser_classes = [MultiPartParser, FileUploadParser]
+    parser_classes = [JSONParser, MultiPartParser, FormParser]
     serializer_class = SongSerializer
     permission_classes = [IsAuthenticated]
     
@@ -66,12 +88,6 @@ class SongCreateAPIView(generics.CreateAPIView):
 
         return Response(song_data)
 
-    def format_duration(self, duration_seconds):
-        """Convert seconds to a formatted string (HH:MM:SS)"""
-        hours = int(duration_seconds // 3600)
-        minutes = int((duration_seconds % 3600) // 60)
-        seconds = int(duration_seconds % 60)
-        return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 
 

@@ -17,8 +17,20 @@ class ArtistSerializer(serializers.ModelSerializer):
             setattr(instance, attr, value)
         instance.save()
         return instance
+    
+class SongSerializers(serializers.ModelSerializer):
+    class Meta:
+        model = Song
+        fields = '__all__'
+        read_only_fields = ['user']  # user will be set automatically
+
+    def create(self, validated_data):
+        user = self.context['request'].user  # get user from context
+        validated_data['user'] = user
+        return super().create(validated_data)
 
 class SongSerializer(serializers.ModelSerializer):
+    audio = serializers.FileField(required=False, allow_null=True)
     artist=ArtistSerializer(read_only=True)
     artist_id=serializers.PrimaryKeyRelatedField(queryset=Artist.objects.all(),source='artist',write_only=True)
 
@@ -104,7 +116,7 @@ class AlbumSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Album
-        fields = ['id', 'name','artist','artist_id', 'release_date', 'songs', 'cover_image']
+        fields = ['id', 'name','artist','artist_id', 'release_date', 'songs', 'cover_image_url']
         
     # def validate(self, data):
     #     if not data.get('cover_image') and not data.get('cover_image_url'):

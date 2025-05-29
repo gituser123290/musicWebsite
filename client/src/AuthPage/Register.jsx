@@ -1,88 +1,93 @@
 import React, { useState } from 'react';
-import  { apiUrl } from '../services/api';
-import { useNavigate } from 'react-router-dom';
-import '../styles/custom.css';
+import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
-
+import { apiUrl } from '../services/api';
 
 const Register = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword2] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    if(password !== confirmPassword){
-      setError('Password does not match');
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
       return;
     }
+
     const formData = new FormData();
     formData.append('username', username);
     formData.append('email', email);
     formData.append('password', password);
-    formData.append('confirmPassword',confirmPassword );
+    formData.append('confirmPassword', confirmPassword);
     setError('');
 
     try {
-      const response = await axios.post(apiUrl+'/account/register/', formData)
-      const {token}=response.data;
-      if(token){
-        sessionStorage.setItem('token',token)
-        navigate('/login'); 
-      }else {
+      const response = await axios.post(`${apiUrl}/account/register/`, formData);
+      const { token } = response.data;
+      if (token) {
+        sessionStorage.setItem('token', token);
+        navigate('/login');
+      } else {
         setError('Registration successful, but no token returned');
       }
     } catch (err) {
-      alert('Registration failed', err.message);
-      setError(err.response?.data?.message);
+      setError(err.response?.data?.message || 'Registration failed');
     }
   };
 
-
   return (
-    <div className='flex w-full justify-center flex-col h-auto register bg-gray-400 rounded-md'>
-      <form onSubmit={handleRegister} className='flex flex-col m-2 w-full justify-center align-middle'>
-        <h2 className='text-center text-2xl text-white font-extrabold'>Register</h2>
-        <input
-          type="text"
-          placeholder="Username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          className='bg-zinc-600 px-1 m-2 rounded-lg'
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className='bg-zinc-600 px-1 m-2 rounded-lg'
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className='bg-zinc-600 px-2 m-2 rounded-lg'
-        />
-        <input
-          type="password"
-          placeholder="Confirm Password"
-          value={confirmPassword}
-          onChange={(e) => setConfirmPassword2(e.target.value)}
-          className='bg-zinc-600 px-2 m-2 rounded-lg'
-        />
-        <button className='px-2 bg-green-400 w-20 btn_register ml-64 rounded-md hover:bg-green-900 m-2' type="submit">Register</button>
-        <p className='text-center text-xl'>
-          Don't have an account yet. Please{' '}
-          <a className='px-1 py-1 rounded-md underline hover:uppercase text-black' href="/login">Login</a>
+    <div className="min-h-screen flex items-center justify-center bg-zinc-900 px-4">
+      <div className="w-full max-w-md bg-zinc-800 p-8 rounded-lg shadow-lg">
+        <h2 className="text-3xl font-bold text-white text-center mb-6">Create an Account</h2>
+        <form onSubmit={handleRegister} className="flex flex-col gap-4">
+          <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            className="w-full px-4 py-3 rounded-md bg-zinc-700 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-4 py-3 rounded-md bg-zinc-700 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <input
+            type="password"
+            placeholder="Password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-4 py-3 rounded-md bg-zinc-700 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <input
+            type="password"
+            placeholder="Confirm Password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            className="w-full px-4 py-3 rounded-md bg-zinc-700 text-white placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500"
+          />
+          <button
+            type="submit"
+            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-3 rounded-md transition duration-300"
+          >
+            Register
+          </button>
+          {error && <p className="text-red-500 text-center">{error}</p>}
+        </form>
+        <p className="text-center text-zinc-400 mt-6">
+          Already have an account?{' '}
+          <Link to="/login" className="text-green-400 hover:underline">
+            Login
+          </Link>
         </p>
-        {error && <p>{error}</p>}
-      </form>
+      </div>
     </div>
-
   );
 };
 
