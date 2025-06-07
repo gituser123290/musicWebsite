@@ -83,6 +83,11 @@ export default function Profile() {
     }
   };
 
+  const addSong=()=>{
+    navigate('/createsong')
+  }
+  
+
   if (loading) return <Loading />;
   if (error) return <p className="text-red-500 text-center mt-10">Error: {error}</p>;
   if (!user) return null;
@@ -152,6 +157,14 @@ export default function Profile() {
               <button
                 onClick={browseSongs}
                 title="Browse Songs"
+                className="text-red-500 hover:text-red-700 transition-colors duration-300 cursor-pointer"
+                aria-label="Browse Songs"
+              >
+                <PiPlaylistFill size={26} />
+              </button>
+              <button
+                onClick={addSong}
+                title="Upload Songs"
                 className="text-red-500 hover:text-red-700 transition-colors duration-300 cursor-pointer"
                 aria-label="Browse Songs"
               >

@@ -12,8 +12,6 @@ export default function Settings() {
     <div className={`${darkMode ? 'bg-gradient-to-br from-gray-900 to-black text-white' : 'bg-gradient-to-br from-white to-gray-100 text-gray-900'} min-h-screen transition-colors duration-500 p-8`}>
       <div className="max-w-xl mx-auto space-y-8 bg-white/10 backdrop-blur-lg border border-white/10 rounded-2xl p-8 shadow-lg">
         <h1 className="text-4xl font-bold text-center">🎛️ Settings</h1>
-
-        {/* Dark Mode */}
         <div className="flex justify-between items-center">
           <label htmlFor="dark-mode" className="text-lg font-medium">🌗 Dark Mode</label>
           <input
@@ -24,8 +22,6 @@ export default function Settings() {
             className="toggle-checkbox w-10 h-5 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors"
           />
         </div>
-
-        {/* Volume Control */}
         <div>
           <label htmlFor="volume" className="text-lg font-medium block mb-2">🔊 Volume</label>
           <input
@@ -39,8 +35,6 @@ export default function Settings() {
           />
           <p className="text-sm mt-1 text-gray-400">{volume}%</p>
         </div>
-
-        {/* Notifications */}
         <div className="flex justify-between items-center">
           <label htmlFor="notifications" className="text-lg font-medium">🔔 Notifications</label>
           <input
@@ -51,8 +45,6 @@ export default function Settings() {
             className="toggle-checkbox w-10 h-5 rounded-full bg-gray-300 dark:bg-gray-700 transition-colors"
           />
         </div>
-
-        {/* Save Button */}
         <button
           onClick={() => alert('Settings saved!')}
           className="w-full bg-orange-500 hover:bg-orange-600 transition-all text-white p-3 rounded-xl text-lg font-semibold shadow-md"

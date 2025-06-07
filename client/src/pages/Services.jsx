@@ -59,7 +59,6 @@ const ServiceCard = ({ title, description, icon }) => (
 export default function ServicesPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-black via-zinc-900 to-gray-800 text-white relative pb-24">
-      {/* Hero Section */}
       <div className="text-center py-16 px-4 sm:px-6 lg:px-8">
         <h1 className="text-5xl sm:text-6xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-pink-500">
           Explore Our Music Services
@@ -69,7 +68,6 @@ export default function ServicesPage() {
         </p>
       </div>
 
-      {/* Services Grid */}
       <div className="container mx-auto px-6 py-8">
         <div className="grid sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {servicesData.map((service, index) => (
@@ -82,8 +80,6 @@ export default function ServicesPage() {
           ))}
         </div>
       </div>
-
-      {/* Sticky Audio Player (Placeholder) */}
       <div className="fixed bottom-0 left-0 w-full bg-black/80 backdrop-blur-md text-white px-6 py-4 flex justify-between items-center shadow-inner">
         <span className="font-semibold">🎶 Now Playing: Your Music Title Here</span>
         <button className="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md font-semibold transition-all">

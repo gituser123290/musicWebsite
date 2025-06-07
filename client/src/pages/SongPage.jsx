@@ -62,7 +62,7 @@ export default function SongPage() {
     }
 
     try {
-      await axios.post(apiUrl + "/songs/create/", formData, {
+      await axios.post(apiUrl + "/songs/", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
           Authorization: `Token ${token}`,

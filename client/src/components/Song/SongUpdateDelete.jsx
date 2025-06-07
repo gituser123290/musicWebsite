@@ -144,8 +144,8 @@ export default function SongUpdate() {
                     ? song.song_cover_url
                     : `${song.song_cover_url}`
                   : song.song_cover.startsWith("http")
-                  ? song.song_cover
-                  : `${song.song_cover}`
+                    ? song.song_cover
+                    : `${song.song_cover}`
               }
               alt={song.title}
               className="w-48 h-48 rounded-full object-cover shadow-2xl border-4 border-green-500 hover:scale-105 transition-transform duration-300"
@@ -253,7 +253,7 @@ export default function SongUpdate() {
                 </div>
 
                 {/* Song Cover */}
-                <div>
+                {/* <div>
                   <label className="text-green-400 block mb-1">Song Cover</label>
                   <input
                     type="file"
@@ -267,6 +267,62 @@ export default function SongUpdate() {
                       {song.song_cover.split("/").pop()}
                     </p>
                   )}
+                </div> */}
+                <div>
+                  <label className="text-green-400 block mb-1">Song Cover (Upload or URL)</label>
+
+                  {/* File Upload Input */}
+                  <input
+                    type="file"
+                    name="song_cover_file"
+                    accept="image/*"
+                    onChange={(e) => {
+                      handleInputChange(e); // your existing handler
+                      setSongDetails((prev) => ({
+                        ...prev,
+                        song_cover_url: "", // Clear URL input if file is selected
+                      }));
+                    }}
+                    className="w-full text-white mb-2"
+                    disabled={!!songDetails.song_cover_url}
+                  />
+
+                  {/* OR URL Input */}
+                  <input
+                    type="text"
+                    name="song_cover_url"
+                    placeholder="https://example.com/cover.jpg"
+                    value={songDetails.song_cover_url || ""}
+                    onChange={(e) => {
+                      handleInputChange(e);
+                      setSongDetails((prev) => ({
+                        ...prev,
+                        song_cover: null, // Clear file input if URL is typed
+                      }));
+                    }}
+                    className="w-full text-white"
+                    disabled={!!songDetails.song_cover}
+                  />
+
+                  {/* Show preview */}
+                  {/* {(songDetails.song_cover && songDetails.song_cover.name) || songDetails.song_cover_url ? (
+                    <div className="mt-2">
+                      <p className="text-gray-400 truncate">
+                        {songDetails.song_cover_url
+                          ? songDetails.song_cover_url
+                          : songDetails.song_cover.name}
+                      </p>
+                      <img
+                        src={
+                          songDetails.song_cover_url
+                            ? songDetails.song_cover_url
+                            : URL.createObjectURL(songDetails.song_cover)
+                        }
+                        alt="Cover Preview"
+                        className="mt-2 w-32 h-32 object-cover rounded"
+                      />
+                    </div>
+                  ) : null} */}
                 </div>
 
                 {/* Artist Select */}

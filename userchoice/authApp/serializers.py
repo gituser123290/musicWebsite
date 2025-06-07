@@ -36,20 +36,17 @@ class PlaylistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Playlist
-        fields = ['id', 'name', 'songs', 'user']
+        fields = ['id', 'name', 'songs']
 
 
 class UserProfileSerializer(serializers.ModelSerializer):
-    playlists = PlaylistSerializer(many=True)
+    playlists = PlaylistSerializer(many=True, read_only=True)
     class Meta:
         model = get_user_model()
         fields = [
             'id', 'username', 'first_name', 'last_name', 'email', 
             'user_picture','playlists', 'bio', 'phone_number', 'date_joined','last_login'
         ]
-    # def get_playlists(self, obj):
-    #     return PlaylistSerializer(Playlist.objects.filter(user=obj), many=True).data
-
 class UserProfileUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile

@@ -19,6 +19,8 @@ import { apiUrl } from "../../services/api";
 import "../../styles/custom.css";
 import axios from "axios";
 
+const token=sessionStorage.getItem('token')
+
 // Simple floating music notes SVG animation
 const FloatingNotes = () => (
   <svg
@@ -91,7 +93,7 @@ export default function SongDetail() {
 
         // Comments
         const commentsResponse = await axios.get(
-          `${apiUrl}/comments/${id}`,
+          `${apiUrl}/songs/${id}/comments/`,
           {
             headers: { Authorization: `Token ${token}` },
           }
@@ -100,7 +102,7 @@ export default function SongDetail() {
 
         // Likes
         const likeResponse = await axios.get(
-          `${apiUrl}/songs/${id}/likes/`,
+          `${apiUrl}/songs/${id}/like/`,
           {
             headers: { Authorization: `Token ${token}` },
           }
@@ -150,23 +152,39 @@ export default function SongDetail() {
 
   // Play/pause toggle
   const togglePlayPause = () => {
-    const audio = audioRef.current;
-    if (!audio) return;
+  const audio = audioRef.current;
+  if (!audio) return;
 
-    if (isPlaying) {
-      audio.pause();
-      setIsPlaying(false);
+  if (isPlaying) {
+    audio.pause();
+    setIsPlaying(false);
+  } else {
+    const playPromise = audio.play();
+    if (playPromise !== undefined) {
+      playPromise
+        .then(() => {
+          setIsPlaying(true);
+          fetch(`${apiUrl}/recently-played/`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Token ${token}`,
+            },
+            body: JSON.stringify({
+              song_title: song.title,
+              artist_name: song.artist.name,
+              image_url: song.song_cover_url,
+            }),
+          });
+
+        })
+        .catch((err) => console.error("Playback error", err));
     } else {
-      const playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise
-          .then(() => setIsPlaying(true))
-          .catch((err) => console.error("Playback error", err));
-      } else {
-        setIsPlaying(true);
-      }
+      setIsPlaying(true);
     }
-  };
+  }
+};
+
 
   // Seek audio on progress bar click
   const seek = (e) => {
@@ -203,7 +221,7 @@ export default function SongDetail() {
 
     try {
       const response = await axios.post(
-        `${apiUrl}/comment/${id}/`,
+        `${apiUrl}/songs/${id}/comments/`,
         { song: song.id, content: commentText },
         { headers: { Authorization: `Token ${token}` } }
       );
@@ -216,33 +234,39 @@ export default function SongDetail() {
 
   // Like/unlike
   const handleLike = async (e) => {
-    e.preventDefault();
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-      return;
-    }
+  e.preventDefault();
+  const token = sessionStorage.getItem("token");
+  if (!token) {
+    navigate("/login");
+    return;
+  }
+  try {
+    const response = await axios.get(`${apiUrl}/songs/${id}/like/`, {
+      headers: { Authorization: `Token ${token}` },
+    });
 
-    try {
-      if (liked) {
-        await axios.delete(`${apiUrl}/songs/${id}/like/delete/`, {
-          headers: { Authorization: `Token ${token}` },
-        });
-        setLikeCount((count) => count - 1);
-        setLiked(false);
-      } else {
-        await axios.post(
-          `${apiUrl}/songs/${id}/like/`,
-          { song: song.id },
-          { headers: { Authorization: `Token ${token}` } }
-        );
-        setLikeCount((count) => count + 1);
-        setLiked(true);
-      }
-    } catch (err) {
-      console.error("Error liking song:", err);
+    const alreadyLiked = response.data && response.data.length > 0;
+
+    if (alreadyLiked) {
+      await axios.delete(`${apiUrl}/songs/${id}/like/`, {
+        headers: { Authorization: `Token ${token}` },
+      });
+      setLikeCount((count) => count - 1);
+      setLiked(false);
+    } else {
+      await axios.post(
+        `${apiUrl}/songs/${id}/like/`,
+        { song: id }, 
+        { headers: { Authorization: `Token ${token}` } }
+      );
+      setLikeCount((count) => count + 1);
+      setLiked(true);
     }
-  };
+  } catch (err) {
+    console.error("Error handling like:", err);
+  }
+};
+
 
   // Add song to playlist
   const addSongToPlaylist = async (e) => {
@@ -254,12 +278,12 @@ export default function SongDetail() {
     }
 
     try {
-      const playlistsResponse = await axios.get(`${apiUrl}/playlist`, {
+      const playlistsResponse = await axios.get(`${apiUrl}/playlists`, {
         headers: { Authorization: `Token ${token}` },
       });
       const playlistId = playlistsResponse.data[0].id;
       await axios.put(
-        `${apiUrl}/playlist/${playlistId}/add_song/`,
+        `${apiUrl}/playlists/${playlistId}/add-song/`,//playlists/<int:pk>/add-song/
         { song_id: song.id },
         { headers: { Authorization: `Token ${token}` } }
       );
@@ -311,18 +335,14 @@ export default function SongDetail() {
           />
           <h2 className="mt-6 text-3xl font-bold text-center">{song.title}</h2>
 
-          {/* Audio Element (hidden) */}
-          <audio ref={audioRef} src={song.audio} preload="metadata" />
+          <audio ref={audioRef} src={`http://localhost:8000${song.audio}`} preload="metadata" />
 
-          {/* Custom Controls */}
           <div className="w-full mt-6">
-            {/* Time display */}
             <div className="flex justify-between text-sm font-mono mb-1">
               <span>{formatTime(currentTime)}</span>
               <span>{formatTime(duration)}</span>
             </div>
 
-            {/* Progress Bar */}
             <div
               ref={progressBarRef}
               onClick={seek}
@@ -361,7 +381,7 @@ export default function SongDetail() {
                 className="p-3 bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
                 title="Previous"
                 aria-label="Previous song"
-                // TODO: implement previous functionality
+              // TODO: implement previous functionality
               >
                 <TbPlayerTrackPrevFilled size={28} />
               </button>
@@ -384,7 +404,7 @@ export default function SongDetail() {
                 className="p-3 bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
                 title="Next"
                 aria-label="Next song"
-                // TODO: implement next functionality
+              // TODO: implement next functionality
               >
                 <TbPlayerTrackNextFilled size={28} />
               </button>

@@ -1,73 +1,39 @@
-import React, { useState } from 'react';
-import { GiMusicSpell } from "react-icons/gi";
-import { IoHomeOutline,IoPersonCircleOutline,IoSettings } from "react-icons/io5";
-import { LiaBookReaderSolid } from "react-icons/lia";
-import { AiOutlineLogout } from "react-icons/ai";
-import { FcServices } from "react-icons/fc";
+/* eslint-disable no-unused-vars */
+import { useState } from 'react';
+import { useLocation } from 'react-router-dom';
+import { User, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
 
-export default function Navbar({ isAuthenticated, handleLogout }){
-  const [dropdownOpen, setDropdownOpen] = useState(false);
+export default function Navbar({ isCollapsed, toggleSidebar }) {
+  const location = useLocation();
+  const isSearchPage = location.pathname === '/search';
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
+  const pageTitle = location.pathname === '/' ? 'Home' : location.pathname.slice(1).replaceAll('-', ' ');
 
   return (
-    <nav className="bg-gradient-to-r from-orange-500 via-pink-500 to-purple-600 text-white px-6 py-4 flex items-center justify-between">
-      <div className="text-2xl font-semibold">
-        <a href="/"><GiMusicSpell size={28}/></a>
+    <header
+      className={`h-16 w-full bg-zinc-950 text-white flex items-center justify-between px-6 fixed top-0 transition-all duration-300 z-30 border-b border-zinc-800 ${
+        isCollapsed ? 'left-20' : 'left-64'
+      } right-0`}
+    >
+      <div className="flex items-center gap-4">
+        <button onClick={toggleSidebar} className="p-1 rounded hover:bg-zinc-800">
+          {isCollapsed ? '' : ''}
+        </button>
+        <h2 className="text-xl font-semibold capitalize">{pageTitle}</h2>
       </div>
-      <div className="flex space-x-6">
-        {!isAuthenticated ? (
-          <>
-            <a href="/login" className="hover:text-black">Login</a>
-            <a href="/register" className="hover:text-black">Register</a>
-          </>
-        ) : (
-          <>
-            <a href="/" className="hover:text-black"><IoHomeOutline size={28}/></a>
-            <a href="/about" className="hover:text-black"><LiaBookReaderSolid size={28}/></a>
-            <a href="/services" className="hover:text-black"><FcServices size={28}/></a>
-            <div className="relative">
-              <button
-                className="flex items-center space-x-2 hover:text-black"
-                onClick={toggleDropdown}
-              >
-                <span><IoPersonCircleOutline size={28}/></span>
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className={`h-4 w-4 transform transition-transform ${dropdownOpen ? 'rotate-180' : ''}`}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  strokeWidth="2"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    d="M19 9l-7 7-7-7"
-                  />
-                </svg>
-              </button>
-              {dropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-green-600 text-black rounded-md shadow-lg z-50">
-                  <ul>
-                    <li>
-                      <a href="/profile" className="block px-4 py-2 text-sm hover:bg-gray-800"><IoPersonCircleOutline size={28}/></a>
-                    </li>
-                    <li>
-                      <a href="/setting" className="block px-4 py-2 text-sm hover:bg-gray-800"><IoSettings size={28}/></a>
-                    </li>
-                    <li>
-                      <button onClick={handleLogout} className="px-4 w-full py-2 text-sm hover:bg-gray-800"><AiOutlineLogout size={28}/></button>
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          </>
-        )}
+
+      {isSearchPage && (
+        <input
+          type="text"
+          placeholder="Search for tracks, artists..."
+          className="bg-zinc-800 text-white px-4 py-2 rounded-md w-1/3 focus:outline-none focus:ring-2 ring-zinc-600"
+        />
+      )}
+
+      <div className="flex items-center gap-4">
+        <Settings className="w-5 h-5 cursor-pointer hover:text-zinc-400" />
+        <User className="w-5 h-5 cursor-pointer hover:text-zinc-400" />
       </div>
-    </nav>
+    </header>
   );
-};
+}

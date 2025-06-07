@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+// import path from 'path'
 module.exports = {
   darkMode: 'class',
   content: [
@@ -29,5 +30,11 @@ module.exports = {
     require('tailwind-scrollbar')({ nocompatible: true }),
     require('@tailwindcss/line-clamp'),
   ],
+  // resolve: {
+  //   alias: {
+  //     "@": path.resolve(__dirname, "./src"),
+  //   },
+  // },
+  
 }
 

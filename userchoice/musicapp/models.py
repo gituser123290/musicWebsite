@@ -8,7 +8,7 @@ class Song(models.Model):
     artist = models.ForeignKey('Artist', on_delete=models.CASCADE, related_name='artists')
     genre = models.CharField(max_length=100,blank=True, null=True) 
     audio = models.FileField(upload_to='songs/', null=True, blank=True)  
-    audio_duration = models.CharField(max_length=10, blank=True, null=True) 
+    duration = models.FloatField(null=True, blank=True)
     song_cover_url = models.URLField(max_length=500, blank=True, null=True)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='songs', on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -83,3 +83,15 @@ class PlaylistCollaborator(models.Model):
 
     def __str__(self):
         return f"{self.user.username} is a {self.role} of {self.playlist.name}"
+    
+    
+    
+class RecentlyPlayed(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="recently_played")
+    song_title = models.CharField(max_length=255)
+    artist_name = models.CharField(max_length=255, blank=True)
+    image_url = models.URLField(blank=True)
+    played_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.song_title} by {self.artist_name}"
