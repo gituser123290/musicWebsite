@@ -21,6 +21,8 @@ class Playlist(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='playlists', on_delete=models.CASCADE)
     songs = models.ManyToManyField(Song, related_name='playlists')
     is_public = models.BooleanField(default=False)
+    cover_image = models.ImageField(upload_to='playlist_covers/', blank=True, null=True)
+    featured = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -33,6 +35,7 @@ class Album(models.Model):
     release_date = models.DateField()
     songs = models.ManyToManyField(Song, related_name='albums')
     cover_image_url = models.URLField(max_length=500,blank=True, null=True)
+    top_album = models.BooleanField(default=False)
 
     def __str__(self):
         return f"{self.name} by {self.artist}"

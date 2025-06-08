@@ -1,8 +1,6 @@
-/* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiUrl } from "../services/api";
-import axios from "axios";
+import { addArtist } from "../services/apiServices";
 import { FaTwitter, FaInstagram, FaFacebook, FaCheckCircle } from "react-icons/fa";
 
 export default function ArtistPage() {
@@ -13,8 +11,8 @@ export default function ArtistPage() {
   const [artistData, setArtistData] = useState({
     name: "",
     bio: "",
-    imageFile: null,   // file instead of URL
-    imagePreview: null, // preview URL
+    imageFile: null,    // file upload
+    imageUrl: "",       // image URL input
     website: "",
     socialMedia: {
       twitter: "",
@@ -24,6 +22,8 @@ export default function ArtistPage() {
     nationality: "",
   });
 
+  const [imagePreview, setImagePreview] = useState(null);
+
   const navigate = useNavigate();
 
   const handleInputChange = (e) => {
@@ -32,6 +32,11 @@ export default function ArtistPage() {
       ...prev,
       [name]: value,
     }));
+
+    // If user edits imageUrl field, update preview (only if no file chosen)
+    if (name === "imageUrl" && !artistData.imageFile) {
+      setImagePreview(value);
+    }
   };
 
   const handleSocialChange = (e) => {
@@ -51,8 +56,16 @@ export default function ArtistPage() {
       setArtistData((prev) => ({
         ...prev,
         imageFile: file,
-        imagePreview: URL.createObjectURL(file),
+        imageUrl: "", // clear URL input if file chosen
       }));
+      setImagePreview(URL.createObjectURL(file));
+    } else {
+      // If user clears the file input
+      setArtistData((prev) => ({
+        ...prev,
+        imageFile: null,
+      }));
+      setImagePreview(artistData.imageUrl || null);
     }
   };
 
@@ -62,42 +75,30 @@ export default function ArtistPage() {
     setError(null);
     setSuccess(false);
 
-    const token = localStorage.getItem("token");
-    if (!token) {
-      setError(new Error("User not authenticated"));
-      setLoading(false);
-      return;
-    }
-
     try {
       const formData = new FormData();
       formData.append("name", artistData.name);
       formData.append("bio", artistData.bio);
       formData.append("website", artistData.website);
       formData.append("nationality", artistData.nationality);
-
-      // Append social media as JSON string
       formData.append("social_media", JSON.stringify(artistData.socialMedia));
 
-      // Append image file if available
+      // Priority: if file selected, send file; else send imageUrl string
       if (artistData.imageFile) {
         formData.append("image", artistData.imageFile);
+      } else if (artistData.imageUrl.trim()) {
+        formData.append("image_url", artistData.imageUrl.trim());
       }
 
-      const response = await axios.post(apiUrl + "/artist/create/", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-          Authorization: `Token ${token}`,
-        },
-      });
+      const data = await addArtist(formData);
 
-      setSuccess(true);
-      setLoading(false);
-
-      setTimeout(() => {
-        navigate("/artists");
-      }, 1500);
-
+      if (data) {
+        setSuccess(true);
+        setLoading(false);
+        setTimeout(() => {
+          navigate("/artists");
+        }, 1500);
+      }
     } catch (err) {
       setError(err);
       setLoading(false);
@@ -146,21 +147,36 @@ export default function ArtistPage() {
             />
           </div>
 
-          {/* Image Upload */}
+          {/* Image Upload OR URL */}
           <div>
-            <label htmlFor="image" className="block text-lg text-gray-700 mb-2">
-              Upload Artist Image
-            </label>
+            <label className="block text-lg text-gray-700 mb-2">Artist Image</label>
+
+            {/* File upload */}
             <input
               type="file"
-              id="image"
+              id="imageFile"
               accept="image/*"
               onChange={handleImageChange}
-              className="block w-full text-gray-700"
+              className="block w-full text-gray-700 mb-2"
             />
-            {artistData.imagePreview && (
+
+            {/* OR text */}
+            <p className="text-center mb-2 text-gray-500 font-semibold">OR</p>
+
+            {/* Image URL input */}
+            <input
+              type="url"
+              name="imageUrl"
+              placeholder="Enter image URL"
+              value={artistData.imageUrl}
+              onChange={handleInputChange}
+              className="w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500"
+            />
+
+            {/* Image preview (file or URL) */}
+            {imagePreview && (
               <img
-                src={artistData.imagePreview}
+                src={imagePreview}
                 alt="Preview"
                 className="mt-4 w-40 h-40 object-cover rounded-lg shadow-md mx-auto"
               />

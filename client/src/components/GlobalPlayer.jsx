@@ -7,7 +7,7 @@ export default function GlobalPlayer() {
   if (!currentTrack) return null
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-zinc-900 text-white p-4 shadow-md flex items-center justify-between z-50">
+    <div className="bg-zinc-900 text-white p-4 shadow-md flex items-center justify-between z-50">
       <div className="flex items-center gap-4">
         <img
           src={currentTrack.cover}

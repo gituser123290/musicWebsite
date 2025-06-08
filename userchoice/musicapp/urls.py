@@ -5,6 +5,8 @@ urlpatterns = [
     
     path('search/', SearchAPIView.as_view(), name='album-list'),
     path('recently-played/', RecentlyPlayedView.as_view(), name='recently-played'),
+    path('playlists/featured/', FeaturedPlaylistsAPIView.as_view(), name='featured-playlists'),
+    path('top-album/', TopAlbumsAPIView.as_view(), name='top-album'),
     # Song URLs
     path('songs/', SongAPIView.as_view(), name='song-list'),
     path('songs/<int:song_id>/', SongAPIView.as_view(), name='song-detail'),

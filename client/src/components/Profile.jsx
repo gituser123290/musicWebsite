@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { apiUrl } from '../services/api';
 import Loading from '../layouts/Loading';
 import moment from 'moment';
-import { FaTwitter, FaGithub, FaLinkedin, FaEnvelope, FaPenSquare, FaSpotify } from 'react-icons/fa';
+import { FaTwitter, FaGithub, FaLinkedin, FaEnvelope, FaPenSquare, FaSpotify, FaAccessibleIcon } from 'react-icons/fa';
 import { PiPlaylistFill } from "react-icons/pi";
 import axios from 'axios';
 import { motion } from 'framer-motion';
@@ -83,10 +83,13 @@ export default function Profile() {
     }
   };
 
-  const addSong=()=>{
+  const addSong = () => {
     navigate('/createsong')
   }
-  
+
+  const addArtist = () => {
+    navigate('/createartist')
+  }
 
   if (loading) return <Loading />;
   if (error) return <p className="text-red-500 text-center mt-10">Error: {error}</p>;
@@ -171,7 +174,16 @@ export default function Profile() {
                 <PiPlaylistFill size={26} />
               </button>
             </div>
-
+            <div>
+              <button
+              title="Add Artist"
+                className="text-red-500 hover:text-red-700 transition-colors duration-300 cursor-pointer"
+                aria-label="Add Artist"
+                onClick={addArtist}
+              >
+                <FaAccessibleIcon size={20} />
+              </button>
+            </div>
             <div className="mt-10">
               <h3 className="text-2xl font-semibold text-indigo-400 mb-4">Your Playlists</h3>
               {user.playlists?.length > 0 ? (

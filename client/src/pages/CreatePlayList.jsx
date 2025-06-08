@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { apiUrl } from "../services/api";
+import { createPlaylists } from "../services/apiServices";
 import Loading from "../layouts/Loading";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 
 export default function CreatePlayList() {
   const [name, setName] = useState("");
@@ -14,18 +13,9 @@ export default function CreatePlayList() {
   const createPlaylist = async (e) => {
     e.preventDefault();
     setLoading(true);
-    const token = sessionStorage.getItem("token");
-    if (!token) {
-      alert("You need to login first");
-      setLoading(false);
-      return;
-    }
     try {
-      await axios.post(
-        apiUrl + "/playlist/create/",
-        { name, is_public: isPublic },
-        { headers: { Authorization: `Token ${token}` } }
-      );
+      const data={name:name, is_public: isPublic }
+      await createPlaylists(data);
       alert("Playlist created successfully!");
       navigate("/playlists");
     } catch (err) {

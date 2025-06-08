@@ -10,18 +10,18 @@ export default function Sidebar({ handleLogout }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const navItems = [
-    { label: "Home", icon: <Home size={20} />, path: "/" },
-    { label: "Browse", icon: <Search size={20} />, path: "/search" },
-    { label: "Playlists", icon: <Search size={20} />, path: "/playlists" },
-    { label: "Library", icon: <Music size={20} />, path: "/library" },
-    { label: "Profile", icon: <User size={20} />, path: "/profile" },
+    { label: "Home", icon: <Home size={25} />, path: "/" },
+    { label: "Browse", icon: <Search size={25} />, path: "/search" },
+    { label: "Playlists", icon: <Search size={25} />, path: "/playlists" },
+    { label: "Library", icon: <Music size={25} />, path: "/library" },
+    { label: "Profile", icon: <User size={25} />, path: "/profile" },
   ];
 
   return (
     <div className='flex h-screen'>
-      <div className={`hidden md:flex flex-col transition-all duration-300 ${isCollapsed ? "w-20" : "w-64"} bg-gray-100 p-4`}>
+      <div className={`hidden md:flex flex-col transition-all duration-300 ${isCollapsed ? "w-16" : "w-60"} bg-gray-100 p-4`}>
         <div className='flex items-center justify-between mb-6'>
-          {!isCollapsed && <h1 className='text-lg font-bold'>🎵 Musicify</h1>}
+          {!isCollapsed && <h1 className='flex justify-between text-lg font-bold'><Music/> Musicify</h1>}
           <button onClick={() => setIsCollapsed(!isCollapsed)}>
             {isCollapsed ? <ChevronRight /> : <ChevronLeft />}
           </button>
@@ -32,7 +32,7 @@ export default function Sidebar({ handleLogout }) {
               key={index}
               to={item.path}
               className={({ isActive }) =>
-                `flex items-center gap-2 p-2 rounded w-full hover:bg-gray-200 relative group ${
+                `flex items-center gap-2 p-2 px-2 rounded w-full hover:bg-gray-200 relative group ${
                   isActive ? "bg-gray-300 font-semibold" : ""
                 }`
               }
@@ -46,16 +46,8 @@ export default function Sidebar({ handleLogout }) {
               )}
             </NavLink>
           ))}
-          {!isCollapsed && (
-            <button
-              onClick={handleLogout}
-              className='text-red-500 mt-6 hover:underline'
-            >
-              Logout
-            </button>
-          )}
         </nav>
-        <Navbar isCollapsed={isCollapsed} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
+        <Navbar isCollapsed={isCollapsed} handleLogout={handleLogout} toggleSidebar={() => setIsCollapsed(!isCollapsed)} />
       </div>
       
       <div className='flex-1 mt-16 overflow-auto'>

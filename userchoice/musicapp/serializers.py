@@ -65,7 +65,7 @@ class PlaylistSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Playlist
-        fields = ['id', 'name', 'user', 'songs', 'songs_id', 'is_public', 'created_at']
+        fields = ['id', 'name', 'user', 'songs','cover_image', 'songs_id', 'is_public', 'created_at']
 
     def create(self, validated_data):
         song_ids = validated_data.pop('songs_id', [])

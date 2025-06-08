@@ -18,48 +18,36 @@ from django.db.models import Q
 from .models import *
 from .serializers import *
 
-def format_duration(self, duration_seconds):
-    """Convert seconds to a formatted string (HH:MM:SS)"""
-    hours = int(duration_seconds // 3600)
-    minutes = int((duration_seconds % 3600) // 60)
-    seconds = int(duration_seconds % 60)
-    return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 
 class SearchAPIView(APIView):
     def get(self, request, format=None):
-        query = request.query_params.get('q', '')
+        query = request.query_params.get('q', '').strip()
+
         if not query:
-            return Response({"detail": "Query parameter `q` is required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"detail": "Query parameter `q` is required."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
-        exact_song_matches = Song.objects.filter(
-            Q(title__icontains=query) | 
-            Q(song__artist_name__icontains=query)
-        )
-        
-        partial_song_matches = Song.objects.filter(
-            Q(title__icontains=query) | 
-            Q(artist__icontains=query)
-        ).exclude(id__in=exact_song_matches.values_list('id', flat=True))
+        # Search Songs
+        songs = Song.objects.filter(
+            Q(title__icontains=query) |
+            Q(artist__name__icontains=query)  # Assuming 'artist' is a ForeignKey
+        ).distinct()
 
-        all_songs = list(exact_song_matches) + list(partial_song_matches)
+        # Search Artists
+        artists = Artist.objects.filter(
+            Q(name__icontains=query)
+        ).distinct()
 
-        exact_artist_matches = Artist.objects.filter(name__icontains=query)
-        
-        partial_artist_matches = Artist.objects.filter(name__icontains=query).exclude(
-            id__in=exact_artist_matches.values_list('id', flat=True)
-        )
-
-        all_artists = list(exact_artist_matches) + list(partial_artist_matches)
-
-        song_data = SongSerializer(all_songs, many=True).data
-        artist_data = ArtistSerializer(all_artists, many=True).data
+        song_data = SongSerializer(songs, many=True).data
+        artist_data = ArtistSerializer(artists, many=True).data
 
         return Response({
             "songs": song_data,
             "artists": artist_data
         }, status=status.HTTP_200_OK)
-    
     
 class RecentlyPlayedView(APIView):
     permission_classes = [IsAuthenticated]
@@ -234,7 +222,14 @@ class PlaylistCreateAPIView(generics.CreateAPIView):
                 return Response({"detail": "Some of the provided songs were not found."}, status=status.HTTP_400_BAD_REQUEST)
             playlist.songs.set(songs)
         return playlist
-    
+
+class PlaylistCreateAPIView(generics.CreateAPIView):
+    serializer_class = PlaylistSerializer
+    permission_classes = [IsAuthenticated]
+    authentication_classes = [TokenAuthentication]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 class LikedSongs(APIView):
     authentication_classes = [TokenAuthentication]
@@ -359,6 +354,11 @@ class AlbumAPIView(APIView):
         album.delete()
         return Response({"detail": "Album deleted successfully."}, status=status.HTTP_204_NO_CONTENT)
 
+class TopAlbumsAPIView(APIView):
+    def get(self, request):
+        albums = Album.objects.filter(top_album=True).order_by('-release_date')[:10]  
+        serializer = AlbumSerializer(albums, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 # Artist Views
 class ArtistListAPIView(generics.ListAPIView):
     parser_classes = [MultiPartParser, FileUploadParser]
@@ -617,3 +617,12 @@ class ProductDetailView(APIView):
                 {"error": f"An error occurred: {str(e)}"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
+            
+class FeaturedPlaylistsAPIView(APIView):
+    def get(self, request):
+        try:
+            playlists = Playlist.objects.filter(featured=True)
+            serializer = PlaylistSerializer(playlists, many=True)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
