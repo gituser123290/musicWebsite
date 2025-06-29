@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import AutoColorCycle from '../components/ColorCycle';
 import Artists from '../components/Artist/Artists'
 import {
   FaMusic, FaList, FaHeadphones,
@@ -24,38 +25,47 @@ export default function HomePage() {
   const handleScroll = () => setShowScrollTop(window.scrollY > 300);
   const scrollToTop = () => window.scrollTo({ top: 0, behavior: "smooth" });
 
-  const fetchRecent = async () => {
+  const didFetch = useRef(false);
+
+
+  const fetchRecent = useCallback(async () => {
     try {
       const data = await recentPlayed();
       setRecentlyPlayed(data);
     } catch (error) {
       console.log("Error", error);
     }
-  };
+  }, []);
 
-  const fetchFeaturedPlaylist = async () => {
+  const fetchFeaturedPlaylist = useCallback(async () => {
     try {
       const data = await featuredPlaylist();
       setFeaturedPlaylists(data);
     } catch (error) {
       console.log("Error", error);
     }
-  };
+  }, []);
 
-  const fetchTopAlbum = async () => {
+  const fetchTopAlbum = useCallback(async () => {
     try {
       const data = await getTopAlbum();
       setTopAlbum(data);
     } catch (error) {
       console.log("Error", error);
     }
-  };
+  }, []);
+
+
 
   useEffect(() => {
+    if (didFetch.current) return; // skip if already fetched
+    didFetch.current = true;
+
     fetchTopAlbum();
     fetchFeaturedPlaylist();
     fetchRecent();
-  }, []);
+  }, [fetchFeaturedPlaylist,fetchTopAlbum,fetchRecent]);
+
 
   useEffect(() => {
     window.addEventListener("scroll", handleScroll);
@@ -77,20 +87,7 @@ export default function HomePage() {
 
   return (
     <div ref={containerRef} className="font-sans transition-all bg-gradient-to-r from-violet-200 to-indigo-200">
-      {/* <div className="flex justify-between items-center px-6 py-4 sticky top-0 z-50 bg-inherit backdrop-blur-lg border-b border-gray-700">
-        <h2 className="text-xl font-bold">Welcome Back</h2>
-        <div className="flex items-center gap-3">
-          <input
-            type="text"
-            placeholder="Search..."
-            onChange={(e) => setSearch(e.target.value)}
-            className="px-3 py-1 rounded bg-gray-700 text-white placeholder-gray-300"
-          />
-          <button onClick={toggleTheme}>
-            {theme === "dark" ? <FaSun className="text-yellow-400" /> : <FaMoon className="text-blue-700" />}
-          </button>
-        </div>
-      </div> */}
+      <AutoColorCycle/>
       <section className="p-6">
         <h3 className="text-2xl font-semibold mb-4">Recently Played</h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -142,7 +139,7 @@ export default function HomePage() {
           </div>
         </section>
       ))}
-      <Artists/>
+      <Artists />
       <div className="container mx-auto text-center p-6">
         <div className="grid md:grid-cols-3 gap-10 text-left">
           <div onClick={() => navigate('/songs')} className="p-8 bg-blue-700 rounded-xl hover:bg-blue-300 cursor-pointer transition">

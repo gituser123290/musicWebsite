@@ -4,6 +4,8 @@ from mutagen import File
 import os
 from rest_framework.exceptions import NotFound, PermissionDenied
 import tempfile
+from django.utils import timezone
+from datetime import timedelta
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly, AllowAny
 from rest_framework.exceptions import NotFound
@@ -56,20 +58,56 @@ class RecentlyPlayedView(APIView):
         songs = RecentlyPlayed.objects.filter(user=request.user).order_by('-played_at')[:20]
         serializer = RecentlyPlayedSerializer(songs, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-
+    
+    
     def post(self, request):
         data = request.data.copy()
         data['user'] = request.user.id  # inject user manually
         serializer = RecentlyPlayedSerializer(data=data)
         if serializer.is_valid():
+            song_title = serializer.validated_data['song_title']
+            user = request.user
+
+            # Calculate the time 24 hours ago
+            time_threshold = timezone.now() - timedelta(hours=24)
+
+            # Check if the same song is already added in the last 24 hours
+            recent_entry = RecentlyPlayed.objects.filter(
+                user=user,
+                song_title=song_title,
+                played_at__gte=time_threshold
+            ).first()
+
+            if recent_entry:
+                return Response(
+                    {"message": "This song is already in your recently played within the last 24 hours."},
+                    status=status.HTTP_200_OK
+                )
+
+            # If not exists, create a new recently played record
             RecentlyPlayed.objects.create(
-                user=request.user,
-                song_title=serializer.validated_data['song_title'],
+                user=user,
+                song_title=song_title,
                 artist_name=serializer.validated_data.get('artist_name', ''),
                 image_url=serializer.validated_data.get('image_url', '')
             )
             return Response({"message": "Added to recently played"}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    # def post(self, request):
+    #     data = request.data.copy()
+    #     data['user'] = request.user.id  # inject user manually
+    #     serializer = RecentlyPlayedSerializer(data=data)
+    #     if serializer.is_valid():
+    #         RecentlyPlayed.objects.create(
+    #             user=request.user,
+    #             song_title=serializer.validated_data['song_title'],
+    #             artist_name=serializer.validated_data.get('artist_name', ''),
+    #             image_url=serializer.validated_data.get('image_url', '')
+    #         )
+    #         return Response({"message": "Added to recently played"}, status=status.HTTP_201_CREATED)
+    #     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
     
        
 # # Song Views

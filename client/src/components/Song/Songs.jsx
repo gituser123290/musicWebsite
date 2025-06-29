@@ -155,6 +155,7 @@
 
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FlyingIcons from '../FlyingIcons';
 import axios from 'axios';
 import Loading from '../../layouts/Loading';
 import { apiUrl } from '../../services/api';
@@ -171,6 +172,8 @@ export default function Songs() {
   const [progress, setProgress] = useState(0);
   const [duration, setDuration] = useState(0);
   const [currentTime, setCurrentTime] = useState(0);
+
+  const [isHovered, setIsHovered] = useState(false);
   const audioRef = useRef(null);
   const navigate = useNavigate();
 
@@ -254,6 +257,29 @@ export default function Songs() {
     };
   }, []);
 
+  function interpolateColor(color1, color2, factor) {
+    const result = color1.slice();
+    for (let i = 0; i < 3; i++) {
+      result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+    }
+    return result;
+  }
+
+  function rgbToRgba(rgb, alpha = 1) {
+    return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+  }
+
+  const startColor1 = [102, 51, 153];
+  const endColor1 = [0, 128, 128];
+  const startColor2 = [51, 0, 102];
+  const endColor2 = [0, 64, 64];
+
+  const factor = progress / 100;
+
+  const bgColor1 = rgbToRgba(interpolateColor(startColor1, endColor1, factor), 0.8);
+  const bgColor2 = rgbToRgba(interpolateColor(startColor2, endColor2, factor), 0.9);
+
+
   const formatTime = (time) =>
     isNaN(time)
       ? '0:00'
@@ -263,7 +289,16 @@ export default function Songs() {
   if (error) return <p className="text-center text-red-500 mt-8 font-semibold">Error: {error.message}</p>;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black p-8 pb-32 relative">
+    <div
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      style={{
+        background: `linear-gradient(135deg, ${bgColor1} 0%, ${bgColor2} 100%)`,
+        transition: 'background 1s linear',
+        overflow: 'hidden',
+        position: 'relative',
+      }}
+      className="min-h-screen bg-gradient-to-b from-black via-gray-900 to-black p-8 pb-32 relative">
       <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {songs.map((song) => (
           <div key={song.id} className="bg-gradient-to-r from-orange-600 to-red-900 rounded-lg drop-shadow p-4">
@@ -277,6 +312,7 @@ export default function Songs() {
               <p className="mt-2 font-semibold text-md text-white">{song.title}</p>
               <p className="font-semibold text-xs text-gray-300">{song.artist.name}</p>
             </div>
+            <FlyingIcons active={isPlaying || isHovered} />
             <div className="flex justify-center mt-4">
               {song.audio ? (
                 <button

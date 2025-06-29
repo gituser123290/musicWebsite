@@ -16,12 +16,12 @@ import {
 import { PiPlaylistFill } from "react-icons/pi";
 import Loading from "../../layouts/Loading";
 import { apiUrl } from "../../services/api";
+import FlyingIcons from "../FlyingIcons";
 import "../../styles/custom.css";
 import axios from "axios";
 
-const token=sessionStorage.getItem('token')
+const token = sessionStorage.getItem('token')
 
-// Simple floating music notes SVG animation
 const FloatingNotes = () => (
   <svg
     className="floating-notes"
@@ -62,6 +62,8 @@ export default function SongDetail() {
   const [comments, setComments] = useState([]);
   const [likeCount, setLikeCount] = useState(0);
   const [liked, setLiked] = useState(false);
+
+  const [isHovered, setIsHovered] = useState(false);
 
   // Audio playback states
   const audioRef = useRef(null);
@@ -152,38 +154,38 @@ export default function SongDetail() {
 
   // Play/pause toggle
   const togglePlayPause = () => {
-  const audio = audioRef.current;
-  if (!audio) return;
+    const audio = audioRef.current;
+    if (!audio) return;
 
-  if (isPlaying) {
-    audio.pause();
-    setIsPlaying(false);
-  } else {
-    const playPromise = audio.play();
-    if (playPromise !== undefined) {
-      playPromise
-        .then(() => {
-          setIsPlaying(true);
-          fetch(`${apiUrl}/recently-played/`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              Authorization: `Token ${token}`,
-            },
-            body: JSON.stringify({
-              song_title: song.title,
-              artist_name: song.artist.name,
-              image_url: song.song_cover_url,
-            }),
-          });
-
-        })
-        .catch((err) => console.error("Playback error", err));
+    if (isPlaying) {
+      audio.pause();
+      setIsPlaying(false);
     } else {
-      setIsPlaying(true);
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+            fetch(`${apiUrl}/recently-played/`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Token ${token}`,
+              },
+              body: JSON.stringify({
+                song_title: song.title,
+                artist_name: song.artist.name,
+                image_url: song.song_cover_url,
+              }),
+            });
+
+          })
+          .catch((err) => console.error("Playback error", err));
+      } else {
+        setIsPlaying(true);
+      }
     }
-  }
-};
+  };
 
 
   // Seek audio on progress bar click
@@ -234,38 +236,38 @@ export default function SongDetail() {
 
   // Like/unlike
   const handleLike = async (e) => {
-  e.preventDefault();
-  const token = sessionStorage.getItem("token");
-  if (!token) {
-    navigate("/login");
-    return;
-  }
-  try {
-    const response = await axios.get(`${apiUrl}/songs/${id}/like/`, {
-      headers: { Authorization: `Token ${token}` },
-    });
-
-    const alreadyLiked = response.data && response.data.length > 0;
-
-    if (alreadyLiked) {
-      await axios.delete(`${apiUrl}/songs/${id}/like/`, {
+    e.preventDefault();
+    const token = sessionStorage.getItem("token");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
+    try {
+      const response = await axios.get(`${apiUrl}/songs/${id}/like/`, {
         headers: { Authorization: `Token ${token}` },
       });
-      setLikeCount((count) => count - 1);
-      setLiked(false);
-    } else {
-      await axios.post(
-        `${apiUrl}/songs/${id}/like/`,
-        { song: id }, 
-        { headers: { Authorization: `Token ${token}` } }
-      );
-      setLikeCount((count) => count + 1);
-      setLiked(true);
+
+      const alreadyLiked = response.data && response.data.length > 0;
+
+      if (alreadyLiked) {
+        await axios.delete(`${apiUrl}/songs/${id}/like/`, {
+          headers: { Authorization: `Token ${token}` },
+        });
+        setLikeCount((count) => count - 1);
+        setLiked(false);
+      } else {
+        await axios.post(
+          `${apiUrl}/songs/${id}/like/`,
+          { song: id },
+          { headers: { Authorization: `Token ${token}` } }
+        );
+        setLikeCount((count) => count + 1);
+        setLiked(true);
+      }
+    } catch (err) {
+      console.error("Error handling like:", err);
     }
-  } catch (err) {
-    console.error("Error handling like:", err);
-  }
-};
+  };
 
 
   // Add song to playlist
@@ -283,7 +285,7 @@ export default function SongDetail() {
       });
       const playlistId = playlistsResponse.data[0].id;
       await axios.put(
-        `${apiUrl}/playlists/${playlistId}/add-song/`,//playlists/<int:pk>/add-song/
+        `${apiUrl}/playlists/${playlistId}/add-song/`,
         { song_id: song.id },
         { headers: { Authorization: `Token ${token}` } }
       );
@@ -292,17 +294,28 @@ export default function SongDetail() {
       setError(err.message);
     }
   };
+  function interpolateColor(color1, color2, factor) {
+    const result = color1.slice();
+    for (let i = 0; i < 3; i++) {
+      result[i] = Math.round(result[i] + factor * (color2[i] - color1[i]));
+    }
+    return result;
+  }
 
-  // Navigation helpers
-  const browseSongs = (e) => {
-    e.preventDefault();
-    navigate("/allsongs");
-  };
+  function rgbToRgba(rgb, alpha = 1) {
+    return `rgba(${rgb[0]}, ${rgb[1]}, ${rgb[2]}, ${alpha})`;
+  }
 
-  const browsePlaylists = (e) => {
-    e.preventDefault();
-    navigate("/playlists");
-  };
+  const startColor1 = [102, 51, 153];
+  const endColor1 = [0, 128, 128];
+  const startColor2 = [51, 0, 102];
+  const endColor2 = [0, 64, 64];
+
+  const factor = progress / 100;
+
+  const bgColor1 = rgbToRgba(interpolateColor(startColor1, endColor1, factor), 0.8);
+  const bgColor2 = rgbToRgba(interpolateColor(startColor2, endColor2, factor), 0.9);
+
 
   if (loading) return <Loading />;
   if (error) return <p className="text-red-600 text-center mt-4">Error: {error}</p>;
@@ -322,8 +335,17 @@ export default function SongDetail() {
       </div>
 
       <div className="flex flex-col md:flex-row gap-10 max-w-6xl mx-auto">
-        {/* Song Cover and Player */}
-        <div className="flex-1 bg-gradient-to-br from-purple-600 to-indigo-800 rounded-xl p-6 flex flex-col items-center shadow-2xl relative">
+        <div
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          style={{
+            background: `linear-gradient(135deg, ${bgColor1} 0%, ${bgColor2} 100%)`,
+            transition: 'background 1s linear',
+            overflow: 'hidden',
+            position: 'relative',
+          }}
+          className="flex-1 bg-gradient-to-br from-purple-600 to-indigo-800 rounded-xl p-6 flex flex-col items-center shadow-2xl relative">
+            <FlyingIcons active={isPlaying || isHovered} />
           <img
             className="w-full max-w-xs rounded-lg shadow-lg"
             src={
@@ -375,13 +397,11 @@ export default function SongDetail() {
               />
             </div>
 
-            {/* Playback Buttons */}
             <div className="flex justify-center items-center space-x-6 mt-6 relative">
               <button
                 className="p-3 bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
                 title="Previous"
                 aria-label="Previous song"
-              // TODO: implement previous functionality
               >
                 <TbPlayerTrackPrevFilled size={28} />
               </button>
@@ -392,11 +412,9 @@ export default function SongDetail() {
                 title={isPlaying ? "Pause" : "Play"}
                 aria-label={isPlaying ? "Pause" : "Play"}
                 onMouseEnter={(e) => {
-                  // show floating notes animation
                 }}
               >
                 {isPlaying ? <FaPause size={24} /> : <FaPlay size={28} />}
-                {/* Floating notes SVG animation on hover */}
                 <FloatingNotes />
               </button>
 
@@ -404,7 +422,6 @@ export default function SongDetail() {
                 className="p-3 bg-blue-600 rounded-full shadow-lg hover:bg-blue-700 transition duration-300"
                 title="Next"
                 aria-label="Next song"
-              // TODO: implement next functionality
               >
                 <TbPlayerTrackNextFilled size={28} />
               </button>
@@ -412,11 +429,8 @@ export default function SongDetail() {
           </div>
         </div>
 
-        {/* Song Info, Comments, Likes, Actions */}
         <div className="flex-1 bg-gradient-to-br from-purple-700 to-indigo-900 rounded-xl p-6 shadow-2xl flex flex-col space-y-6">
           <h2 className="text-3xl font-semibold text-center">{song.title}</h2>
-
-          {/* Comments */}
           <div>
             <div className="flex items-center space-x-2 mb-3 text-lg">
               <FaComment size={22} />
@@ -440,8 +454,6 @@ export default function SongDetail() {
               <p className="text-gray-400">No comments yet.</p>
             )}
           </div>
-
-          {/* Like and count */}
           <div className="flex items-center space-x-2">
             {liked ? (
               <FaHeart
@@ -470,8 +482,6 @@ export default function SongDetail() {
             )}
             <span>{likeCount} {likeCount === 1 ? "Like" : "Likes"}</span>
           </div>
-
-          {/* Comment form */}
           <form onSubmit={handleComment} className="w-full">
             <div className="flex space-x-2">
               <input
@@ -492,8 +502,6 @@ export default function SongDetail() {
               </button>
             </div>
           </form>
-
-          {/* Playlist Actions */}
           <div className="flex space-x-6 justify-center mt-6">
             <button
               onClick={addSongToPlaylist}
@@ -506,7 +514,7 @@ export default function SongDetail() {
             </button>
 
             <button
-              onClick={browsePlaylists}
+              onClick={() => navigate("/playlists")}
               className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 transition duration-300 px-4 py-2 rounded-md shadow-md"
               title="Browse Playlists"
               aria-label="Browse playlists"
@@ -516,7 +524,7 @@ export default function SongDetail() {
             </button>
 
             <button
-              onClick={browseSongs}
+              onClick={() => navigate("/allsongs")}
               className="flex items-center space-x-2 bg-indigo-600 hover:bg-indigo-700 transition duration-300 px-4 py-2 rounded-md shadow-md"
               title="Browse Songs"
               aria-label="Browse all songs"
@@ -530,4 +538,5 @@ export default function SongDetail() {
     </div>
   );
 }
+
 

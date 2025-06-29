@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { apiUrl } from "../services/api";
+import AutoColorCycle from "../components/ColorCycle";
 import axios from "axios";
 
 export default function SongPage() {
@@ -114,7 +115,7 @@ export default function SongPage() {
               required
             />
           </div>
-
+            <AutoColorCycle/>
           <div>
             <label className="text-sm font-medium text-gray-400">Artist</label>
             <select

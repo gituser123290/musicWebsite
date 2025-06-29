@@ -9,6 +9,7 @@ import SidebarLayout from './layouts/Sidebar';
 import NotFound from './layouts/NotFound';
 import PlayerBar from './components/PlayerBar';
 import Library from './pages/Library';
+import AutoColorCycle from './components/ColorCycle';
 
 // Lazy-loaded pages
 const HomePage = React.lazy(() => import('./pages/Home'));
@@ -140,10 +141,7 @@ function App() {
                 !isAuthenticated ? <Register /> : <Navigate to="/" />
               }
             />
-            {/* Unauthorized page */}
             <Route path="/unauthorized" element={<Unauthorized />} />
-
-            {/* SidebarLayout wraps the rest */}
             <Route
               element={
                 <SidebarLayout
