@@ -13,7 +13,7 @@ AUTH_USER_MODEL = 'authApp.UserProfile'
 
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost","musicwebsite-1.onrender.com']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
